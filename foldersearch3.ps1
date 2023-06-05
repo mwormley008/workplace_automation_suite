@@ -97,11 +97,16 @@ if ($docFile.Count -eq 1)
     Write-Host "Multiple files found:"
     $index = 1
     $fileList = @()
-    foreach ($file in $docFile) {
+
+    # Sort the files by creation time
+    $sortedFiles = $docFile | Sort-Object -Property CreationTime -Descending
+
+    foreach ($file in $sortedFiles) {
         $fileList += [pscustomobject]@{
-            Index = $index
+            LeftIndex = $index  # Index on the left
             DocName = $file.Name
             Created = $file.CreationTime.ToString('MM/dd/yyyy')
+            RightIndex = $index  # Index on the right
         }
         $index++
     }
