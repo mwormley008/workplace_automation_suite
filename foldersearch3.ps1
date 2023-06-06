@@ -46,8 +46,7 @@ if ($docFile.Count -eq 1)
 
     # Path variable for the file to be opened
     # Write-Host "One file found: $($doc.Name)"  # Display the file name
-    Write-Host "One file found: $($doc.Name), Created: $($doc.CreationTime)"
-
+    Write-Host "One file found: $($doc.Name), $($doc.CreationTime.ToString('MM/dd/yyyy')), $i"
     $pathToOpen = $doc.FullName
 
     # Ask if the user wants to run the revision script
@@ -103,7 +102,7 @@ if ($docFile.Count -eq 1)
     #     $index++
     # }
     foreach ($file in $docFile) {
-        Write-Host "$index. $($file.Name), $($file.CreationTime)"
+        Write-Host "$index. $($file.Name), $($file.CreationTime.ToString('MM/dd/yyyy')), $index"
         $index++
     }
 
