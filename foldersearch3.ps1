@@ -94,17 +94,19 @@ if ($docFile.Count -eq 1)
 
 } elseif ($docFile.Count -gt 1) 
 {
-    # If multiple files match, prompt the user to choose one.
     Write-Host "Multiple files found:"
     $index = 1
-    # foreach ($file in $docFile) {
-    #     Write-Host "$index. $($file.Name)"
-    #     $index++
-    # }
+    $fileList = @()
     foreach ($file in $docFile) {
-        Write-Host "$index. $($file.Name), $($file.CreationTime.ToString('MM/dd/yyyy')), $index"
+        $fileList += [pscustomobject]@{
+            Index = $index
+            DocName = $file.Name
+            Created = $file.CreationTime.ToString('MM/dd/yyyy')
+        }
         $index++
     }
+
+    $fileList | Format-Table -AutoSize | Out-String -Stream
 
 
     $selectedFileIndex = Read-Host -Prompt 'Enter the number of the file you want to open'
