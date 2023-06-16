@@ -45,8 +45,9 @@ if ($docFile.Count -eq 1)
     $doc = $docFile  # There's only one document, so we take that.
 
     # Path variable for the file to be opened
-    Write-Host "One file found: $($doc.Name)"  # Display the file name
-    
+    # Write-Host "One file found: $($doc.Name)"  # Display the file name
+    Write-Host "One file found: $($doc.Name), Created: $($doc.CreationTime)"
+
     $pathToOpen = $doc.FullName
 
     # Ask if the user wants to run the revision script
@@ -97,10 +98,15 @@ if ($docFile.Count -eq 1)
     # If multiple files match, prompt the user to choose one.
     Write-Host "Multiple files found:"
     $index = 1
+    # foreach ($file in $docFile) {
+    #     Write-Host "$index. $($file.Name)"
+    #     $index++
+    # }
     foreach ($file in $docFile) {
-        Write-Host "$index. $($file.Name)"
+        Write-Host "$index. $($file.Name), $($file.CreationTime)"
         $index++
     }
+
 
     $selectedFileIndex = Read-Host -Prompt 'Enter the number of the file you want to open'
     $selectedFile = $docFile[[int]$selectedFileIndex - 1]
