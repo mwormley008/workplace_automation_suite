@@ -32,7 +32,7 @@ press('delete')
 write(message)
 hotkey('shift', 'tab')
 write('Photos for Invoice')
-hotkey('shift', 'tab')
+#hotkey('shift', 'tab')
 time.sleep(1)
 
 
