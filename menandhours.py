@@ -34,3 +34,9 @@ print(contents)
 
 total = int(contents[0]) * float(contents[2])
 print(total)
+
+pya.press('tab', presses=2)
+pya.write(str(total))
+
+pya.hotkey('shift', 'tab')
+pya.press('down')
