@@ -1,6 +1,6 @@
 # men and hours
 
-import pyautogui as pya, pyperclip, time
+import pyautogui as pya, pyperclip, time, re
 
 from pyautogui import press, write, hold
 
@@ -18,12 +18,19 @@ def highlight_line():
     pya.keyUp('shiftleft')
     pya.press('numlock')
 
-#contents = []
+contents = []
 
 highlight_line()
 
 full_string = copy_clipboard()
 
-','.split(full_string)
+full_string = full_string.split(', ')
 print(full_string)
 
+for i in full_string:
+    contents.extend(i.split())
+
+print(contents)
+
+total = int(contents[0]) * float(contents[2])
+print(total)
