@@ -34,6 +34,7 @@ Note that the askopenfilename() function returns the selected file path as a str
 Make sure to import the necessary modules (Tk and askopenfilename) from tkinter and create a Tk root window before using the askopenfilename() function.
 """
 new_invoice_number = simpledialog.askinteger("Invoice Prompt", "Enter the new invoice number:")
+completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
 
 # Page 1
 workbook = load_workbook(filename=workbook_path)
@@ -60,10 +61,15 @@ print(workperiod)
 invoice_number = sheet1["J9"]
 old_invoice_number = invoice_number.value
 invoice_number.value = new_invoice_number
+# add work from this period to completed and stored to date
+completed_through_cell = sheet1["E26"]
+completed_through_cell.value += completed_through
 
 # add old current payment E39 to previous payments E38
+retention_percentage = sheet1['B29'].value
 sheet1["E38"].value += sheet1["E39"].value
-sheet1["E39"].value = 0
+sheet1["E39"].value = completed_through * (1-retention_percentage*.01)
+
 
 # Page 2
 sheet2 = workbook["G703"]
@@ -80,15 +86,19 @@ for x, y in zip(prev_apps, this_period):
 # Each new row increases by 4 (D17 E17)
 
 # Save a new file with new name
-"""
 new_workbook_path = workbook_path.replace(str(old_invoice_number), str(new_invoice_number))
-new_workbook_path = workbook_path.replace(str(old_application_number), str(new_application_number))
-
+new_workbook_path = new_workbook_path.split(' ')
+new_workbook_path[-1] = new_workbook_path[-1].replace(str(old_application_number), str(new_application_number))
+new_workbook_path = (' ').join(new_workbook_path)
 print(new_workbook_path)
-print(type(new_workbook_path))
+#new_workbook_path = new_workbook_path.replace(str(old_application_number), str(new_application_number))
 
-new_workbook_path = os.path.normpath(new_workbook_path)
-print(new_workbook_path)
-workbook.save(new_workbook_path)"""
+
+#print(new_workbook_path)
+#print(type(new_workbook_path))
+
+#print(new_workbook_path)
+#workbook.save(new_workbook_path)
+workbook.save(new_workbook_path)
 
 # Add formulae to all cells 
