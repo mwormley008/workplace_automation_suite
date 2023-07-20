@@ -41,6 +41,10 @@ root = Tk()
 root.withdraw()  # Hide the root window
 completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
 
+qb_window.activate()
+hotkey('alt', 'j')
+time.sleep(.5)
+
 sleep(1)
 
 today = date.today()
@@ -110,26 +114,3 @@ else:
 # This is some code from ChatGPT that lets you find a file by the number
 # even if it's not the only thing in the file name
 
-"""
-
-def find_file_by_number(folder_path, target_number):
-    pattern = re.compile(r'.*{}.*'.format(target_number))
-
-    for filename in os.listdir(folder_path):
-        if pattern.match(filename):
-            file_path = os.path.join(folder_path, filename)
-            return file_path
-
-    # If the file is not found
-    return None
-
-# Example usage
-folder_path = '/path/to/folder'  # Replace with the actual folder path
-target_number = '12345'  # Replace with the specific number you are looking for
-
-file_path = find_file_by_number(folder_path, target_number)
-if file_path:
-    print(f"File found: {file_path}")
-else:
-    print("File not found.")
-"""

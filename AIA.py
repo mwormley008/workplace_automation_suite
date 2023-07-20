@@ -1,6 +1,7 @@
 # Script to put in the expense categories
 
-import pyautogui, openpyxl, datetime, calendar, os
+import pyautogui, openpyxl, datetime, calendar, os, sys, re
+import subprocess
 from openpyxl import Workbook, load_workbook
 from datetime import datetime, timedelta, date
 
@@ -16,37 +17,45 @@ response = messagebox.askyesno("Confirmation", "Do you want to start in Quickboo
 
 if response:
     qtoken = 1
+    exec(open('progress_invoice.py').read())
 else:
     qtoken = 0
 
-exec(open('progress_invoice.py').read())
 
-# old_invoice_number = simpledialog.askinteger("Invoice Prompt", "Enter the old invoice number:")
-
-
+old_invoice_number = simpledialog.askinteger("Invoice Prompt", "Enter the old invoice number:")
 
 initial_dir=r"\\WBR\data\shared\G702 & G703 Forms"
-workbook_path = askopenfilename(initialdir=initial_dir)
+
+def find_file_by_number(folder_path, target_number):
+    pattern = re.compile(r'.*{}.*\.xlsx$'.format(target_number))
+
+    for filename in os.listdir(folder_path):
+        if pattern.match(filename):
+            file_path = os.path.join(folder_path, filename)
+            return file_path
+
+    # If the file is not found
+    return None
+
+# Example usage
+folder_path = initial_dir # Replace with the actual folder path
+target_number = old_invoice_number  # Replace with the specific number you are looking for
+
+file_path = find_file_by_number(folder_path, target_number)
+
+if file_path:
+    print(f"File found: {file_path}")
+    use_file = messagebox.askyesno("Confirmation", f"Do you want to use this file?/\n {file_path}")
+    if use_file:
+        workbook_path = file_path
+    else:
+        workbook_path = askopenfilename(initialdir=initial_dir)
+else:
+    print("File not found.")
+    workbook_path = askopenfilename(initialdir=initial_dir)
 print(workbook_path)
-"\\WBR\data\shared\G702 & G703 Forms\41 North Contractors Raising Canes New Lenox 15682 3.xlsx"
-# Open AIA form based on invoice number
-# maybe I could do this with tkinter idk
-## If I have tkinter form I guess it could prompt old inv number,
-## new invoice number, and total completed and stored to date
-"""from tkinter import Tk
-from tkinter.filedialog import askopenfilename
 
 
-# Open a file dialog for selecting a file
-
-# Print the selected file path
-print("Selected file:", file_path)
-When you run this code, a file dialog window will appear, allowing you to browse and select the file you want. Once you select the file and click "Open," the selected file path will be stored in the file_path variable, and you can use it in your Python code as needed.
-
-Note that the askopenfilename() function returns the selected file path as a string. You can modify the code after obtaining the file path to perform further operations on the selected file.
-
-Make sure to import the necessary modules (Tk and askopenfilename) from tkinter and create a Tk root window before using the askopenfilename() function.
-"""
 if qtoken == 0:
     new_inv = simpledialog.askinteger("Invoice Prompt", "Enter the new invoice number:")
     completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
@@ -116,4 +125,21 @@ print(new_workbook_path)
 #workbook.save(new_workbook_path)
 workbook.save(new_workbook_path)
 
-# Add formulae to all cells 
+# TODO: Add formulae to all cells
+
+excel_path = r"C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"
+
+subprocess.run([excel_path, new_workbook_path])
+
+"""os.startfile(excel_path)
+os.startfile(new_workbook_path)
+
+
+print("start", '', '"' + new_workbook_path + '"')
+subprocess.run(["start", '', '"' + new_workbook_path + '"'], shell=True)
+"""
+
+"""
+child_process = subprocess.Popen(new_workbook_path)
+child_process.wait()
+"""
