@@ -3,13 +3,14 @@
 # Excel column and then automates the input of that list into a data entry form
 # using autogui 
 import pyautogui, openpyxl, time, pyperclip, datetime, calendar
-import os, re
+import os, re, sys
+import pygetwindow as gw
 from openpyxl import load_workbook
 from pyautogui import write, press, keyUp, keyDown, hotkey
 from time import sleep
 from datetime import datetime, timedelta, date
 
-from tkinter import Tk, simpledialog
+from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename
 
 def copy_clipboard():
@@ -25,6 +26,15 @@ def highlight_line():
     sleep(1)
     press('numlock')
     sleep(1)
+
+windows = gw.getAllWindows()
+
+qb_window = None
+
+for window in windows:
+    if "QuickBooks" in window.title:
+        qb_window = window
+        break
 
 # Create the Tkinter root window
 root = Tk()
@@ -82,7 +92,19 @@ write(completed_date)
 press('tab')
 write(str(completed_through))
 press('down')
-write(str(completed_through * -.1))
+write('-10%')
+
+
+print_bin = messagebox.askyesno("Confirmation", "Do you want to print this?")
+
+if print_bin:
+    sleep(1)
+    qb_window.activate()
+    hotkey('ctrl', 'p')
+    sleep(5)
+    press('space') 
+else:
+    sys.exit()
 
 
 # This is some code from ChatGPT that lets you find a file by the number
