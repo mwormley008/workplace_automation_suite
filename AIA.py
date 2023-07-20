@@ -4,7 +4,7 @@ import pyautogui, openpyxl, datetime, calendar, os
 from openpyxl import Workbook, load_workbook
 from datetime import datetime, timedelta, date
 
-from tkinter import Tk, simpledialog
+from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename
 
 
@@ -12,8 +12,16 @@ from tkinter.filedialog import askopenfilename
 root = Tk()
 root.withdraw()  # Hide the root window
 
-# old_invoice_number = simpledialog.askinteger("Invoice Prompt", "Enter the old invoice number:")
+response = messagebox.askyesno("Confirmation", "Do you want to start in Quickbooks?")
 
+if response:
+    qtoken = 1
+else:
+    qtoken = 0
+
+exec(open('progress_invoice.py').read())
+
+# old_invoice_number = simpledialog.askinteger("Invoice Prompt", "Enter the old invoice number:")
 
 
 
@@ -39,8 +47,9 @@ Note that the askopenfilename() function returns the selected file path as a str
 
 Make sure to import the necessary modules (Tk and askopenfilename) from tkinter and create a Tk root window before using the askopenfilename() function.
 """
-new_invoice_number = simpledialog.askinteger("Invoice Prompt", "Enter the new invoice number:")
-completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
+if qtoken == 0:
+    new_inv = simpledialog.askinteger("Invoice Prompt", "Enter the new invoice number:")
+    completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
 
 # Page 1
 workbook = load_workbook(filename=workbook_path)
@@ -66,7 +75,7 @@ print(workperiod)
 # J9
 invoice_number = sheet1["J9"]
 old_invoice_number = invoice_number.value
-invoice_number.value = new_invoice_number
+invoice_number.value = new_inv
 # add work from this period to completed and stored to date
 completed_through_cell = sheet1["E26"]
 completed_through_cell.value += completed_through
@@ -92,7 +101,7 @@ for x, y in zip(prev_apps, this_period):
 # Each new row increases by 4 (D17 E17)
 
 # Save a new file with new name
-new_workbook_path = workbook_path.replace(str(old_invoice_number), str(new_invoice_number))
+new_workbook_path = workbook_path.replace(str(old_invoice_number), str(new_inv))
 new_workbook_path = new_workbook_path.split(' ')
 new_workbook_path[-1] = new_workbook_path[-1].replace(str(old_application_number), str(new_application_number))
 new_workbook_path = (' ').join(new_workbook_path)
