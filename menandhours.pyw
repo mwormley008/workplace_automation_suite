@@ -2,9 +2,23 @@
 
 import pyautogui as pya, pyperclip, time, re
 
+from time import sleep
+
 from pyautogui import press, write, hold
 
-time.sleep(3)
+import pygetwindow as gw
+windows = gw.getAllWindows()
+
+qb_window = None
+
+for window in windows:
+    if "QuickBooks" in window.title:
+        qb_window = window
+        break
+
+qb_window.activate()
+
+#time.sleep(3)
 
 def copy_clipboard():
     pya.hotkey('ctrl', 'c')
@@ -20,7 +34,10 @@ def highlight_line():
 
 contents = []
 
+pya.write('hours')
+
 highlight_line()
+sleep(.5)
 
 full_string = copy_clipboard()
 
