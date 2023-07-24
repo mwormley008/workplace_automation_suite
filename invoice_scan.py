@@ -5,8 +5,11 @@ import cv2
 import pypdf
 import pytesseract
 import pdf2image
-import os, re
+import os, re, datetime
+import openpyxl
 from pdf2image import convert_from_path
+from openpyxl import Workbook
+from datetime import date
 
 # You must install tesseract on your machine and update the path below
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
@@ -35,6 +38,11 @@ def extract_text_from_pdf(file_path):
     pdf_file_obj.close()
     return text
 
+wb = Workbook()
+
+ws = wb.active
+
+file_name = f'{date.today()}_invoices.xlsx'
 
 folder_path = r'C:\Users\Michael\Desktop\python-work\Invoices'
 
@@ -87,3 +95,5 @@ for filename in os.listdir(folder_path):
 
     else:
         continue
+
+wb.save(os.path.join(folder_path, file_name))
