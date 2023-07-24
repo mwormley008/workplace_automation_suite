@@ -55,5 +55,12 @@ for filename in os.listdir(folder_path):
             content = ocr_core(img)
             if content.startswith("GEN"):
                 print("GEMCO")
+            match = re.search(r'invoice date[:\s]*([01]?\d/[0123]?\d/\d{2})', content, re.IGNORECASE)
+            if match:
+                # If a match was found, 'group(1)' contains the first parenthesized subgroup - the date.
+                invoice_date = match.group(1)
+                print(f"Found 'invoice date': {invoice_date}")
+            else:
+                print("No 'invoice date' found")
     else:
         continue
