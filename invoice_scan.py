@@ -53,14 +53,37 @@ for filename in os.listdir(folder_path):
             img = cv2.imread('out.jpg')
             print(f"Content on page {i+1}:\n{ocr_core(img)}")
             content = ocr_core(img)
+            # Finds the vendor
             if content.startswith("GEN"):
-                print("GEMCO")
-            match = re.search(r'invoice date[:\s]*([01]?\d/[0123]?\d/\d{2})', content, re.IGNORECASE)
-            if match:
+                print("Vendor: GEMCO")
+
+            # Finds the date of the invoice    
+            date_match = re.search(r'invoice date[:\s]*([01]?\d/[0123]?\d/\d{2})', content, re.IGNORECASE)
+            if date_match:
                 # If a match was found, 'group(1)' contains the first parenthesized subgroup - the date.
-                invoice_date = match.group(1)
+                invoice_date = date_match.group(1)
                 print(f"Found 'invoice date': {invoice_date}")
             else:
                 print("No 'invoice date' found")
+            
+            ## Finds the invoice number
+
+            inv_match = re.search(r'main office (\d+-?\d*)', content, re.IGNORECASE)
+            if inv_match:
+                # If a match was found, 'group(1)' contains the first parenthesized subgroup - the office number.
+                invoice_no = inv_match.group(1)
+                print(f"Found 'main office number': {invoice_no}")
+            else:
+                print("No 'main office number' found")
+
+            ## Finds the invoice amount due
+            total_match = re.search(r'balance \$([\d,]+\.\d{2})', content, re.IGNORECASE)
+            if total_match:
+                # If a match was found, 'group(1)' contains the first parenthesized subgroup - the balance amount.
+                balance_amount = total_match.group(1)
+                print(f"Found 'balance amount': ${balance_amount}")
+            else:
+                print("No 'balance amount' found")
+
     else:
         continue
