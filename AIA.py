@@ -60,11 +60,11 @@ if qb_response and noe_token == 0:
     exec(open('progress_invoice.py').read())
 elif qb_response and noe_token == 1:
     qtoken = 1
-    contract_date = simpledialog.askinteger("Contract Prompt", "What is the contract date DD/MM/YY:")
+    contract_date = simpledialog.askstring("Contract Prompt", "What is the contract date MM/DD/YY:")
     exec(open('new_contract_invoice.py').read())
 elif qb_response == 0 and noe_token == 1:
     qtoken = 0
-    contract_date = simpledialog.askstring("Contract Prompt", "What is the contract date DD/MM/YY:")
+    contract_date = simpledialog.askstring("Contract Prompt", "What is the contract date MM/DD/YY:")
     bill_to = simpledialog.askstring("Contractor", "Who is the contractor?")
     ship_to = simpledialog.askstring("Project", "What is the project name?")
 
@@ -127,6 +127,8 @@ else:
     project.value = project_info[0]
     sheet1["E5"].value = owner_info[1]
     sheet1["E6"].value = owner_info[2]
+    sheet1["J15"].value = contract_date
+
 
 # increment work period
 
@@ -152,10 +154,12 @@ if noe_token == 0:
     sheet1["E38"].value += sheet1["E39"].value
     sheet1["E39"].value = completed_through * (1-retention_percentage*.01)
 if noe_token == 1:
+    # Contract
+    sheet1["E23"].value = contract_amount
     completed_through_cell.value = completed_through
     invoice_number.value = new_inv
     current_payment_due = sheet1["E39"]
-    current_payment_due = (completed_through * .9)
+    current_payment_due.value = (completed_through * .9)
 
 
 

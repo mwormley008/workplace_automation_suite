@@ -30,7 +30,7 @@ pyautogui.click()
 
 
 
-mail_contacts = {'Novak':'DCaporale@novakconstruction.com', 'Valenti':'Melissa.Sanson@valentibuilders.com'}
+mail_contacts = {'Novak':'DCaporale@novakconstruction.com', 'Valenti':'Melissa.Sanson@valentibuilders.com', 'Hanna':'mrosales@hannadesigngroup.com'}
 # Create the Tkinter root window
 root = Tk()
 root.withdraw()  # Hide the root window
