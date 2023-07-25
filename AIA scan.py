@@ -1,4 +1,11 @@
-# Script to put in the expense categories
+# Script to save a scan and email it once the invoice is scanned, then you just need the
+# invoice number, that's it
+# you'll need your scan window still open as well as a chrome window
+# in the wbr gmail tab
+
+# TODO: I think I'd like to make it so that if you don't have the WBR 
+# gmail open it'll open it for you although that might be solvable with the 
+# gmail api
 
 import pyautogui, openpyxl, datetime, calendar, os, sys, re
 import subprocess
