@@ -64,7 +64,10 @@ elif qb_response and noe_token == 1:
     exec(open('new_contract_invoice.py').read())
 elif qb_response == 0 and noe_token == 1:
     qtoken = 0
-    contract_date = simpledialog.askinteger("Contract Prompt", "What is the contract date DD/MM/YY:")
+    contract_date = simpledialog.askstring("Contract Prompt", "What is the contract date DD/MM/YY:")
+    bill_to = simpledialog.askstring("Contractor", "Who is the contractor?")
+    ship_to = simpledialog.askstring("Project", "What is the project name?")
+
 else:
     qtoken = 0
 
@@ -98,6 +101,12 @@ if qtoken == 0:
     new_inv = simpledialog.askinteger("Invoice Prompt", "Enter the new invoice number:")
     completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
 
+
+
+owner_info = bill_to.split('\r\n')
+project_info = ship_to.split('\r\n')
+
+
 # Page 1
 workbook = load_workbook(filename=workbook_path)
 sheet1 = workbook["G702"]
@@ -111,9 +120,13 @@ if noe_token == 0:
     new_application_number = application.value
 else:
     owner = sheet1["C4"]
-    owner.value = bill_to
+    owner.value = owner_info[0]
+    sheet1["C5"].value = owner_info[1]
+    sheet1["C6"].value = owner_info[2]
     project = sheet1["E4"]
-    project.value = ship_to
+    project.value = project_info[0]
+    sheet1["E5"].value = owner_info[1]
+    sheet1["E6"].value = owner_info[2]
 
 # increment work period
 
@@ -169,7 +182,8 @@ if noe_token == 0:
 
     workbook.save(new_workbook_path)
 else:
-    workbook.save(str(owner.value + project.value + str(new_inv) + str(application.value)))
+    new_workbook_path = initial_dir + '\\' + str(owner_info[0] + ' ' + project_info[0] + ' ' + str(new_inv) + ' ' + str(application.value) + '.xlsx')
+    workbook.save(new_workbook_path)
 ## Here I am
 
 # TODO: Add formulae to all cells
@@ -177,6 +191,7 @@ else:
 excel_path = r"C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"
 
 subprocess.run([excel_path, new_workbook_path])
+
 
 """os.startfile(excel_path)
 os.startfile(new_workbook_path)

@@ -59,21 +59,26 @@ for window in windows:
 root = Tk()
 root.withdraw()  # Hide the root window
 
+invoice_status = messagebox.askyesno("Confirmation", "Have you already created the invoice?")
+
 contract_amount = simpledialog.askinteger("Contract Prompt", "What is the total contract amount:")
 
 completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
 
 qb_window.activate()
-hotkey('ctrl', 't')
-time.sleep(.5)
-press('up', presses=25)
-press('down', presses=3)
-hotkey('alt', 't')
-sleep(2)
 
-bill_bin = messagebox.askyesno("Confirmation", "Have you entered the billing information?")
-sleep(.5)
+if not invoice_status:
+    hotkey('ctrl', 't')
+    time.sleep(.5)
+    press('up', presses=25)
+    press('down', presses=3)
+    hotkey('alt', 't')
+    sleep(2)
+
+bill_bin = messagebox.askyesno("Confirmation", "Are you ready to have this invoice information used?")
+sleep(1)
 qb_window.activate()
+sleep(.5)
 hotkey('alt', 'j')
 time.sleep(.5)
 
@@ -93,6 +98,8 @@ completed_date = f"Completed through {today.month}/{res}/{today.year}"
 # get the new invoice number
 press('tab', presses=3)
 new_inv = copy_clipboard()
+
+sleep(1)
 
 press('tab')
 highlight_3_line()

@@ -46,6 +46,8 @@ for window in windows:
 # Create the Tkinter root window
 root = Tk()
 root.withdraw()  # Hide the root window
+
+
 completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
 
 qb_window.activate()
