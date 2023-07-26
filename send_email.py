@@ -1,7 +1,8 @@
 # trying to get this gmail thing going we'll see 
 from Google import Create_Service
-import base64, os, datetime, pickle
-import win32print
+import base64, os, datetime, pickle, time
+from time import sleep
+import win32print, subprocess
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime, timedelta, time
@@ -42,6 +43,7 @@ def send_message(service, user_id, message):
     return None
   
 def download_attachments(service, user_id, msg_id, store_dir, desired_subject):
+    attachments_paths = []
     try:
         message = service.users().messages().get(userId=user_id, id=msg_id).execute()
         payload = message['payload']
@@ -70,11 +72,62 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_subject):
                         f.write(file_data)
 
                     print(f"Attachment '{filename}' downloaded to: {filepath}")
+
+                    attachments_paths.append(filepath)
     except Exception as e:
         print('An error occurred: %s' % e)
 
+    return attachments_paths
 
+def print_file(filepath):
+    printer_name = win32print.GetDefaultPrinter()
+    if not printer_name:
+        print("No default printer found. Please set a default printer.")
+        return
 
+    try:
+        with open(filepath, 'rb') as f:
+            data = f.read()
+
+        hPrinter = win32print.OpenPrinter(printer_name)
+        try:
+            hJob = win32print.StartDocPrinter(hPrinter, 1, ("Attachment", None, "RAW"))
+            try:
+                win32print.StartPagePrinter(hPrinter)
+                win32print.WritePrinter(hPrinter, data)
+                win32print.EndPagePrinter(hPrinter)
+            finally:
+                win32print.EndDocPrinter(hPrinter)
+        finally:
+            win32print.ClosePrinter(hPrinter)
+
+        print(f"Attachment '{filepath}' printed successfully.")
+    except Exception as e:
+        print(f"An error occurred while printing: {e}")
+
+def print_file_with_ghostscript(filepath):
+    ghostscript_path = r"C:\Program Files\gs\gs10.01.2\bin\gswin64c.exe"  # Replace with the path to Ghostscript executable
+    printer_name = win32print.GetDefaultPrinter()
+
+    if not os.path.exists(filepath):
+        print(f"File '{filepath}' does not exist.")
+        return
+
+    command = [
+        ghostscript_path,
+        "-dNOPAUSE",
+        "-dBATCH",
+        "-dPrinted",
+        f"-sDEVICE=mswinpr2",  # Use the Windows printer device
+        f"-sOutputFile=%printer%{printer_name}",
+        filepath
+    ]
+
+    try:
+        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        print(f"File '{filepath}' printed successfully.")
+    except Exception as e:
+        print(f"An error occurred while printing: {e}")
 
 service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 user_email = "wbrroof@gmail.com"  # Replace with the email address you want to send the message from
@@ -92,9 +145,15 @@ query = "from:carolyn@profastening.net subject:'Invoice'"
 try:
     response = service.users().messages().list(userId=user_email, q=query).execute()
     messages = response.get('messages', [])
+    all_attachments = []
     for message in messages:
         msg_id = message['id']
-        download_attachments(service, user_email, msg_id, store_directory, "Invoice")
+        attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice")
+        if attachments:
+            all_attachments.extend(attachments)
+    sleep(1)
+    for attachment in all_attachments:
+       print_file_with_ghostscript(attachment)
 except Exception as e:
     print('An error occurred: %s' % e)
 
