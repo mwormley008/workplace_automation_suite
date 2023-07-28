@@ -55,8 +55,11 @@ for cell in ws[column_to_check]:
 print(rows_with_value)
 
 # Write the bills to QB
+qb_window.activate()
+sleep(1)
 
 for j in rows_with_value:
+    sleep(1)
     pyautogui.write(ws['A'+j].value)
     sleep(1)
     pyautogui.press('tab', presses=2)

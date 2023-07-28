@@ -23,7 +23,7 @@ def quick_windows():
     qb_window = None
 
     for window in windows:
-        if "QuickBooks" in window.title:
+        if "QuickBooks Desktop" in window.title:
             qb_window = window
 
     return qb_window        
@@ -35,12 +35,14 @@ first_row_skipped = False
 # Alright, this tsarts with the bill window open in QB
 
 qb_window = quick_windows()
+sleep(1)
 
 if qb_window:
     qb_window.activate()
 else:
-    print("QuickBooks window not found.")
+    print("QuickBooks window not found.")   
 
+sleep(1)
 
 for i in range(2,len(ws['A'])+1):
     print(ws[f'A{i}'].value)

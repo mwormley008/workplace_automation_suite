@@ -11,6 +11,8 @@ from pdf2image import convert_from_path
 from openpyxl import Workbook, load_workbook
 from datetime import date
 
+from tkinter import Tk, simpledialog, messagebox
+
 # You must install tesseract on your machine and update the path below
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
@@ -132,7 +134,7 @@ for filename in os.listdir(folder_path):
                         print("No 'invoice date' found")
 
                     ## Finds the invoice amount due
-                    total_match = re.search(r'balance \$([\d,]+\.\d{2})', content, re.IGNORECASE)
+                    total_match = re.search(r'balance \$([\d,]*\.\d{2}|\d+)', content, re.IGNORECASE)
                     if total_match:
                         # If a match was found, 'group(1)' contains the first parenthesized subgroup - the balance amount.
                         balance_amount = total_match.group(1)
@@ -140,6 +142,7 @@ for filename in os.listdir(folder_path):
                         ws[f'D{invoice_counter}'].value = balance_amount
                     else:
                         print("No 'balance amount' found")
+
             if page_match:
                 total_match = re.search(r'balance \$([\d,]+\.\d{2})', content, re.IGNORECASE)
                 if total_match:
@@ -154,5 +157,11 @@ for filename in os.listdir(folder_path):
 
     else:
         continue
+
+for i in range(2,len(ws['D'])+1):
+    print(ws[f'D{i}'].value)
+    if ws[f'D{i}'].value is None:
+        missing_invoice = simpledialog.askstring('Missing Total', f"What is the balance due for invoice {ws[f'C{i}'].value}")
+        ws[f'D{i}'].value = missing_invoice
 
 wb.save(os.path.join(folder_path, file_name))
