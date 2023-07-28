@@ -1,11 +1,14 @@
 # trying to get this gmail thing going we'll see 
 from Google import Create_Service
-import base64, os, datetime, pickle, time
+import base64, os, datetime, pickle, time, tkinter
 from time import sleep
 import win32print, subprocess
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime, timedelta, time
+
+from tkinter import Tk, simpledialog, messagebox
+from tkinter.filedialog import askopenfilename, Frame, Button
 
 
 CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
@@ -141,21 +144,27 @@ start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
 start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
 
 
-query = "from:carolyn@profastening.net subject:'Invoice'"
-try:
-    response = service.users().messages().list(userId=user_email, q=query).execute()
-    messages = response.get('messages', [])
-    all_attachments = []
-    for message in messages:
-        msg_id = message['id']
-        attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice")
-        if attachments:
-            all_attachments.extend(attachments)
-    sleep(1)
-    for attachment in all_attachments:
-       print_file_with_ghostscript(attachment)
-except Exception as e:
-    print('An error occurred: %s' % e)
+query_list = ["from:carolyn@profastening.net subject:'Invoice'", "from:Sales@gemcoroofingsupply.com subject:'Invoice'"]
+
+
+print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
+
+for query in query_list:
+    try:
+        response = service.users().messages().list(userId=user_email, q=query).execute()
+        messages = response.get('messages', [])
+        all_attachments = []
+        for message in messages:
+            msg_id = message['id']
+            attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice")
+            if attachments:
+                all_attachments.extend(attachments)
+        sleep(1)
+        if print_status:
+            for attachment in all_attachments:
+                print_file_with_ghostscript(attachment)
+    except Exception as e:
+        print('An error occurred: %s' % e)
 
 
 # recipient_email = "throwod@gmail.com"  # Replace with the recipient's email address

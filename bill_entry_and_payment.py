@@ -54,6 +54,8 @@ for cell in ws[column_to_check]:
 
 print(rows_with_value)
 
+# Write the bills to QB
+
 for j in rows_with_value:
     pyautogui.write(ws['A'+j].value)
     sleep(1)
@@ -75,7 +77,10 @@ press('o')
 sleep(.5)
 press('p')
 sleep(1)
-      
+
+
+# Pay the bills
+
 bills_counter = 0
 for j in rows_with_value:
     press('tab')

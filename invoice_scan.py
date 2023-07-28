@@ -90,7 +90,7 @@ for filename in os.listdir(folder_path):
             
             ## Finds the invoice number and checks for uniqueness
             inv_pattern = r'INVOICE\n\n(\d+-\d+)'
-            inv_pattern2 = r'main office (\d+-?\d*)'
+            inv_pattern2 = r'office (\d+-?\d*)'
             page_pattern = r"page\s(\d+)\sof\s([2-9])"
 
 
@@ -117,7 +117,7 @@ for filename in os.listdir(folder_path):
                     ws[f'C{invoice_counter}'] = f'{invoice_no}'
                     
                     # Finds the vendor
-                    if content.startswith("GEN"):
+                    if content.startswith("GEN") or content.startswith("GEM"):
                         print("Vendor: GEMCO")
                         ws[f'A{invoice_counter}'] = 'Gemco'
 
@@ -137,7 +137,7 @@ for filename in os.listdir(folder_path):
                         # If a match was found, 'group(1)' contains the first parenthesized subgroup - the balance amount.
                         balance_amount = total_match.group(1)
                         print(f"Found 'balance amount': ${balance_amount}")
-                        ws[f'D{invoice_counter}'] = balance_amount
+                        ws[f'D{invoice_counter}'].value = balance_amount
                     else:
                         print("No 'balance amount' found")
             if page_match:
