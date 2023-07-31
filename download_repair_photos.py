@@ -250,19 +250,46 @@ for email_address in email_addresses:
     except Exception as e:
         print('An error occurred: %s' % e)
 # TODO: I'd like to add some printing properties here but it looks like I'm going to need to figure out how to do a right click
-# print_status = messagebox.askyesno("Confirmation", "Do you want to print?")
-# if print_status:
-#     print_folder = r"C:\Users\Michael\Desktop\python-work\repair_photos"
-#     print_items = os.listdir(print_folder)
-#     subprocess.run(['explorer', os.path.realpath(print_folder)])
-#     sleep(5)
-#     press('1')
-#     for item in print_items:
-#         sleep(1)
-#         press('enter')
-#         sleep(1)
-#         press('0')
-        
+print_status = messagebox.askyesno("Confirmation", "Do you want to print?")
+if print_status:
+    print_folder = r"C:\Users\Michael\Desktop\python-work\repair_photos"
+    print_items = os.listdir(print_folder)
+    subprocess.run(['explorer', os.path.realpath(print_folder)])
+    sleep(5)
+    press('1')
+    sleep(1)
+    for item in print_items:
+        sleep(1)
+        press('enter')
+        sleep(1)
+        press('0')
+        sleep(3)
+        hotkey('shift', 'F10')
+        sleep(1)
+        press('p')
+        sleep(5)
+        hotkey('shift', 'F10')
+        sleep(2)
+        press('d')
+        sleep(2)
+        hotkey('ctrl', 'a')
+        sleep(1)
+        hotkey('shift', 'F10')
+        sleep(2)
+        press('p')
+        sleep(3)
+        press('tab', presses=5)
+        sleep(2)
+        press('down', presses=6)
+        sleep(2)
+        press('enter')
+        sleep(10)
+        hotkey('alt', 'left')
+        sleep(3)
+        press('down')
+        sleep(2)
+
+
     
 
 
@@ -290,6 +317,4 @@ x, y = 100, 100  # Replace with the coordinates where you want to right-click
 main_window.click_input(coords=(x, y), right=True)
 
 # Find the context menu and select an item from it
-context_menu = Desktop(allow_magic_lookup=False).window(class_name="ContextMenu")
-context_menu_item_text = "Print"  # Replace with the text of the menu item you want to select
-context_menu[context_menu_item_text].invoke()"""
+"""
