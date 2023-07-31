@@ -58,25 +58,76 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_subject):
         today = datetime.utcnow().date()
 
         if received_date != today:
-            return  # Skip processing if the email was not received today
+            return []  # Skip processing if the email was not received today
 
         if desired_subject in subject:
             parts = payload.get('parts', [])
+            print(f"Number of parts in the email: {len(parts)}")
+            print(f"Parts: {parts}")
+
+            found_valid_attachment = False
             for part in parts:
+                print('hello')
                 if part.get('filename'):
-                    filename = part['filename']
+                    filename = part['filename']  # Fix the filename extraction here
+                    print(f"Extracted filename: {filename}")  # Add this line to print the extracted filename
+
                     attachment_id = part['body']['attachmentId']
                     attachment = service.users().messages().attachments().get(userId=user_id, messageId=msg_id, id=attachment_id).execute()
                     file_data = base64.urlsafe_b64decode(attachment['data'].encode('UTF-8'))
-                    os.makedirs(store_dir, exist_ok=True)
 
-                    filepath = os.path.join(store_dir, filename)
-                    with open(filepath, 'wb') as f:
-                        f.write(file_data)
+                    print(f"Size of 'file_data': {len(file_data)}")  # Add this line to print the size of 'file_data'
 
-                    print(f"Attachment '{filename}' downloaded to: {filepath}")
+                    # Additional debugging: Check the first few bytes of the 'file_data'
+                    print(f"First few bytes of 'file_data': {file_data[:100]}")
+                if 'parts' in part:
+                        print('hallelujah')
+                        for sub_part in part['parts']:
+                            if sub_part.get('filename'):
+                                # Extract sub-part information
+                                sub_filename = sub_part['filename']
+                                sub_attachment_id = sub_part['body']['attachmentId']
+                                
+                                # Download the sub-attachment using its ID
+                                sub_attachment = service.users().messages().attachments().get(userId=user_id, messageId=msg_id, id=sub_attachment_id).execute()
+                                
+                                # Decode the attachment data
+                                sub_file_data = base64.urlsafe_b64decode(sub_attachment['data'].encode('UTF-8'))
 
-                    attachments_paths.append(filepath)
+                                # Additional debugging: Check the size and first few bytes of 'sub_file_data'
+                                print(f"Size of sub 'file_data': {len(sub_file_data)}")
+                                print(f"First few bytes of sub 'file_data': {sub_file_data[:100]}")
+
+                                # Check if the sub-file is a PDF
+                                _, file_extension = os.path.splitext(sub_filename)
+                                if file_extension.lower() == ".pdf" and sub_file_data:
+                                    # Save the sub-attachment to the specified 'store_dir'
+                                    os.makedirs(store_dir, exist_ok=True)
+                                    filepath = os.path.join(store_dir, sub_filename)
+                                    with open(filepath, 'wb') as f:
+                                        f.write(sub_file_data)
+
+                                    print(f"Sub-attachment '{sub_filename}' downloaded to: {filepath}")
+
+                                    attachments_paths.append(filepath)
+                                else:
+                                    print(f"Skipped sub-attachment '{sub_filename}' because it is not a PDF or is empty.")
+                            else:
+                                print("Skipping a sub-part with no 'filename' attribute.")
+
+                        print(f"Attachment '{filename}' downloaded to: {filepath}")
+
+                        attachments_paths.append(filepath)
+                        found_valid_attachment = True
+                #     else:
+                #         print(f"Skipped '{filename}' because it is not a PDF or is empty.")
+                # else:
+                #     print("Skipping a part with no 'filename' attribute.")
+
+            if not found_valid_attachment:
+                print("No valid attachments found in the email.")
+        else:
+            print(f"Skipping email with subject: {subject}")
     except Exception as e:
         print('An error occurred: %s' % e)
 
@@ -144,7 +195,7 @@ start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
 start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
 
 
-query_list = ["from:carolyn@profastening.net subject:'Invoice'", "from:Sales@gemcoroofingsupply.com subject:'Invoice'"]
+query_list = ["from:carolyn@profastening.net subject:'Invoice'", "from:Sales@gemcoroofingsupply.com subject:'Invoice'", "from:april@sheetmetalsupplyltd.com subject:'Invoice'"]
 
 
 print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
@@ -159,6 +210,8 @@ for query in query_list:
             attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice")
             if attachments:
                 all_attachments.extend(attachments)
+            print(attachments)
+            
         sleep(1)
         if print_status:
             for attachment in all_attachments:
@@ -167,6 +220,49 @@ for query in query_list:
         print('An error occurred: %s' % e)
 
 
+def main():
+    # ... (Your existing code for authentication and obtaining the service object)
+    service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
+
+    user_email = "wbrroof@gmail.com"  # Replace with the email address you want to fetch messages from
+    store_directory = r"C:\Users\Michael\Desktop\python-work\Invoices"
+
+    today = datetime.utcnow().date()
+    start_of_today = datetime.combine(today, time.min)
+    start_of_tomorrow = start_of_today + timedelta(days=1)
+
+    start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
+    start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
+
+    query_list = [
+        "from:carolyn@profastening.net subject:'Invoice'",
+        "from:Sales@gemcoroofingsupply.com subject:'Invoice'",
+        "from:april@sheetmetalsupplyltd.com subject:'Invoice'"
+    ]
+
+    print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
+
+    for query in query_list:
+        try:
+            response = service.users().messages().list(userId=user_email, q=query).execute()
+            messages = response.get('messages', [])
+            all_attachments = []
+            for message in messages:
+                msg_id = message['id']
+                attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice")
+                if attachments:
+                    all_attachments.extend(attachments)
+                print(attachments)
+
+            sleep(1)
+            if print_status:
+                for attachment in all_attachments:
+                    print_file_with_ghostscript(attachment)
+        except Exception as e:
+            print('An error occurred: %s' % e)
+
+# if __name__ == "__main__":
+#     main()
 # recipient_email = "throwod@gmail.com"  # Replace with the recipient's email address
 # message_subject = "Testing Gmail API"
 # message_text = "Bruh, this is a message sent via the Gmail API! Let's go!"

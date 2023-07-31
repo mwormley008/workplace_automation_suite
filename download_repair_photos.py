@@ -256,7 +256,11 @@ if print_status:
     print_items = os.listdir(print_folder)
     subprocess.run(['explorer', os.path.realpath(print_folder)])
     sleep(5)
-    press('1')
+    press('home')
+    sleep(.2)
+    press('down')
+    sleep(.2)
+    press('up')
     sleep(1)
     for item in print_items:
         sleep(1)
