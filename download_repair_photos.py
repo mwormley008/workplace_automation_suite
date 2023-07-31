@@ -9,7 +9,12 @@ from datetime import datetime, timedelta, time
 
 from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename, Frame, Button
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter, landscape
 
+from pyautogui import press, write, hotkey
+
+from pywinauto import Desktop, Application
 
 CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
 API_NAME = 'gmail'
@@ -70,7 +75,7 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_sender, da
         if received_date < threshold_date:
             return  # Skip processing if the email was not received today
 
-# Retrieve the body of the email
+        # Retrieve the body of the email
         if 'parts' in payload:
             parts = payload.get('parts', [])
             for part in parts:
@@ -118,17 +123,40 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_sender, da
 
                     attachments_paths.append(filepath)
             
-            details = f"Subject: {subject}\n\nFrom: {sender}\n\nReceived Date: {received_date}\n\nBody:{text}"
-            details_file = os.path.join(unique_email_dir, "00000000details.txt")
-            with open(details_file, 'w') as f:
-                f.write(details)
+            save_info_as_pdf(subject, sender, received_date, text, unique_email_dir)
+
+            # details = f"Subject: {subject}\n\nFrom: {sender}\n\nReceived Date: {received_date}\n\nBody:{text}"
+            # details_file = os.path.join(unique_email_dir, "00000000details.txt")
+            # with open(details_file, 'w') as f:
+            #     f.write(details)
 
         return attachments_paths
 
     except Exception as error:
         print(f"An error occurred: {error}")
 
+def save_info_as_pdf(subject, sender, received_date, body, directory):
+    filename = os.path.join(directory, "0000000details.pdf")
+    c = canvas.Canvas(filename, pagesize=landscape(letter))
+    width, height = landscape(letter)  # Get dimensions
 
+    textobject = c.beginText()
+    textobject.setFont('Helvetica', 20)  # Set font and size
+    textobject.setTextOrigin(30, height - 50)  # Start near top-left corner
+
+    lines = [
+        f"Subject: {subject}\n\n",
+        f"From: {sender}\n\n",
+        f"Received Date: {received_date}\n\n",
+        f"Body: {body}"
+    ]
+
+    for line in lines:
+        for sub_line in line.split('\n'):
+            textobject.textLine(sub_line)
+
+    c.drawText(textobject)
+    c.save()
 
 def print_file(filepath):
     printer_name = win32print.GetDefaultPrinter()
@@ -221,6 +249,21 @@ for email_address in email_addresses:
         #         print_file_with_ghostscript(attachment)
     except Exception as e:
         print('An error occurred: %s' % e)
+# TODO: I'd like to add some printing properties here but it looks like I'm going to need to figure out how to do a right click
+# print_status = messagebox.askyesno("Confirmation", "Do you want to print?")
+# if print_status:
+#     print_folder = r"C:\Users\Michael\Desktop\python-work\repair_photos"
+#     print_items = os.listdir(print_folder)
+#     subprocess.run(['explorer', os.path.realpath(print_folder)])
+#     sleep(5)
+#     press('1')
+#     for item in print_items:
+#         sleep(1)
+#         press('enter')
+#         sleep(1)
+#         press('0')
+        
+    
 
 
 # recipient_email = "throwod@gmail.com"  # Replace with the recipient's email address
@@ -230,3 +273,23 @@ for email_address in email_addresses:
 # message = create_message(user_email, recipient_email, message_subject, message_text)
 # if message:
 #     send_message(service, user_email, message)
+
+"""from pywinauto import Desktop, Application
+
+# Replace with the path to the file or application that you want to interact with
+file_path = "C:\\path\\to\\your\\file.txt"
+
+# Open the file using its associated application (e.g., Notepad)
+app = Application().start(file_path)
+
+# Get the main window of the application
+main_window = app.window()
+
+# Simulate a right-click at coordinates (x, y) within the window
+x, y = 100, 100  # Replace with the coordinates where you want to right-click
+main_window.click_input(coords=(x, y), right=True)
+
+# Find the context menu and select an item from it
+context_menu = Desktop(allow_magic_lookup=False).window(class_name="ContextMenu")
+context_menu_item_text = "Print"  # Replace with the text of the menu item you want to select
+context_menu[context_menu_item_text].invoke()"""
