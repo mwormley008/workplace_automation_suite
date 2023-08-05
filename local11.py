@@ -39,7 +39,7 @@ sleep(1)
 
 # Sets the worksheet and column (this is correct without moving anything)
 sheet = workbook["Sheet1"]
-column_range = sheet["I5:I16"]
+column_range = sheet["I5:I15"]
 
 # 
 column_list = []
