@@ -45,7 +45,8 @@ def send_message(service, user_id, message):
     print('An error occurred: %s' % e)
     return None
   
-def download_attachments(service, user_id, msg_id, store_dir, desired_subject):
+def download_attachments(service, user_id, msg_id, store_dir, desired_subject, days_ago):
+    
     attachments_paths = []
     try:
         message = service.users().messages().get(userId=user_id, id=msg_id).execute()
@@ -56,8 +57,12 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_subject):
         received_at = int(message['internalDate']) / 1000  # Convert to seconds
         received_date = datetime.utcfromtimestamp(received_at).date()
         today = datetime.utcnow().date()
+        threshold_date = today - timedelta(days_ago)
+        
+        print(received_date)
+        print(threshold_date)
 
-        if received_date != today:
+        if received_date < threshold_date:
             return []  # Skip processing if the email was not received today
 
         if desired_subject in subject:
@@ -69,60 +74,66 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_subject):
             for part in parts:
                 print('hello')
                 if part.get('filename'):
+                    print("something here")
                     filename = part['filename']  # Fix the filename extraction here
                     print(f"Extracted filename: {filename}")  # Add this line to print the extracted filename
 
                     attachment_id = part['body']['attachmentId']
                     attachment = service.users().messages().attachments().get(userId=user_id, messageId=msg_id, id=attachment_id).execute()
                     file_data = base64.urlsafe_b64decode(attachment['data'].encode('UTF-8'))
+                    os.makedirs(store_dir, exist_ok=True)
+                    filepath = os.path.join(store_dir, filename)
+                    with open(filepath, 'wb') as f:
+                        f.write(file_data)
 
+                    print(f"Attachment '{filename}' downloaded to: {filepath}")
+
+                    attachments_paths.append(filepath)
                     print(f"Size of 'file_data': {len(file_data)}")  # Add this line to print the size of 'file_data'
 
                     # Additional debugging: Check the first few bytes of the 'file_data'
                     print(f"First few bytes of 'file_data': {file_data[:100]}")
-                if 'parts' in part:
-                        print('hallelujah')
-                        for sub_part in part['parts']:
-                            if sub_part.get('filename'):
-                                # Extract sub-part information
-                                sub_filename = sub_part['filename']
-                                sub_attachment_id = sub_part['body']['attachmentId']
+                # elif 'parts' in part:
+                #         print('hallelujah')
+                #         for sub_part in part['parts']:
+                #             print(f"Subpart: {sub_part}")
+                #             if sub_part.get('filename'):
+                #                 print("something")
+                #                 # Extract sub-part information
+                #                 sub_filename = sub_part['filename']
+                #                 sub_attachment_id = sub_part['body']['attachmentId']
                                 
-                                # Download the sub-attachment using its ID
-                                sub_attachment = service.users().messages().attachments().get(userId=user_id, messageId=msg_id, id=sub_attachment_id).execute()
+                #                 # Download the sub-attachment using its ID
+                #                 sub_attachment = service.users().messages().attachments().get(userId=user_id, messageId=msg_id, id=sub_attachment_id).execute()
                                 
-                                # Decode the attachment data
-                                sub_file_data = base64.urlsafe_b64decode(sub_attachment['data'].encode('UTF-8'))
+                #                 # Decode the attachment data
+                #                 sub_file_data = base64.urlsafe_b64decode(sub_attachment['data'].encode('UTF-8'))
 
-                                # Additional debugging: Check the size and first few bytes of 'sub_file_data'
-                                print(f"Size of sub 'file_data': {len(sub_file_data)}")
-                                print(f"First few bytes of sub 'file_data': {sub_file_data[:100]}")
+                #                 # Additional debugging: Check the size and first few bytes of 'sub_file_data'
+                #                 print(f"Size of sub 'file_data': {len(sub_file_data)}")
+                #                 print(f"First few bytes of sub 'file_data': {sub_file_data[:100]}")
 
-                                # Check if the sub-file is a PDF
-                                _, file_extension = os.path.splitext(sub_filename)
-                                if file_extension.lower() == ".pdf" and sub_file_data:
-                                    # Save the sub-attachment to the specified 'store_dir'
-                                    os.makedirs(store_dir, exist_ok=True)
-                                    filepath = os.path.join(store_dir, sub_filename)
-                                    with open(filepath, 'wb') as f:
-                                        f.write(sub_file_data)
+                #                 # Check if the sub-file is a PDF
+                #                 _, file_extension = os.path.splitext(sub_filename)
+                #                 if file_extension.lower() == ".pdf":
+                #                     # Save the sub-attachment to the specified 'store_dir'
+                #                     os.makedirs(store_dir, exist_ok=True)
+                #                     filepath = os.path.join(store_dir, sub_filename)
+                #                     with open(filepath, 'wb') as f:
+                #                         f.write(sub_file_data)
 
-                                    print(f"Sub-attachment '{sub_filename}' downloaded to: {filepath}")
+                #                     print(f"Sub-attachment '{sub_filename}' downloaded to: {filepath}")
 
-                                    attachments_paths.append(filepath)
-                                else:
-                                    print(f"Skipped sub-attachment '{sub_filename}' because it is not a PDF or is empty.")
-                            else:
-                                print("Skipping a sub-part with no 'filename' attribute.")
+                #                     attachments_paths.append(filepath)
+                #                 else:
+                #                     print(f"Skipped sub-attachment '{sub_filename}' because it is not a PDF or is empty.")
+                #             else:
+                #                 print("Skipping a sub-part with no 'filename' attribute.")
 
-                        print(f"Attachment '{filename}' downloaded to: {filepath}")
+                #         print(f"Attachment '{filename}' downloaded to: {filepath}")
 
-                        attachments_paths.append(filepath)
-                        found_valid_attachment = True
-                #     else:
-                #         print(f"Skipped '{filename}' because it is not a PDF or is empty.")
-                # else:
-                #     print("Skipping a part with no 'filename' attribute.")
+                #         attachments_paths.append(filepath)
+                #         found_valid_attachment = True
 
             if not found_valid_attachment:
                 print("No valid attachments found in the email.")
@@ -195,19 +206,29 @@ start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
 start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
 
 
-query_list = ["from:carolyn@profastening.net subject:'Invoice'", "from:Sales@gemcoroofingsupply.com subject:'Invoice'", "from:april@sheetmetalsupplyltd.com subject:'Invoice'"]
 
+query_list = [
+    "from:carolyn@profastening.net subject:'Invoice'", 
+    "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
+    "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
+    "amy@profastening.net subject:'Invoice'",
+    "dawn@sheetmetalsupplyltd.com subject:'Invoice'"
+    ]
+
+# Tells how many days back to check
+desired_date = simpledialog.askinteger("Desired Dates", "How many days into the past do you want to select emails?")
 
 print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
 
 for query in query_list:
+    print(query)
     try:
         response = service.users().messages().list(userId=user_email, q=query).execute()
         messages = response.get('messages', [])
         all_attachments = []
         for message in messages:
             msg_id = message['id']
-            attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice")
+            attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date)
             if attachments:
                 all_attachments.extend(attachments)
             print(attachments)
