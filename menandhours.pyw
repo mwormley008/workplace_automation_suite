@@ -9,6 +9,7 @@ from pyautogui import press, write, hold
 import pygetwindow as gw
 windows = gw.getAllWindows()
 
+sleep(.1)
 qb_window = None
 
 for window in windows:
@@ -18,7 +19,7 @@ for window in windows:
 
 qb_window.activate()
 
-#time.sleep(3)
+time.sleep(3)
 
 def copy_clipboard():
     pya.hotkey('ctrl', 'c')
@@ -53,7 +54,9 @@ total = int(contents[0]) * float(contents[2])
 print(total)
 
 pya.press('tab', presses=2)
+sleep(.5)
 pya.write(str(total))
+sleep(.5)
 
 pya.hotkey('shift', 'tab')
 pya.press('down')

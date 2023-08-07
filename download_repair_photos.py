@@ -61,6 +61,7 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_sender, da
         subject = [h['value'] for h in headers if h['name'] == 'Subject'][0]  # Retrieve subject
         safe_subject = "".join([c for c in subject if c.isalpha() or c.isdigit() or c==' ']).rstrip()  # Cleaned subject line for directory
 
+        
 
         # Extract the email address from sender
         sender_email = re.search(r'<(.*)>', sender)
@@ -110,8 +111,11 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_sender, da
                     file_data = base64.urlsafe_b64decode(attachment['data'].encode('UTF-8'))
                     subject = [h['value'] for h in headers if h['name'] == 'Subject'][0]  # Retrieve subject
                     safe_subject = "".join([c for c in subject if c.isalpha() or c.isdigit() or c==' ']).rstrip()
-                    unique_email_dir = os.path.join(store_dir, safe_subject)
-
+                    
+                    if 'time' in subject.lower():  # Check if the word "time" is in the subject
+                        unique_email_dir = os.path.join(r"C:\Users\Michael\Desktop\python-work\time_sheets", safe_subject)
+                    else:
+                        unique_email_dir = os.path.join(store_dir, safe_subject)
                     
                     os.makedirs(unique_email_dir, exist_ok=True)
 
@@ -208,6 +212,8 @@ def print_file_with_ghostscript(filepath):
     except Exception as e:
         print(f"An error occurred while printing: {e}")
 
+
+
 service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 user_email = "wbrroof@gmail.com"  # Replace with the email address you want to send the message from
 store_directory = r"C:\Users\Michael\Desktop\python-work\repair_photos"
@@ -225,7 +231,7 @@ start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
 start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
 
 
-email_addresses = ["oblivion969.dm@gmail.com"]  # List of email addresses
+email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com"]  # List of email addresses
 
 # print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
 
@@ -252,58 +258,58 @@ for email_address in email_addresses:
 # TODO: I'd like to add some printing properties here but it looks like I'm going to need to figure out how to do a right click
 print_status = messagebox.askyesno("Confirmation", "Do you want to print?")
 if print_status:
-    print_folder = r"C:\Users\Michael\Desktop\python-work\repair_photos"
-    print_items = os.listdir(print_folder)
-    subprocess.run(['explorer', os.path.realpath(print_folder)])
-    sleep(5)
-    press('home')
-    sleep(.2)
-    press('down')
-    sleep(.2)
-    press('up')
-    sleep(1)
-    for item in print_items:
-        sleep(1)
-        press('enter')
-        sleep(1)
-        press('0')
-        sleep(3)
-        hotkey('shift', 'F10')
-        sleep(1)
-        press('p')
+
+    print_folder1 = r"C:\Users\Michael\Desktop\python-work\repair_photos"
+    print_folder2 = r"C:\Users\Michael\Desktop\python-work\time_sheets"
+    
+    print_folders = [print_folder1, print_folder2]
+
+    for folder in print_folders:
+        print_items = os.listdir(folder)
+        subprocess.run(['explorer', os.path.realpath(folder)])
         sleep(5)
-        hotkey('shift', 'F10')
-        sleep(2)
-        press('d')
-        sleep(2)
-        hotkey('ctrl', 'a')
-        sleep(1)
-        hotkey('shift', 'F10')
-        sleep(2)
-        press('p')
-        sleep(3)
-        press('tab', presses=5)
-        sleep(2)
-        press('down', presses=6)
-        sleep(2)
-        press('enter')
-        sleep(10)
-        hotkey('alt', 'left')
-        sleep(3)
+        press('home')
+        sleep(.2)
         press('down')
-        sleep(2)
+        sleep(.2)
+        press('up')
+        sleep(1)
+        for item in print_items:
+            sleep(1)
+            press('enter')
+            sleep(1)
+            press('0')
+            sleep(3)
+            hotkey('shift', 'F10')
+            sleep(1)
+            press('p')
+            sleep(5)
+            hotkey('shift', 'F10')
+            sleep(2)
+            press('d')
+            sleep(2)
+            hotkey('ctrl', 'a')
+            sleep(1)
+            hotkey('shift', 'F10')
+            sleep(2)
+            press('p')
+            sleep(3)
+            press('tab', presses=5)
+            sleep(2)
+            if folder is print_folder1:
+                press('down', presses=6)
+            sleep(2)
+            press('enter')
+            sleep(10)
+            if folder is print_folder2:
+                sleep(10)
+            hotkey('alt', 'left')
+            sleep(3)
+            press('down')
+            sleep(2)
 
 
     
-
-
-# recipient_email = "throwod@gmail.com"  # Replace with the recipient's email address
-# message_subject = "Testing Gmail API"
-# message_text = "Bruh, this is a message sent via the Gmail API! Let's go!"
-
-# message = create_message(user_email, recipient_email, message_subject, message_text)
-# if message:
-#     send_message(service, user_email, message)
 
 """from pywinauto import Desktop, Application
 
