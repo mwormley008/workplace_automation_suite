@@ -32,7 +32,7 @@ ws = invoices_for_input['Sheet']
 
 first_row_skipped = False
 
-# Alright, this tsarts with the bill window open in QB
+# Alright, this starts with the bill window open in QB
 
 qb_window = quick_windows()
 sleep(1)
@@ -42,13 +42,14 @@ if qb_window:
 else:
     print("QuickBooks window not found.")   
 
-sleep(1)
+sleep(3)
 
 for i in range(2,len(ws['A'])+1):
     print(ws[f'A{i}'].value)
     print(ws[f'B{i}'].value)
     print(ws[f'C{i}'].value)
     print(ws[f'D{i}'].value)
+    sleep(1)
     pyautogui.write(ws[f'A{i}'].value)
     sleep(1)
     pyautogui.press('tab')

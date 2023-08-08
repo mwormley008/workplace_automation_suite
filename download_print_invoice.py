@@ -65,7 +65,7 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_subject, d
         if received_date < threshold_date:
             return []  # Skip processing if the email was not received today
 
-        if desired_subject in subject:
+        if desired_subject.lower() in subject.lower():
             parts = payload.get('parts', [])
             print(f"Number of parts in the email: {len(parts)}")
             print(f"Parts: {parts}")
@@ -212,7 +212,8 @@ query_list = [
     "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
     "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
     "amy@profastening.net subject:'Invoice'",
-    "dawn@sheetmetalsupplyltd.com subject:'Invoice'"
+    "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
+    "lia@stevensoncrane.com subject:'invoice'"
     ]
 
 # Tells how many days back to check

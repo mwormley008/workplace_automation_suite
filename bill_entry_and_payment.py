@@ -15,6 +15,8 @@ from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename
 from pyautogui import press, write, hotkey
 from time import sleep
+import win32com.client
+
 
 windows = gw.getAllWindows()
 
@@ -32,7 +34,7 @@ wb = openpyxl.load_workbook(workbook_path)
 ws = wb['Sheet1']
 
 first_row_skipped = False
-
+"""
 # List to store row numbers with a cell value
 rows_with_value = []
 check_numbers = simpledialog.askinteger("Check numbers", "What is the first check number?")
@@ -65,7 +67,7 @@ for j in rows_with_value:
     pyautogui.press('tab', presses=2)
     sleep(1)
     if ws['C'+j].value is not None:
-        pyautogui.write(ws['C'+j])
+        pyautogui.write(str(ws['C'+j].value))
         sleep(.5)
     pyautogui.press('tab')
     sleep(.5)
@@ -116,3 +118,27 @@ write(str(check_numbers))
 sleep(1)
 press('enter')
 # pyautogui.write(ws['A'+'2'].value)
+"""
+# Print any checks needed
+for cell in ws['F']:
+    if cell.value is not None and cell.row > 1:
+        a_value = ws['A' + str(cell.row)].value
+        # Path to your Word document
+        file_path = f"C:\\Users\\Michael\\Desktop\\CEnvelopes\\{a_value}.docx"
+
+        # Start an instance of Word
+        word = win32com.client.Dispatch('Word.Application')
+
+        # Open the document
+    
+        doc = word.Documents.Open(file_path)
+
+        # Print the document to the default printer
+        doc.PrintOut()
+
+        # Close the document
+        doc.Close()
+
+        # Quit Word
+        word.Quit()
+        sleep(2)
