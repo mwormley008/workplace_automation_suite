@@ -112,9 +112,11 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_sender, da
                     subject = [h['value'] for h in headers if h['name'] == 'Subject'][0]  # Retrieve subject
                     safe_subject = "".join([c for c in subject if c.isalpha() or c.isdigit() or c==' ']).rstrip()
                     
-                    if 'time' in subject.lower():  # Check if the word "time" is in the subject
+                    if 'time' in subject.lower() or 'expense' in subject.lower():  # Check if the word "time" is in the subject
+                        print(subject.lower()+'expense')
                         unique_email_dir = os.path.join(r"C:\Users\Michael\Desktop\python-work\time_sheets", safe_subject)
                     else:
+                        print(subject.lower()+'repair')
                         unique_email_dir = os.path.join(store_dir, safe_subject)
                     
                     os.makedirs(unique_email_dir, exist_ok=True)

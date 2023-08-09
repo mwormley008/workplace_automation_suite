@@ -10,8 +10,19 @@ from pyautogui import press, write, hotkey
 
 from time import sleep
 
-excel_sheet = r"C:\Users\Michael\Documents\72723.xlsx"
+
+
+initial_dir=r"C:\Users\Michael\Documents"
+folder_path = initial_dir 
+
+workbook_path = askopenfilename(initialdir=initial_dir)
+
+excel_sheet = workbook_path
 invoices_for_input = load_workbook(excel_sheet, data_only=True)
+
+sleep(1)
+
+
 
 def quick_windows():
     windows = gw.getAllWindows()
@@ -26,7 +37,16 @@ def quick_windows():
 ws = invoices_for_input['Sheet1']
 # This gets the bottom row. While I was testing for some reason it was going one row over
 # so i just said length minus one, but maybe that won't be true in the future
-bottom_row = len(ws['A'])-1
+# bottom_row = len(ws['A'])-1
+bottom_row = 0
+for row, cell in enumerate(ws['A']):
+    if cell.value is not None and cell.value != '':
+        bottom_row = row
+
+# Since row indexing starts from 0, you might want to add 1 to get the actual row number
+bottom_row += 1
+
+print(bottom_row)
 print(bottom_row)
 first_row_skipped = False
 
@@ -35,7 +55,7 @@ bill_total = 0
 categories_to_pay = {} 
 
 for cell in row_cells:
-    if bill_total == cell.value:
+    if bill_total and bill_total == cell.value:
         break
     else:
         bill_total += cell.value
