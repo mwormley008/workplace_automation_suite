@@ -112,7 +112,7 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_sender, da
                     subject = [h['value'] for h in headers if h['name'] == 'Subject'][0]  # Retrieve subject
                     safe_subject = "".join([c for c in subject if c.isalpha() or c.isdigit() or c==' ']).rstrip()
                     
-                    if 'time' in subject.lower() or 'expense' in subject.lower():  # Check if the word "time" is in the subject
+                    if 'time' in subject.lower() or 'expense' in subject.lower() or desired_sender == 'edinc99@gmail.com':  # Check if the word "time" is in the subject
                         print(subject.lower()+'expense')
                         unique_email_dir = os.path.join(r"C:\Users\Michael\Desktop\python-work\time_sheets", safe_subject)
                     else:
@@ -233,7 +233,7 @@ start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
 start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
 
 
-email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com"]  # List of email addresses
+email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com"]  # List of email addresses
 
 # print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
 

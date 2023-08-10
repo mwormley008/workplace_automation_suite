@@ -34,7 +34,6 @@ wb = openpyxl.load_workbook(workbook_path)
 ws = wb['Sheet1']
 
 first_row_skipped = False
-"""
 # List to store row numbers with a cell value
 rows_with_value = []
 check_numbers = simpledialog.askinteger("Check numbers", "What is the first check number?")
@@ -62,6 +61,14 @@ sleep(1)
 
 for j in rows_with_value:
     sleep(1)
+    if ws['A'+j].value == "Nicor Gas":
+        print("nicor")
+        hotkey('ctrl', 't')
+        sleep(1)
+        press('n')
+        sleep(1)
+        press('enter')
+        sleep(1)
     pyautogui.write(ws['A'+j].value)
     sleep(1)
     pyautogui.press('tab', presses=2)
@@ -118,7 +125,6 @@ write(str(check_numbers))
 sleep(1)
 press('enter')
 # pyautogui.write(ws['A'+'2'].value)
-"""
 # Print any checks needed
 for cell in ws['F']:
     if cell.value is not None and cell.row > 1:
