@@ -214,6 +214,14 @@ def print_file_with_ghostscript(filepath):
     except Exception as e:
         print(f"An error occurred while printing: {e}")
 
+def mark_as_read(service, user_id, msg_id):
+    try:
+        # Remove 'UNREAD' label
+        service.users().messages().modify(userId=user_id, id=msg_id, body={'removeLabelIds': ['UNREAD']}).execute()
+        print(f'Message {msg_id} marked as read.')
+    except Exception as e:
+        print(f'An error occurred: {e}')
+        return None
 
 
 service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
@@ -239,7 +247,11 @@ email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy9
 
 for email_address in email_addresses:
     
-    query = f"from:{email_address}"
+    query_date = datetime.now() - timedelta(days=7)
+    query_date_str = query_date.strftime('%Y-%m-%d')
+
+    query = f"from:{email_address} after:{query_date_str}"
+
     try:
         response = service.users().messages().list(userId=user_email, q=query).execute()
         
@@ -251,6 +263,8 @@ for email_address in email_addresses:
             attachments = download_attachments(service, user_email, msg_id, store_directory, email_address, desired_date)
             if attachments:
                 all_attachments.extend(attachments)
+            
+            mark_as_read(service, user_email, msg_id)
         sleep(1)
         # if print_status:
         #     for attachment in all_attachments:
@@ -313,20 +327,3 @@ if print_status:
 
     
 
-"""from pywinauto import Desktop, Application
-
-# Replace with the path to the file or application that you want to interact with
-file_path = "C:\\path\\to\\your\\file.txt"
-
-# Open the file using its associated application (e.g., Notepad)
-app = Application().start(file_path)
-
-# Get the main window of the application
-main_window = app.window()
-
-# Simulate a right-click at coordinates (x, y) within the window
-x, y = 100, 100  # Replace with the coordinates where you want to right-click
-main_window.click_input(coords=(x, y), right=True)
-
-# Find the context menu and select an item from it
-"""
