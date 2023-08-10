@@ -217,7 +217,7 @@ def print_file_with_ghostscript(filepath):
 def mark_as_read(service, user_id, msg_id):
     try:
         # Remove 'UNREAD' label
-        service.users().messages().modify(userId=user_id, id=msg_id, body={'removeLabelIds': ['UNREAD']}).execute()
+        service.users().messages().modify(userId=user_id, id=msg_id, body={'removeLabelIds': ['UNREAD', 'INBOX']}).execute()
         print(f'Message {msg_id} marked as read.')
     except Exception as e:
         print(f'An error occurred: {e}')
@@ -240,14 +240,39 @@ start_of_tomorrow = start_of_today + timedelta(days=1)
 start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
 start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
 
+# def list_labels(service, user_id):
+#     try:
+#         response = service.users().labels().list(userId=user_id).execute()
+#         labels = response.get('labels', [])
+#         return labels
+#     except Exception as e:
+#         print(f'An error occurred: {e}')
+#         return None
+
+# # Usage example:
+# user_email = "wbrroof@gmail.com"
+# labels = list_labels(service, user_email)
+# for label in labels:
+#     print(label['name'], label['id'])
+
 
 email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com"]  # List of email addresses
+
+
+email_to_label_mapping = {
+    "oblivion969.dm@gmail.com": "Label_7", # PICS-JR - Dave Myers
+    "fespitia76@gmail.com": "Label_6",     # PICS-Frank Espitia
+    "mmblidy92@gmail.com": "Label_8",      # PICS-Mike Blidy
+    "tawormley@aol.com": "Label_9",        # PICS-Troy
+    "edinc99@gmail.com": "Label_11",       # Time Sheets - Expenses
+    # Add more mappings if needed
+}
+
 
 # print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
 
 for email_address in email_addresses:
-    
-    query_date = datetime.now() - timedelta(days=7)
+    query_date = datetime.now() - timedelta(days=desired_date)  # Using the desired_date variable instead of fixed 7
     query_date_str = query_date.strftime('%Y-%m-%d')
 
     query = f"from:{email_address} after:{query_date_str}"
@@ -260,11 +285,33 @@ for email_address in email_addresses:
         for message in messages:
             
             msg_id = message['id']
+            msg = service.users().messages().get(userId=user_email, id=msg_id).execute()
+            subject = [header['value'] for header in msg['payload']['headers'] if header['name'] == 'Subject'][0]
             attachments = download_attachments(service, user_email, msg_id, store_directory, email_address, desired_date)
+            
+            label_id_to_add = email_to_label_mapping[email_address]
+
             if attachments:
                 all_attachments.extend(attachments)
             
+             # Check if subject contains special terms
+            if any(term in subject.lower() for term in ['time', 'expense', 'fwd']):
+                label_id_to_add = 'Label_11'  # Replace with appropriate label ID
+            
             mark_as_read(service, user_email, msg_id)
+
+        # Modify labels for the message
+            # if 'special_word' in subject:
+                # label_id_to_add = 'special_label_id'
+            # else:
+                # label_id_to_add = 'regular_label_id_for_' + email_address  # You should define these label IDs
+
+            service.users().messages().modify(
+                userId=user_email,
+                id=msg_id,
+                body={'addLabelIds': [label_id_to_add]}
+            ).execute()
+
         sleep(1)
         # if print_status:
         #     for attachment in all_attachments:
