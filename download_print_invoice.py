@@ -10,6 +10,8 @@ from datetime import datetime, timedelta, time
 from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename, Frame, Button
 
+# from download_repair_photos import mark_as_read
+
 
 CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
 API_NAME = 'gmail'
@@ -194,10 +196,22 @@ def print_file_with_ghostscript(filepath):
     except Exception as e:
         print(f"An error occurred while printing: {e}")
 
+
+def mark_as_read(service, user_id, msg_id):
+    try:
+        # Remove 'UNREAD' label
+        service.users().messages().modify(userId=user_id, id=msg_id, body={'removeLabelIds': ['UNREAD']}).execute()
+        print(f'Message {msg_id} marked as read.')
+    except Exception as e:
+        print(f'An error occurred: {e}')
+        return None
+    
+
 service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 user_email = "wbrroof@gmail.com"  # Replace with the email address you want to send the message from
 store_directory = r"C:\Users\Michael\Desktop\python-work\Invoices"
 
+print("print invoice")
 today = datetime.utcnow().date()
 start_of_today = datetime.combine(today, time.min)
 start_of_tomorrow = start_of_today + timedelta(days=1)
@@ -207,7 +221,7 @@ start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
 
 
 
-query_list = [
+email_list = [
     "from:carolyn@profastening.net subject:'Invoice'", 
     "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
     "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
@@ -216,13 +230,15 @@ query_list = [
     "lia@stevensoncrane.com subject:'invoice'"
     ]
 
-# Tells how many days back to check
+# Asks how many days back to check
 desired_date = simpledialog.askinteger("Desired Dates", "How many days into the past do you want to select emails?")
-
 print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
+query_date = datetime.now() - timedelta(days=desired_date)  # Using the desired_date variable instead of fixed 7
+query_date_str = query_date.strftime('%Y-%m-%d')
 
-for query in query_list:
-    print(query)
+for email_query in email_list:
+    query = f"{email_query} after:{query_date_str}"
+    print(email_query)
     try:
         response = service.users().messages().list(userId=user_email, q=query).execute()
         messages = response.get('messages', [])
@@ -234,6 +250,8 @@ for query in query_list:
                 all_attachments.extend(attachments)
             print(attachments)
             
+            mark_as_read(service, user_email, msg_id)
+
         sleep(1)
         if print_status:
             for attachment in all_attachments:

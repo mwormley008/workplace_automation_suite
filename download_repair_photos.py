@@ -228,7 +228,7 @@ service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 user_email = "wbrroof@gmail.com"  # Replace with the email address you want to send the message from
 store_directory = r"C:\Users\Michael\Desktop\python-work\repair_photos"
 
-
+print('repair photos')
 # Tells how many days back to check
 desired_date = simpledialog.askinteger("Desired Dates", "How many days into the past do you want to select emails?")
 
