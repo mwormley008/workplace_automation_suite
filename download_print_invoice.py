@@ -10,6 +10,8 @@ from datetime import datetime, timedelta, time
 from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename, Frame, Button
 
+
+from flask import Flask, request
 # from download_repair_photos import mark_as_read
 
 
@@ -242,6 +244,21 @@ request = {
 }
 watch_response = service.users().watch(userId='me', body=request).execute()
 
+app = Flask(__name__)
+
+
+@app.route('/', methods=['GET'])
+def home():
+    return 'Server is running!'
+
+@app.route('/notification', methods=['POST'])
+def notification():
+    # Your code for handling the notification here
+    print(request.json)
+    return 'OK', 200
+
+if __name__ == '__main__':
+    app.run()
 
 for email_query in email_list:
     query = f"{email_query} after:{query_date_str}"
