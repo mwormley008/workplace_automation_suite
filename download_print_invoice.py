@@ -236,6 +236,13 @@ print_status = messagebox.askyesno("Confirmation", "Do you want to print matchin
 query_date = datetime.now() - timedelta(days=desired_date)  # Using the desired_date variable instead of fixed 7
 query_date_str = query_date.strftime('%Y-%m-%d')
 
+request = {
+    'labelIds': ['INBOX'],
+    'topicName': 'projects/gmail-project-394016/topics/Base_Topic'
+}
+watch_response = service.users().watch(userId='me', body=request).execute()
+
+
 for email_query in email_list:
     query = f"{email_query} after:{query_date_str}"
     print(email_query)
