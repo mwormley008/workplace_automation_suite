@@ -6,7 +6,7 @@ import win32print, subprocess
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime, timedelta, time
-
+import pickle 
 from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename, Frame, Button
 
@@ -225,7 +225,13 @@ start_of_tomorrow = start_of_today + timedelta(days=1)
 start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
 start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
 
-
+# Load access token from pickle file
+pickle_file = f'token_{API_NAME}_{API_VERSION}.pickle'
+with open(pickle_file, 'rb') as token_file:
+    access_token = pickle.load(token_file)
+    print('pickle')
+    print(access_token.token)
+print(pickle_file)
 
 email_list = [
     "from:carolyn@profastening.net subject:'Invoice'", 
@@ -272,7 +278,7 @@ def subscribe():
     }
     
     headers = {
-        "Authorization": f"Bearer {CLIENT_SECRET_FILE}",
+        "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json"
     }
     
