@@ -12,7 +12,11 @@ from tkinter.filedialog import askopenfilename, Frame, Button
 
 
 from flask import Flask, request
+import requests
+
 # from download_repair_photos import mark_as_read
+
+# TODO: Add logic to only check things with the UNREAD tag 
 
 
 CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
@@ -238,11 +242,17 @@ print_status = messagebox.askyesno("Confirmation", "Do you want to print matchin
 query_date = datetime.now() - timedelta(days=desired_date)  # Using the desired_date variable instead of fixed 7
 query_date_str = query_date.strftime('%Y-%m-%d')
 
+# Define the watch reuest body
 request = {
     'labelIds': ['INBOX'],
-    'topicName': 'projects/gmail-project-394016/topics/Base_Topic'
+    'topicName': 'projects/gmail-project-394016/topics/Base_Topic',
+    'labelFilterBehavior': 'INCLUDE'
 }
+# Set up the watch
 watch_response = service.users().watch(userId='me', body=request).execute()
+
+# Print the response
+print('Watch response:', watch_response)
 
 app = Flask(__name__)
 
@@ -251,14 +261,60 @@ app = Flask(__name__)
 def home():
     return 'Server is running!'
 
+
+@app.route('/subscribe', methods=['POST'])
+def subscribe():
+    print('hw')
+    watch_payload = {
+        "topicName": "projects/gmail-project-394016/topics/Base_Topic",
+        "labelIds": ["INBOX"],
+        "labelFilterBehavior": "INCLUDE"
+    }
+    
+    headers = {
+        "Authorization": f"Bearer {CLIENT_SECRET_FILE}",
+        "Content-Type": "application/json"
+    }
+    
+    response = requests.post(
+        "https://www.googleapis.com/gmail/v1/users/me/watch",
+        json=watch_payload,
+        headers=headers
+    )
+    
+    if response.status_code == 200:
+        return "Subscribed to Gmail notifications."
+    else:
+        return f"Failed to subscribe. Error: {response.text}", 400
+
+
 @app.route('/notification', methods=['POST'])
 def notification():
-    # Your code for handling the notification here
-    print(request.json)
-    return 'OK', 200
+    try:
+        notification_data = request.json  # Assuming Gmail sends JSON notifications
+        resource_state = notification_data['message']['data']['emailHistoryId']  # Extract the resource state
+        print(f'Received notification with resource state: {resource_state}')
+
+        if resource_state == 'exists':
+            # Fetch email details using historyId or message.id
+            history_id = notification_data['historyId']  # Extract the historyId
+            message_id = notification_data['message']['data']['message']['id']  # Extract the message ID
+
+            # Use historyId or message_id to fetch email details using Gmail API
+            # Implement your logic to process the email here
+            # ...
+
+            print(f'Processing email with historyId: {history_id} and message ID: {message_id}')
+        else:
+            print('Received notification for resource state other than "exists"')
+
+        return 'OK', 200
+    except Exception as e:
+        print(f'An error occurred: {e}')
+        return 'Error', 500
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 
 for email_query in email_list:
     query = f"{email_query} after:{query_date_str}"
