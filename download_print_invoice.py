@@ -239,7 +239,8 @@ email_list = [
     "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
     "amy@profastening.net subject:'Invoice'",
     "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
-    "lia@stevensoncrane.com subject:'invoice'"
+    "lia@stevensoncrane.com subject:'invoice'",
+    "wbrroof@aol.com"
     ]
 
 # Asks how many days back to check
@@ -363,7 +364,8 @@ def main():
     query_list = [
         "from:carolyn@profastening.net subject:'Invoice'",
         "from:Sales@gemcoroofingsupply.com subject:'Invoice'",
-        "from:april@sheetmetalsupplyltd.com subject:'Invoice'"
+        "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
+        "from:wbrroof@aol.com"
     ]
 
     print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")

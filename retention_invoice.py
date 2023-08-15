@@ -50,7 +50,6 @@ root = Tk()
 root.withdraw()  # Hide the root window
 
 
-completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
 
 # Focuses the Quickbooks window and goes to the customer:job pane
 qb_window.activate()
@@ -111,14 +110,14 @@ press('down')
 press('backspace')
 write(str(new_prev_retained))
 press('tab', presses=4)
-highlight_line()
-# sleep(2)
-press('backspace')
-write(completed_date)
-press('tab')
-write(str(completed_through))
-press('down')
-write('-10%')
+# Deletes the completed through line, because this is the retention billing program and 
+# We won't have done any additional work this perioud
+hotkey('ctrl', 'delete')
+sleep(1.5)
+write('New Ret Due')
+press('tab', presses=2)
+sleep(.5)
+write(str(new_prev_retained))
 
 
 print_bin = messagebox.askyesno("Confirmation", "Do you want to print this?")

@@ -33,6 +33,9 @@ wb = openpyxl.load_workbook(workbook_path)
 
 ws = wb['Sheet1']
 
+bill_status = messagebox.askyesno("Bill Entry", "Do you need to enter new bills?")
+print(bill_status)
+
 first_row_skipped = False
 # List to store row numbers with a cell value
 rows_with_value = []
@@ -51,7 +54,7 @@ for cell in ws[column_to_check]:
 
     if cell.value is not None:
         print(f"Cell {cell.coordinate} contains text: {cell.value}")
-        rows_with_value.append(cell.coordinate[1])
+        rows_with_value.append(cell.coordinate[1:])
 
 print(rows_with_value)
 
@@ -59,29 +62,30 @@ print(rows_with_value)
 qb_window.activate()
 sleep(1)
 
-for j in rows_with_value:
-    sleep(1)
-    if ws['A'+j].value == "Nicor Gas":
-        print("nicor")
-        hotkey('ctrl', 't')
+if not bill_status:
+    for j in rows_with_value:
         sleep(1)
-        press('n')
+        if ws['A'+j].value == "Nicor Gas":
+            print("nicor")
+            hotkey('ctrl', 't')
+            sleep(1)
+            press('n')
+            sleep(1)
+            press('enter')
+            sleep(1)
+        pyautogui.write(ws['A'+j].value)
         sleep(1)
-        press('enter')
+        pyautogui.press('tab', presses=2)
         sleep(1)
-    pyautogui.write(ws['A'+j].value)
-    sleep(1)
-    pyautogui.press('tab', presses=2)
-    sleep(1)
-    if ws['C'+j].value is not None:
-        pyautogui.write(str(ws['C'+j].value))
+        if ws['C'+j].value is not None:
+            pyautogui.write(str(ws['C'+j].value))
+            sleep(.5)
+        pyautogui.press('tab')
         sleep(.5)
-    pyautogui.press('tab')
-    sleep(.5)
-    pyautogui.write(str(ws['D'+j].value))
-    sleep(.5)
-    hotkey('alt', 's')
-    sleep(2)
+        pyautogui.write(str(ws['D'+j].value))
+        sleep(.5)
+        hotkey('alt', 's')
+        sleep(2)
 
 press('alt')
 sleep(.5)
@@ -124,6 +128,8 @@ sleep(.2)
 write(str(check_numbers))
 sleep(1)
 press('enter')
+
+print_ready = messagebox.askyesno("Ready?", "Have your checks printed?")
 # pyautogui.write(ws['A'+'2'].value)
 # Print any checks needed
 for cell in ws['F']:
