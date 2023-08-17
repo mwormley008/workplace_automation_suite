@@ -16,6 +16,8 @@ from pyautogui import press, write, hotkey
 
 from pywinauto import Desktop, Application
 
+import shutil
+
 CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
 API_NAME = 'gmail'
 API_VERSION = 'v1'
@@ -223,6 +225,64 @@ def mark_as_read(service, user_id, msg_id):
         print(f'An error occurred: {e}')
         return None
 
+def print_file_with_ghostscript(filepath):
+    ghostscript_path = r"C:\Program Files\gs\gs10.01.2\bin\gswin64c.exe"  # Replace with the path to Ghostscript executable
+    printer_name = win32print.GetDefaultPrinter()
+
+    if not os.path.exists(filepath):
+        print(f"File '{filepath}' does not exist.")
+        return
+
+    command = [
+        ghostscript_path,
+        "-dNOPAUSE",
+        "-dBATCH",
+        "-dPrinted",
+        f"-sDEVICE=mswinpr2",  # Use the Windows printer device
+        f"-sOutputFile=%printer%{printer_name}",
+        filepath
+    ]
+
+    try:
+        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        print(f"File '{filepath}' printed successfully.")
+    except Exception as e:
+        print(f"An error occurred while printing: {e}")
+
+
+def only_pdfs_in_folder(folder):
+    """
+    Return True if all files in the folder have a .pdf extension, else False.
+    """
+    files = [f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))]
+    return all(f.lower().endswith('.pdf') for f in files)
+
+def print_pdfs_from_folder(folder_path):
+    # List all files in the directory
+    files = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+
+    # Check if all files are PDFs
+    if all(f.lower().endswith('.pdf') for f in files):
+        for pdf_file in files:
+            full_path = os.path.join(folder_path, pdf_file)
+            print_file_with_ghostscript(full_path)
+            sleep(.5)
+            os.remove(full_path)  # Delete the PDF after printing
+            sleep(.5)
+        # Check if the folder is empty
+        if not os.listdir(folder_path):
+            try:
+                shutil.rmtree(folder_path)
+                print(f"Folder '{folder_path}' has been deleted.")
+            except Exception as e:
+                print(f"An error occurred while deleting the folder: {e}")
+        else:
+            print(f"Folder '{folder_path}' still contains some files. Not deleted.")
+    else:
+        print(f"The folder '{folder_path}' contains non-PDF files. Skipping...")
+
+
+
 
 service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 user_email = "wbrroof@gmail.com"  # Replace with the email address you want to send the message from
@@ -328,9 +388,20 @@ if print_status:
     print_folders = [print_folder1, print_folder2]
 
     for folder in print_folders:
+        subfolders = [os.path.join(folder, subfolder) for subfolder in os.listdir(folder) if os.path.isdir(os.path.join(folder, subfolder))]
+
         print_items = os.listdir(folder)
-        subprocess.run(['explorer', os.path.realpath(folder)])
         sleep(5)
+        # if only pdfs
+        for subfolder in subfolders:
+            if only_pdfs_in_folder(subfolder):
+                print_pdfs_from_folder(subfolder)
+                # Branch for subfolders with only .pdf files
+                print("This subfolder only contains .pdf files:", subfolder)
+                # Add your desired logic for when the subfolder only contains .pdf files here 
+        subprocess.run(['explorer', os.path.realpath(folder)])
+        sleep(2)
+        # Selects the first item in the list
         press('home')
         sleep(.2)
         press('down')
@@ -348,11 +419,11 @@ if print_status:
             press('p')
             sleep(5)
             hotkey('shift', 'F10')
-            sleep(2)
+            sleep(3)
             press('d')
-            sleep(2)
+            sleep(3)
             hotkey('ctrl', 'a')
-            sleep(1)
+            sleep(2)
             hotkey('shift', 'F10')
             sleep(2)
             press('p')
