@@ -202,6 +202,14 @@ def print_file_with_ghostscript(filepath):
     except Exception as e:
         print(f"An error occurred while printing: {e}")
 
+def get_subject_from_message(service, user_email, msg_id):
+    """Get the subject of an email based on its id"""
+    message = service.users().messages().get(userId=user_email, id=msg_id).execute()
+    headers = message['payload']['headers']
+    for header in headers:
+        if header['name'] == 'Subject':
+            return header['value']
+    return None
 
 def mark_as_read(service, user_id, msg_id):
     try:
@@ -239,8 +247,7 @@ email_list = [
     "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
     "amy@profastening.net subject:'Invoice'",
     "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
-    "lia@stevensoncrane.com subject:'invoice'",
-    "wbrroof@aol.com"
+    "lia@stevensoncrane.com subject:'invoice'"
     ]
 
 # Asks how many days back to check
@@ -261,70 +268,78 @@ watch_response = service.users().watch(userId='me', body=request).execute()
 # Print the response
 print('Watch response:', watch_response)
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
 
-@app.route('/', methods=['GET'])
-def home():
-    return 'Server is running!'
+# @app.route('/', methods=['GET'])
+# def home():
+#     return 'Server is running!'
 
 
-@app.route('/subscribe', methods=['POST'])
-def subscribe():
-    print('hw')
-    watch_payload = {
-        "topicName": "projects/gmail-project-394016/topics/Base_Topic",
-        "labelIds": ["INBOX"],
-        "labelFilterBehavior": "INCLUDE"
-    }
+# @app.route('/subscribe', methods=['POST'])
+# def subscribe():
+#     print('hw')
+#     watch_payload = {
+#         "topicName": "projects/gmail-project-394016/topics/Base_Topic",
+#         "labelIds": ["INBOX"],
+#         "labelFilterBehavior": "INCLUDE"
+#     }
     
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json"
-    }
+#     headers = {
+#         "Authorization": f"Bearer {access_token}",
+#         "Content-Type": "application/json"
+#     }
     
-    response = requests.post(
-        "https://www.googleapis.com/gmail/v1/users/me/watch",
-        json=watch_payload,
-        headers=headers
-    )
+#     response = requests.post(
+#         "https://www.googleapis.com/gmail/v1/users/me/watch",
+#         json=watch_payload,
+#         headers=headers
+#     )
     
-    if response.status_code == 200:
-        return "Subscribed to Gmail notifications."
-    else:
-        return f"Failed to subscribe. Error: {response.text}", 400
+#     if response.status_code == 200:
+#         return "Subscribed to Gmail notifications."
+#     else:
+#         return f"Failed to subscribe. Error: {response.text}", 400
 
 
-@app.route('/notification', methods=['POST'])
-def notification():
-    try:
-        notification_data = request.json  # Assuming Gmail sends JSON notifications
-        resource_state = notification_data['message']['data']['emailHistoryId']  # Extract the resource state
-        print(f'Received notification with resource state: {resource_state}')
+# @app.route('/notification', methods=['POST'])
+# def notification():
+#     try:
+#         notification_data = request.json  # Assuming Gmail sends JSON notifications
+#         resource_state = notification_data['message']['data']['emailHistoryId']  # Extract the resource state
+#         print(f'Received notification with resource state: {resource_state}')
 
-        if resource_state == 'exists':
-            # Fetch email details using historyId or message.id
-            history_id = notification_data['historyId']  # Extract the historyId
-            message_id = notification_data['message']['data']['message']['id']  # Extract the message ID
+#         if resource_state == 'exists':
+#             # Fetch email details using historyId or message.id
+#             history_id = notification_data['historyId']  # Extract the historyId
+#             message_id = notification_data['message']['data']['message']['id']  # Extract the message ID
 
-            # Use historyId or message_id to fetch email details using Gmail API
-            # Implement your logic to process the email here
-            # ...
+#             # Use historyId or message_id to fetch email details using Gmail API
+#             # Implement your logic to process the email here
+#             # ...
 
-            print(f'Processing email with historyId: {history_id} and message ID: {message_id}')
-        else:
-            print('Received notification for resource state other than "exists"')
+#             print(f'Processing email with historyId: {history_id} and message ID: {message_id}')
+#         else:
+#             print('Received notification for resource state other than "exists"')
 
-        return 'OK', 200
-    except Exception as e:
-        print(f'An error occurred: {e}')
-        return 'Error', 500
+#         return 'OK', 200
+#     except Exception as e:
+#         print(f'An error occurred: {e}')
+#         return 'Error', 500
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
+check_unread = messagebox.askyesno("Check Unread?", "Would you like to only check the unread emails after your search date?")
+
+read_list = []
+smaller_list = []
 
 for email_query in email_list:
-    query = f"{email_query} after:{query_date_str}"
+    if check_unread:
+        query = f"is:unread {email_query} after:{query_date_str}"
+    else:
+        query = f"{email_query} after:{query_date_str}"
     print(email_query)
     try:
         response = service.users().messages().list(userId=user_email, q=query).execute()
@@ -333,11 +348,17 @@ for email_query in email_list:
         for message in messages:
             msg_id = message['id']
             attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date)
+
+            subject = get_subject_from_message(service, user_email, msg_id)  # Get the subject of the message
+
             if attachments:
                 all_attachments.extend(attachments)
+                smaller_list.append({'id': subject})  # Append subject instead of ID
+                mark_as_read(service, user_email, msg_id)
             print(attachments)
+
             
-            mark_as_read(service, user_email, msg_id)
+
 
         sleep(1)
         if print_status:
@@ -345,49 +366,51 @@ for email_query in email_list:
                 print_file_with_ghostscript(attachment)
     except Exception as e:
         print('An error occurred: %s' % e)
+    print(f"read list: {read_list}")
+    print(f"smaller list: {smaller_list}")
 
 
-def main():
-    # ... (Your existing code for authentication and obtaining the service object)
-    service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
+# def main():
+#     # ... (Your existing code for authentication and obtaining the service object)
+#     service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 
-    user_email = "wbrroof@gmail.com"  # Replace with the email address you want to fetch messages from
-    store_directory = r"C:\Users\Michael\Desktop\python-work\Invoices"
+#     user_email = "wbrroof@gmail.com"  # Replace with the email address you want to fetch messages from
+#     store_directory = r"C:\Users\Michael\Desktop\python-work\Invoices"
 
-    today = datetime.utcnow().date()
-    start_of_today = datetime.combine(today, time.min)
-    start_of_tomorrow = start_of_today + timedelta(days=1)
+#     today = datetime.utcnow().date()
+#     start_of_today = datetime.combine(today, time.min)
+#     start_of_tomorrow = start_of_today + timedelta(days=1)
 
-    start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
-    start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
+#     start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
+#     start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
 
-    query_list = [
-        "from:carolyn@profastening.net subject:'Invoice'",
-        "from:Sales@gemcoroofingsupply.com subject:'Invoice'",
-        "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
-        "from:wbrroof@aol.com"
-    ]
+#     query_list = [
+#         "from:carolyn@profastening.net subject:'Invoice'",
+#         "from:Sales@gemcoroofingsupply.com subject:'Invoice'",
+#         "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
+#         "from:wbrroof@aol.com"
+#     ]
 
-    print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
+#     print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
 
-    for query in query_list:
-        try:
-            response = service.users().messages().list(userId=user_email, q=query).execute()
-            messages = response.get('messages', [])
-            all_attachments = []
-            for message in messages:
-                msg_id = message['id']
-                attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice")
-                if attachments:
-                    all_attachments.extend(attachments)
-                print(attachments)
+#     for query in query_list:
+#         try:
+#             response = service.users().messages().list(userId=user_email, q=query).execute()
+#             messages = response.get('messages', [])
+#             all_attachments = []
+#             for message in messages:
+#                 msg_id = message['id']
+#                 attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice")
+#                 if attachments:
+#                     all_attachments.extend(attachments)
+#                 print(attachments)
 
-            sleep(1)
-            if print_status:
-                for attachment in all_attachments:
-                    print_file_with_ghostscript(attachment)
-        except Exception as e:
-            print('An error occurred: %s' % e)
+#             sleep(1)
+#             if print_status:
+#                 for attachment in all_attachments:
+#                     print_file_with_ghostscript(attachment)
+#         except Exception as e:
+#             print('An error occurred: %s' % e)
 
 # if __name__ == "__main__":
 #     main()

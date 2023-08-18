@@ -1,4 +1,5 @@
-# Script to put in the expense categories
+# If you're making a progress invoice, you'll start by manually copying the old invoice 
+
 
 import pyautogui, openpyxl, datetime, calendar, os, sys, re
 import subprocess, time
@@ -42,7 +43,7 @@ def find_file_by_number(folder_path, target_number):
     return None
 
 # Create the Tkinter root window
-root = Tk()
+root = Tk() 
 root.withdraw()  # Hide the root window
 noe_token = 0
 new_or_existing = CustomDialog(root, title="New or Existing", button_names=["New Billing Cycle", "Existing Billing Cycle"])
@@ -62,6 +63,8 @@ elif qb_response and noe_token == 1:
     qtoken = 1
     contract_date = simpledialog.askstring("Contract Prompt", "What is the contract date MM/DD/YY:")
     exec(open('new_contract_invoice.py').read())
+    owner_info = bill_to.split('\r\n')
+    project_info = ship_to.split('\r\n')
 elif qb_response == 0 and noe_token == 1:
     qtoken = 0
     contract_date = simpledialog.askstring("Contract Prompt", "What is the contract date MM/DD/YY:")
@@ -103,8 +106,7 @@ if qtoken == 0:
 
 
 
-owner_info = bill_to.split('\r\n')
-project_info = ship_to.split('\r\n')
+
 
 
 # Page 1
