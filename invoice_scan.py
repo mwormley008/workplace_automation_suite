@@ -106,7 +106,7 @@ for filename in os.listdir(folder_path):
             match_counter = 0
             page.save('out.jpg', 'JPEG')
             img = cv2.imread('out.jpg')
-            print(f"Content on {ocr_core(img)}")
+            # print(f"Content on {ocr_core(img)}")
             content, inv_text, amt_text = ocr_core(img)
             print(inv_text, amt_text)
             
@@ -129,8 +129,8 @@ for filename in os.listdir(folder_path):
 
             if vendor == "Gemco":
                 ## Finds the invoice number and checks for uniqueness
-                inv_pattern = r'INVOICE\n\n(\d+-\d+)'
-                inv_pattern2 = r'office (\d+-?\d*)'
+                inv_pattern = r'\n\n(\d{7,10}-\d{1,3})'  # Matches 7 to 10 digits, a hyphen, then 1 to 3 digits
+                inv_pattern2 = r'(\d{7,10}-\d{1,3})'   # Same as above but with an optional hyphen
                 ## Page pattern is to check whether there is text that says
                 # Page x of x because if it does then we need to 
                 # process things differently than if it's a single page document
@@ -197,7 +197,7 @@ for filename in os.listdir(folder_path):
                     print("No 'unique invoice number' found")
             elif vendor == "Pro Fastening Systems":
                 ## Finds the invoice number and checks for uniqueness
-                inv_pattern = r'DATE \|INVOICENO\. \| PAGE\n(\d{2}-\d{2}-\d{2}) (\d{7})'
+                inv_pattern = r'(\d{2}-\d{2}-\d{2}) (\d{7})'
                 # inv_pattern2 = r'office (\d+-?\d*)'
                 # page_pattern = r"page\s(\d+)\sof\s([2-9])"
 
