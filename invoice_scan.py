@@ -233,11 +233,14 @@ for filename in os.listdir(folder_path):
                         total_match2 = re.search(r'PLERSE PAT \$([\d,]+\.\d{2})', amt_text, re.IGNORECASE)
                         if total_match:
                             # If a match was found, 'group(1)' contains the first parenthesized subgroup - the balance amount.
-                            balance_amount = total_match.group(1)
+                            
+                            balance_amount =  total_match.group(1).replace(' :', ',')
+                            balance_amount = balance_amount.replace(":", ",")
                             print(f"Found 'balance amount': ${balance_amount}")
                             ws[f'D{invoice_counter}'].value = balance_amount
                         elif total_match2:
-                            balance_amount = total_match2.group(1)
+                            balance_amount =  total_match2.group(1).replace(' :', ',')
+                            balance_amount = balance_amount.replace(":", ",")
                             print(f"Found 'balance amount': ${balance_amount}")
                             ws[f'D{invoice_counter}'].value = balance_amount
                         else:
@@ -336,7 +339,7 @@ for filename in os.listdir(folder_path):
                         total_match = re.search(r'Total Invoice: \$([\d,]+\.\d{2})', amt_text, re.IGNORECASE)
                         if total_match:
                             # If a match was found, 'group(1)' contains the first parenthesized subgroup - the balance amount.
-                            balance_amount =  total_match.group(1).replace(' :', ',')
+                            
                             print(f"Found 'balance amount': ${balance_amount}")
                             ws[f'D{invoice_counter}'].value = balance_amount
                         else:
