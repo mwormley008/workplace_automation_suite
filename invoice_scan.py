@@ -32,9 +32,9 @@ def ocr_core(image):
     
     # Define the bottom right quadrant
     x = 2 * width // 4
-    y = 2 * height // 4
+    y = 3 * height // 4
     w = width // 2
-    h = height // 2
+    h = height // 4
 
     # Crop the region of interest for the invoice number
     inv_roi = gray[0:height//2, width//2:width]
@@ -42,6 +42,7 @@ def ocr_core(image):
 
     # Crop the region of interest for the amount
     amt_roi = gray[y:y+h, x:x+w]
+    
     amt_text = pytesseract.image_to_string(amt_roi, config='--psm 6')
 
     text = pytesseract.image_to_string(gray)
@@ -116,7 +117,7 @@ for filename in os.listdir(folder_path):
                 print("Vendor: GEMCO")
                 
                 vendor = "Gemco"
-            elif content.startswith("INVOICE\nPro Fastening Systems") or content.startswith("Pro Fastening Systems"):
+            elif content.startswith("INVOICE\nPro Fastening Systems") or content.startswith("Pro Fastening Systems") or content.startswith("INVOICE\n\nPro Fastening Systems"):
                 print("Vendor: Pro Fastening Systems")
                 ws[f'A{invoice_counter+1}'] = 'Pro Fastening Systems'
                 vendor = "Pro Fastening Systems"
@@ -197,7 +198,8 @@ for filename in os.listdir(folder_path):
                     print("No 'unique invoice number' found")
             elif vendor == "Pro Fastening Systems":
                 ## Finds the invoice number and checks for uniqueness
-                inv_pattern = r'(\d{2}-\d{2}-\d{2}) (\d{7})'
+                inv_pattern = r'(\d{2}-\d{2}-\d{2})\s*\|?\s*(\d{7}-?\d{0,2})'
+
                 # inv_pattern2 = r'office (\d+-?\d*)'
                 # page_pattern = r"page\s(\d+)\sof\s([2-9])"
 
@@ -226,7 +228,8 @@ for filename in os.listdir(folder_path):
                         ws[f'C{invoice_counter}'] = f'{invoice_no}'
 
                         ## Finds the invoice amount due
-                        total_match = re.search(r'THIS AMOUNT \$([\d,]+\.\d{2})', amt_text, re.IGNORECASE)
+                        total_match = re.search(r'THIS AMOUNT \$(\d?\s?(?:[:,])?[\d,]+\.\d{2})', amt_text, re.IGNORECASE)
+
                         total_match2 = re.search(r'PLERSE PAT \$([\d,]+\.\d{2})', amt_text, re.IGNORECASE)
                         if total_match:
                             # If a match was found, 'group(1)' contains the first parenthesized subgroup - the balance amount.
@@ -333,7 +336,7 @@ for filename in os.listdir(folder_path):
                         total_match = re.search(r'Total Invoice: \$([\d,]+\.\d{2})', amt_text, re.IGNORECASE)
                         if total_match:
                             # If a match was found, 'group(1)' contains the first parenthesized subgroup - the balance amount.
-                            balance_amount = total_match.group(1)
+                            balance_amount =  total_match.group(1).replace(' :', ',')
                             print(f"Found 'balance amount': ${balance_amount}")
                             ws[f'D{invoice_counter}'].value = balance_amount
                         else:

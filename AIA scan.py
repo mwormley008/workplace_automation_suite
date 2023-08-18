@@ -3,6 +3,9 @@
 # you'll need your scan window still open as well as a chrome window
 # in the wbr gmail tab
 
+# Scan your invoice then begin
+
+
 # TODO: I think I'd like to make it so that if you don't have the WBR 
 # gmail open it'll open it for you although that might be solvable with the 
 # gmail api
