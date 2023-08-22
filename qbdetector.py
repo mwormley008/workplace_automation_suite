@@ -18,6 +18,12 @@ def print_element_info(element, indent=0):
     for child in element.children():
         print_element_info(child, indent + 1)
 
+def check_exist(element):
+    if element.exists():
+        dual_print(f"{element} exists.")
+    else:
+        dual_print(f"{element} does not exist.")
+
 # Connect to the QuickBooks application
 app = Application(backend="win32").connect(path=r"C:\Program Files (x86)\Intuit\QuickBooks 2019\QBW32.EXE")  
 
@@ -28,6 +34,8 @@ else:
     dual_print("QuickBooks is not running!")
 
 main_window = app.window(title_re='.*QuickBooks Desktop Pro 2019.*')
+if main_window.exists():
+    dual_print('mwe xists')
 
 # print_element_info(main_window)
 
@@ -37,38 +45,35 @@ main_window = app.window(title_re='.*QuickBooks Desktop Pro 2019.*')
 #     print(child.window_text(), "-", child.element_info.control_type, "-", child.class_name())
 
 # Attempt to fetch the "QuickBooks Message" window
-message_window = main_window.child_window(title="QuickBooks Message", control_type="Window")
-cancel_button = message_window.child_window(title="Cancel", control_type="Pane")
+message_window = app.window(title_re=".*QuickBooks Message.*")
+
+check_exist(message_window)
+
+cancel_button = message_window.child_window(title="Cancel")
 
 if cancel_button.exists():
     dual_print("Cancel button found!")
-    try:
-        cancel_button.click_input()
-    except Exception as e:
-        dual_print("Error while clicking:", e)
+    cancel_button.click_input()
 else:
     dual_print("Cancel button not found!")
 
+# Access and interact with the "Enter Bills" window
+bill_entry_window = main_window.child_window(title_re=".*Enter Bills.*")
 
-# Access the Workspace pane from the main window
-workspace_pane = main_window.child_window(title="Workspace", control_type="Pane", class_name="MDIClient")
-
-# From the Workspace pane, access the Enter Bills window
-bill_entry_window = workspace_pane.child_window(title_re='.*Enter Bills.*', control_type="Window")
 
 if bill_entry_window.exists():
+    # print_element_info(bill_entry_window)
     dual_print("Enter Bills window found!")
-else: 
-    dual_print("Enter Bills window not found!")
 
-# Once we've accessed the Enter Bills window, find the Clear button
-clear_button = bill_entry_window.child_window(title="Clear", control_type="Pane", class_name="MauiPushButton")
+    # Find and click the "Clear" button
+    clear_button = bill_entry_window.child_window(title="Clear")
 
-# Check if the button exists and click on it
-if clear_button.exists():
-    clear_button.click_input()
+    if clear_button.exists():
+        dual_print("Clear button found!")
+        clear_button.click_input()
+    else:
+        dual_print("Clear button not found!")
 else:
-    dual_print("Clear button not found!")
-
+    dual_print("Enter Bills window not found!")
 
 output_file.close()

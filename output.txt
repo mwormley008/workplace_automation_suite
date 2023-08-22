@@ -1,4 +1,6 @@
 QuickBooks is running!
+mwe xists
+<pywinauto.application.WindowSpecification object at 0x000001B22FF62550> does not exist.
 Cancel button not found!
-Enter Bills window not found!
-Clear button not found!
+Enter Bills window found!
+Clear button found!
