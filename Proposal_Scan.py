@@ -98,9 +98,9 @@ def find_file_by_number(folder_path, target_number):
     # If the file is not found
     return None
 
-# Example usage
-folder_path = initial_dir # Replace with the actual folder path
-target_number = invoice_number  # Replace with the specific number you are looking for
+# This sets the folder as the proposals folder
+folder_path = initial_dir 
+
 
 file_path = find_file_by_number(folder_path, target_number)
 
