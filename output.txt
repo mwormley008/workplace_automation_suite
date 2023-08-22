@@ -1,0 +1,4 @@
+QuickBooks is running!
+Cancel button not found!
+Enter Bills window not found!
+Clear button not found!
