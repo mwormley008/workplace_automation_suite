@@ -291,6 +291,7 @@ store_directory = r"C:\Users\Michael\Desktop\python-work\repair_photos"
 print('repair photos')
 # Tells how many days back to check
 desired_date = simpledialog.askinteger("Desired Dates", "How many days into the past do you want to select emails?")
+check_unread = messagebox.askyesno("Check Unread?", "Would you like to only check the unread emails after your search date?")
 
 
 today = datetime.utcnow().date()
@@ -335,7 +336,11 @@ for email_address in email_addresses:
     query_date = datetime.now() - timedelta(days=desired_date)  # Using the desired_date variable instead of fixed 7
     query_date_str = query_date.strftime('%Y-%m-%d')
 
-    query = f"from:{email_address} after:{query_date_str}"
+    if check_unread:
+        query = f"is:unread from:{email_address} after:{query_date_str}"
+    else:
+        query = f"from:{email_address} after:{query_date_str}"
+        
 
     try:
         response = service.users().messages().list(userId=user_email, q=query).execute()
@@ -441,6 +446,7 @@ if print_status:
             sleep(3)
             press('down')
             sleep(2)
+print("download_repair_photos.py is complete.")
 
 
     
