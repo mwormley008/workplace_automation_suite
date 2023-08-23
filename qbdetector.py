@@ -44,8 +44,7 @@ if main_window.exists():
     create_invoices_window_title = "Create Invoices (Editing Transaction...) "
     create_invoices_window = main_window.child_window(title=create_invoices_window_title)
     # Navigate the control hierarchy to get to the "Duplicate Invoice" button
-    duplicate_invoice_btn = main_window.window(title="Create Invoices (Editing Transaction...) ")\
-                            .child_window(auto_id="DuplicateBtn", control_type="Button")
+    duplicate_invoice_btn = main_window.child_window(auto_id="DuplicateBtn")
 
     # Check if the button is found and click it
     if duplicate_invoice_btn.exists():

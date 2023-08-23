@@ -11,6 +11,8 @@ from datetime import datetime, timedelta, date
 from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename
 
+from click_qb_copy_button import click_duplicate_button
+
 def copy_clipboard():
     hotkey('ctrl', 'c')
     time.sleep(.5)
@@ -30,6 +32,14 @@ windows = gw.getAllWindows()
 qb_window = None
 
 
+# Specify the necessary parameters
+APP_PATH = r"C:\Program Files (x86)\Intuit\QuickBooks 2019\QBW32.EXE"
+MAIN_WINDOW_TITLE_REGEX = ".*QuickBooks Desktop Pro 2019.*"
+CHILD_WINDOW_TITLE = "Create Invoices (Editing Transaction...) "
+BUTTON_ID = "DuplicateBtn"
+
+
+
 
 for window in windows:
     if "QuickBooks" in window.title:
@@ -40,10 +50,24 @@ for window in windows:
 root = Tk()
 root.withdraw()  # Hide the root window
 
+search_inv = simpledialog.askinteger("Search invoice #", "What's the invoice number of the template invoice?")
 
 
 # Focuses the Quickbooks window and goes to the customer:job pane
 qb_window.activate()
+
+hotkey('ctrl', 'f')
+sleep(1)
+press('tab', presses=3)
+sleep(.1)
+write(str(search_inv))
+press('enter')
+sleep(1)
+# Call the function
+sleep(1)
+click_duplicate_button(APP_PATH, MAIN_WINDOW_TITLE_REGEX, CHILD_WINDOW_TITLE, BUTTON_ID)
+sleep(1)
+press('space')
 hotkey('alt', 'j')
 time.sleep(.5)
 
