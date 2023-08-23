@@ -1,14 +1,9 @@
-# Auto GUI
-# This is a program that grabs information from a specified 
-# Excel column and then automates the input of that list into a data entry form
-# using autogui
-
-
-
 ## TODO:
-# I think I might be able to use tkinter to confirm when I've made a copy that way I can just automate
-# the whole first part of the making a copy step and then once I've done pressed the button 
-# that one time it'll do the rest for me
+
+# I need to make a first progress invoice because if it's the first time
+# you need to add additional cells that aren't in the existing multiple billing
+# cycle version
+
 import pyautogui, openpyxl, time, pyperclip, datetime, calendar
 import os, re, sys
 import pygetwindow as gw
@@ -34,6 +29,16 @@ def highlight_line():
     press('numlock')
     sleep(1)
 
+def highlight_multi_line(number_of_lines):
+    press('numlock')
+    keyDown('shiftleft')
+    press('end')
+    press('down', presses=number_of_lines)
+    keyUp('shiftleft')
+    sleep(1)
+    press('numlock')
+    sleep(1)
+
 windows = gw.getAllWindows()
 
 qb_window = None
@@ -50,6 +55,7 @@ root = Tk()
 root.withdraw()  # Hide the root window
 
 
+second_bill = messagebox.askyesno("Billing Lifecycle", "Is this the second entry in the billing cycle?")
 completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
 
 # Focuses the Quickbooks window and goes to the customer:job pane
@@ -85,15 +91,18 @@ sleep(.5)
 prev_billed = prev_billed.replace(',', '')
 prev_billed = prev_billed[0:-3]
 
-# Goes to the last invoice's completed through which will become the last perioud amount
-press('down', presses=2)
-last_period = copy_clipboard()
-sleep(.5)
+if not second_bill:
+    # Goes to the last invoice's completed through which will become the last perioud amount
+    press('down', presses=2)
+    last_period = copy_clipboard()
+    sleep(.5)
 
-# This could become a method or something since I'm doing it multiple times and it would improve 
-# Legibility
-last_period = last_period.replace(',', '')
-last_period = last_period[0:-3]
+    # This could become a method or something since I'm doing it multiple times and it would improve 
+    # Legibility
+    last_period = last_period.replace(',', '')
+    last_period = last_period[0:-3]
+else:
+    last_period = 0
 
 # Combines the previously billed with the amount billed last perioud for the new previously billed
 new_prev_billed = int((prev_billed)) + int((last_period))
@@ -103,22 +112,58 @@ new_prev_retained = new_prev_billed * .1
 
 # Alright, at this point we now have all of the information and now we're just going to be writing it to
 # The quickbooks fields
-press('up', presses=2)
-sleep(.5)
-press('backspace')
-write(str(new_prev_billed))
-press('down')
-press('backspace')
-write(str(new_prev_retained))
-press('tab', presses=4)
-highlight_line()
-# sleep(2)
-press('backspace')
-write(completed_date)
-press('tab')
-write(str(completed_through))
-press('down')
-write('-10%')
+
+# This starts in the current period cell, which is higher up in the second billing than others
+if not second_bill:
+    press('up', presses=2)
+    sleep(.5)
+    press('backspace')
+    write(str(new_prev_billed))
+    press('down')
+    press('backspace')
+    write(str(new_prev_retained))
+    press('tab', presses=4)
+    highlight_line()
+    # sleep(2)
+    press('backspace')
+    write(completed_date)
+    press('tab')
+    write(str(completed_through))
+    press('down')
+    write('-10%')
+else:
+    press('tab')
+    write('0')
+    hotkey('shift', 'tab')
+    hotkey('shift', 'tab')
+    highlight_line()
+    write('Previously billed')
+    hotkey('shift', 'tab')
+    write('PREV')
+    press('down')
+    write('PREV RET')
+    press('tab', presses=2)
+    write(str(new_prev_retained))
+    press('tab')
+    write('0')
+    press('tab', presses=2)
+    write('L&M')
+    press('tab')
+    highlight_multi_line(2)
+    press('backspace')
+    write(completed_date)
+    # sleep(2)
+    press('tab')
+    write(str(completed_through))
+    sleep(.5)
+    sleep(.5)
+    press('tab')
+    write('1')
+    press('tab', presses=2)
+    write('Retention')
+    sleep(.5)
+    press('tab')
+    
 
 
 print_bin = messagebox.askyesno("Confirmation", "Do you want to print this?")

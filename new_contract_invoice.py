@@ -1,9 +1,5 @@
-# Auto GUI
-# This is a program that grabs information from a specified 
-# Excel column and then automates the input of that list into a data entry form
-# using autogui
-
-
+# I think this starts with you having entered the customer and job info, or you can wait to answer the "are you ready to "
+# use this billing info
 
 ## TODO:
 # I think I might be able to use tkinter to confirm when I've made a copy that way I can just automate
@@ -17,7 +13,7 @@ from pyautogui import write, press, keyUp, keyDown, hotkey
 from time import sleep
 from datetime import datetime, timedelta, date
 
-from tkinter import Tk, simpledialog, messagebox
+from tkinter import Tk, simpledialog, messagebox, Label, Toplevel, Button, Entry
 from tkinter.filedialog import askopenfilename
 
 def copy_clipboard():
@@ -46,6 +42,125 @@ def highlight_3_line():
     press('numlock')
     sleep(1)
 
+# # def center_window(window, width, height):
+#     screen_width = window.winfo_screenwidth()
+#     screen_height = window.winfo_screenheight()
+    
+#     x = (screen_width - width) // 2
+#     y = (screen_height - height) // 2
+    
+#     window.geometry(f"{width}x{height}+{x}+{y}")
+
+# def show_custom_dialog():
+#     dialog = Toplevel(root)
+#     dialog.title("Contract Info")
+    
+    
+#     width = 300
+#     height = 300
+#     center_window(dialog, width, height)
+
+#     Label(dialog, text="Total Contract Amount:").pack()
+#     contract_entry = Entry(dialog)
+#     contract_entry.pack()
+
+#     Label(dialog, text="Amount billed without retention taken out:").pack()
+#     completed_entry = Entry(dialog)
+#     completed_entry.pack()
+
+#     Label(dialog, text="Total Roofing Labor Contract:").pack()
+#     completed_entry = Entry(dialog)
+#     completed_entry.pack()
+
+#     Label(dialog, text="Total Roofing Material Contract:").pack()
+#     completed_entry = Entry(dialog)
+#     completed_entry.pack()
+
+#     ok_button = Button(dialog, text="OK", command=dialog.destroy)
+#     ok_button.pack()
+
+#     dialog.wait_window(dialog)
+
+#     contract_amount = contract_entry.get()
+#     completed_through = completed_entry.get()
+
+#     print("Contract Amount:", contract_amount)
+#     print("Completed Through:", completed_through)
+
+# # Create the Tkinter root window
+# root = Tk()
+# root.withdraw()  # Hide the root window
+
+# show_custom_dialog()
+
+class CustomDialog:
+    def __init__(self, root, field_names):
+        self.root = root
+        self.dialog = Toplevel(root)
+        self.dialog.title("Contract and Billing Info")
+        self.field_entries = {}
+        self.values = {}  # Add this line to initialize an empty dictionary for the values
+
+
+        self.create_dialog(field_names)
+
+    def center_window(self, width, height):
+        self.dialog.geometry(f"{width}x{height}+200+200")
+
+
+    def create_dialog(self, field_names):
+        width = 300
+        height = len(field_names) * 50 + 150
+        self.center_window(width, height)
+
+        for field_name in field_names:
+            Label(self.dialog, text=field_name).pack()
+            entry = Entry(self.dialog)
+            entry.pack()
+            self.field_entries[field_name] = entry
+
+        # OK button now both fetches values and destroys the dialog
+        ok_button = Button(self.dialog, text="OK", command=self.ok_clicked)
+        ok_button.pack()
+
+        self.dialog.wait_window(self.dialog)
+
+    def get_values(self):
+        return {field_name: entry.get() for field_name, entry in self.field_entries.items()}
+
+    
+    def ok_clicked(self):
+        self.values = self.get_values()  # Store values before destroying the dialog
+        self.dialog.destroy()  # Close the dialog window
+
+def show_custom_dialog(field_names):
+    root = Tk()
+    root.withdraw()  # Hide the root window
+
+    dialog = CustomDialog(root, field_names)
+    category_values = dialog.values
+    print(category_values)
+
+    return dialog.values
+
+field_names = [
+    "Total Roofing Labor Contract Amount:", 
+    "Total Roofing Material Contract Amount:", 
+    "Total Sheet Metal Labor Contract Amount:", 
+    "Total Sheet Metal Material Contract Amount:",
+    "Billed Roofing Labor:", 
+    "Billed Roofing Material:", 
+    "Billed Sheet Metal Labor:", 
+    "Billed Sheet Metal Material:",
+    "Total Contract Amount:",  # New field
+    "Total Billed:" 
+]
+
+category_values = show_custom_dialog(field_names)
+
+contract_amount = category_values["Total Contract Amount:"]
+completed_through = category_values["Total Billed:"]
+
 windows = gw.getAllWindows()
 
 qb_window = None
@@ -55,18 +170,16 @@ for window in windows:
         qb_window = window
         break
 
-# Create the Tkinter root window
-root = Tk()
-root.withdraw()  # Hide the root window
 
 invoice_status = messagebox.askyesno("Confirmation", "Have you already created the invoice?")
 
-contract_amount = simpledialog.askinteger("Contract Prompt", "What is the total contract amount:")
+# contract_amount = simpledialog.askinteger("Contract Prompt", "What is the total contract amount:")
 
-completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
+# completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
 
 qb_window.activate()
 
+# If you haven't started an invoice yet, this will create a contract invoice
 if not invoice_status:
     hotkey('ctrl', 't')
     time.sleep(.5)
@@ -90,8 +203,7 @@ res = calendar.monthrange(today.year, today.month)[1]
 completed_date = f"Completed through {today.month}/{res}/{today.year}"
 
 
-# starts once you have created a copy of the invoice, which will
-# start with highlighting the customer job
+
 # 8 tabs to the first item
 # 10 tabs to the first price cell
 

@@ -1,5 +1,5 @@
 # If you're making a progress invoice, you'll start by manually copying the old invoice 
-
+# TODO: Add GUI elements to create a copy of the invoice if you need it
 
 import pyautogui, openpyxl, datetime, calendar, os, sys, re
 import subprocess, time
@@ -42,6 +42,10 @@ def find_file_by_number(folder_path, target_number):
     # If the file is not found
     return None
 
+def assign_values_to_cells(values, mapping, sheet):
+    for field_name, cell in mapping.items():
+        sheet[cell] = int(values[field_name])
+
 # Create the Tkinter root window
 root = Tk() 
 root.withdraw()  # Hide the root window
@@ -59,7 +63,10 @@ sleep(1)
 if qb_response and noe_token == 0:
     qtoken = 1
     exec(open('progress_invoice.py').read())
+# start in QuickBooks in a new billing cycle
 elif qb_response and noe_token == 1:
+# I think this starts with you having entered the customer and job info, or you can wait to answer the "are you ready to "
+# use this billing info
     qtoken = 1
     contract_date = simpledialog.askstring("Contract Prompt", "What is the contract date MM/DD/YY:")
     exec(open('new_contract_invoice.py').read())
@@ -148,7 +155,7 @@ invoice_number = sheet1["J9"]
 # add work from this period to completed and stored to date
 completed_through_cell = sheet1["E26"]
 if noe_token == 0:
-    completed_through_cell.value += completed_through
+    completed_through_cell.value += int(completed_through)
     old_invoice_number = invoice_number.value
     invoice_number.value = new_inv
     # add old current payment E39 to previous payments E38
@@ -157,23 +164,40 @@ if noe_token == 0:
     sheet1["E39"].value = completed_through * (1-retention_percentage*.01)
 if noe_token == 1:
     # Contract
-    sheet1["E23"].value = contract_amount
-    completed_through_cell.value = completed_through
+    sheet1["E23"].value = int(contract_amount)
+    completed_through_cell.value = int(completed_through)
     invoice_number.value = new_inv
     current_payment_due = sheet1["E39"]
-    current_payment_due.value = (completed_through * .9)
+    current_payment_due.value = (int(completed_through) * .9)
 
 
+# Page 2
+
+sheet2 = workbook["G703"]
+
+# Excel columns
+contract_categories = ["C13", "C17", "C21", "C25"]
+prev_apps = ["D13", "D17", "D21", "D25"]
+this_period = ["E13", "E17", "E21", "E25"]
+
+# Mapping categaries from tk inter dialog box to excel cells
+mapping = {
+    "Total Roofing Labor Contract Amount:": "C13",
+    "Total Roofing Material Contract Amount:": "C17",
+    "Total Sheet Metal Labor Contract Amount:": "C21",
+    "Total Sheet Metal Material Contract Amount:": "C25",
+    "Billed Roofing Labor:": "E13",
+    "Billed Roofing Material:": "E17",
+    "Billed Sheet Metal Labor:": "E21",
+    "Billed Sheet Metal Material:": "E25"
+}
 
 if noe_token == 0:
-    # Page 2
-    sheet2 = workbook["G703"]
-    prev_apps = ["D13", "D17", "D21", "D25"]
-    this_period = ["E13", "E17", "E21", "E25"]
-
     for x, y in zip(prev_apps, this_period):
         sheet2[x].value += sheet2[y].value
         sheet2[y].value = 0
+else:
+    assign_values_to_cells(category_values, mapping, sheet2)
 
 
 

@@ -40,10 +40,6 @@ if main_window.exists():
 # print_element_info(main_window)
 
 
-# for child in main_window.children():
-#     print(child.window_text() + "child")
-#     print(child.window_text(), "-", child.element_info.control_type, "-", child.class_name())
-
 # Attempt to fetch the "QuickBooks Message" window
 message_window = app.window(title_re=".*QuickBooks Message.*")
 

@@ -1,14 +1,5 @@
-# Auto GUI
-# This is a program that grabs information from a specified 
-# Excel column and then automates the input of that list into a data entry form
-# using autogui
-
-
-
 ## TODO:
-# I think I might be able to use tkinter to confirm when I've made a copy that way I can just automate
-# the whole first part of the making a copy step and then once I've done pressed the button 
-# that one time it'll do the rest for me
+
 import pyautogui, openpyxl, time, pyperclip, datetime, calendar
 import os, re, sys
 import pygetwindow as gw
