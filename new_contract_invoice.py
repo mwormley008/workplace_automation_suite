@@ -15,6 +15,7 @@ from datetime import datetime, timedelta, date
 
 from tkinter import Tk, simpledialog, messagebox, Label, Toplevel, Button, Entry
 from tkinter.filedialog import askopenfilename
+from AIA import OptionButtons
 
 def copy_clipboard():
     hotkey('ctrl', 'c')
@@ -37,6 +38,7 @@ def highlight_3_line():
     keyDown('shiftleft')
     press('end')
     press('down', presses=2)
+    press('end')
     keyUp('shiftleft')
     sleep(1)
     press('numlock')
@@ -130,8 +132,32 @@ class CustomDialog:
 
     
     def ok_clicked(self):
-        self.values = self.get_values()  # Store values before destroying the dialog
-        self.dialog.destroy()  # Close the dialog window
+        values = self.get_values()
+    
+        try:
+            total_contract = float(values["Total Contract Amount:"])
+            contract_sum = float(values["Total Roofing Labor Contract Amount:"]) + \
+                        float(values["Total Roofing Material Contract Amount:"]) + \
+                        float(values["Total Sheet Metal Labor Contract Amount:"]) + \
+                        float(values["Total Sheet Metal Material Contract Amount:"])
+        
+            total_billed_period = float(values["Total Billed this period (without retention taken out):"])
+            billed_sum = float(values["Billed Roofing Labor:"]) + \
+                        float(values["Billed Roofing Material:"]) + \
+                        float(values["Billed Sheet Metal Labor:"]) + \
+                        float(values["Billed Sheet Metal Material:"])
+            
+            # Checking if the values match
+            if not (abs(total_contract - contract_sum) < 1e-9 and abs(total_billed_period - billed_sum) < 1e-9):
+                messagebox.showerror("Error", "The categories don't add up to the totals.")
+                return
+        except ValueError:  # Handle the case where user inputs non-numeric values
+            messagebox.showerror("Error", "Please enter valid numeric values.")
+            return
+
+        # If everything is correct, then proceed
+        self.values = values
+        self.dialog.destroy()
 
 def show_custom_dialog(field_names):
     root = Tk()
@@ -153,13 +179,21 @@ field_names = [
     "Billed Sheet Metal Labor:", 
     "Billed Sheet Metal Material:",
     "Total Contract Amount:",  # New field
-    "Total Billed:" 
+    "Total Billed this period (without retention taken out):",
 ]
+
 
 category_values = show_custom_dialog(field_names)
 
 contract_amount = category_values["Total Contract Amount:"]
-completed_through = category_values["Total Billed:"]
+completed_through = category_values["Total Billed this period (without retention taken out):"]
+
+retention_amount_dialog = OptionButtons(Tk(), title="Retention Level", button_names=["10%", "5%"])
+if retention_amount_dialog.result == '10%':
+    retention_percent = 10
+else:
+    retention_percent = 5
+print(retention_percent)
 
 windows = gw.getAllWindows()
 
@@ -240,7 +274,8 @@ write(completed_date)
 press('tab')
 
 press('down')
-write('-10%')
+write(f'-{retention_percent}%')
+press('tab')
 
 
 print_bin = messagebox.askyesno("Confirmation", "Do you want to print this?")

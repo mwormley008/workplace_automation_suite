@@ -1,7 +1,9 @@
 # trying to get this gmail thing going we'll see 
 
 # TODO: Would be nice to see if i could avoid printing blank pdfs 
-# and when time sheets is empty to not loop
+# close windows after using them
+# delete files once used
+
 from Google import Create_Service
 import base64, os, datetime, pickle, time, tkinter, re
 from time import sleep

@@ -14,6 +14,7 @@ from datetime import datetime, timedelta, date
 
 from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename
+from AIA import OptionButtons
 
 def copy_clipboard():
     hotkey('ctrl', 'c')
@@ -57,6 +58,15 @@ root.withdraw()  # Hide the root window
 
 second_bill = messagebox.askyesno("Billing Lifecycle", "Is this the second entry in the billing cycle?")
 completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
+
+
+retention_amount_dialog = OptionButtons(Tk(), title="Retention Level", button_names=["10%", "5%"])
+if retention_amount_dialog.result == '10%':
+    retention_percent = 10
+else:
+    retention_percent = 5
+print(retention_percent)
+
 
 # Focuses the Quickbooks window and goes to the customer:job pane
 qb_window.activate()
@@ -130,7 +140,7 @@ if not second_bill:
     press('tab')
     write(str(completed_through))
     press('down')
-    write('-10%')
+    write(f'-{retention_percent}%')
 else:
     press('tab')
     write('0')
@@ -162,6 +172,8 @@ else:
     press('tab', presses=2)
     write('Retention')
     sleep(.5)
+    press('tab', presses=2)
+    write(f'-{retention_percent}%')
     press('tab')
     
 
