@@ -1,4 +1,7 @@
 # trying to get this gmail thing going we'll see 
+
+# TODO: Would be nice to see if i could avoid printing blank pdfs 
+# and when time sheets is empty to not loop
 from Google import Create_Service
 import base64, os, datetime, pickle, time, tkinter, re
 from time import sleep
@@ -395,7 +398,6 @@ if print_status:
     for folder in print_folders:
         subfolders = [os.path.join(folder, subfolder) for subfolder in os.listdir(folder) if os.path.isdir(os.path.join(folder, subfolder))]
 
-        print_items = os.listdir(folder)
         sleep(5)
         # if only pdfs
         for subfolder in subfolders:
@@ -404,6 +406,7 @@ if print_status:
                 # Branch for subfolders with only .pdf files
                 print("This subfolder only contains .pdf files:", subfolder)
                 # Add your desired logic for when the subfolder only contains .pdf files here 
+        print_items = os.listdir(folder)
         subprocess.run(['explorer', os.path.realpath(folder)])
         sleep(2)
         # Selects the first item in the list

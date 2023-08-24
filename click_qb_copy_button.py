@@ -19,8 +19,8 @@ def click_duplicate_button(app_path, main_window_title_regex, child_window_title
         return
 
     # Navigate to the 'Duplicate Invoice' button
-    duplicate_invoice_btn = main_window.window(title=child_window_title)\
-                            .child_window(auto_id=button_id, control_type="Button")
+    duplicate_invoice_btn = main_window.child_window(auto_id="DuplicateBtn")
+
 
     # Check if the button is found and click it
     if duplicate_invoice_btn.exists():
