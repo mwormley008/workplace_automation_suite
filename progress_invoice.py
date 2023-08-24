@@ -15,6 +15,9 @@ from datetime import datetime, timedelta, date
 from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename
 from AIA import OptionButtons
+from click_qb_copy_button import click_duplicate_button
+from new_contract_invoice import CustomDialog, show_custom_dialog
+
 
 def copy_clipboard():
     hotkey('ctrl', 'c')
@@ -40,6 +43,54 @@ def highlight_multi_line(number_of_lines):
     press('numlock')
     sleep(1)
 
+def find_invoice(invoice_number):
+    hotkey('ctrl', 'f')
+    press('tab', presses=4)
+    write(str(invoice_number))
+    press('enter')
+    sleep(1)
+    hotkey('alt', 'g')
+    
+    
+    APP_PATH = r"C:\Program Files (x86)\Intuit\QuickBooks 2019\QBW32.EXE"
+    MAIN_WINDOW_TITLE_REGEX = ".*QuickBooks Desktop Pro 2019.*"
+    CHILD_WINDOW_TITLE = "Create Invoices (Editing Transaction...) "
+    BUTTON_ID = "DuplicateBtn"
+    
+    click_duplicate_button(APP_PATH, MAIN_WINDOW_TITLE_REGEX, CHILD_WINDOW_TITLE, BUTTON_ID)
+
+    sleep(1)
+
+    press('space')
+
+    sleep(.3)
+    
+def new_ok_clicked(self):
+        values = self.get_values()
+    
+        try:
+            
+            total_billed_period = float(values["Total Billed this period (without retention taken out):"])
+            billed_sum = float(values["Billed Roofing Labor:"]) + \
+                        float(values["Billed Roofing Material:"]) + \
+                        float(values["Billed Sheet Metal Labor:"]) + \
+                        float(values["Billed Sheet Metal Material:"])
+            
+            # Checking if the values match
+            if not (abs(total_billed_period - billed_sum) < 1e-9):
+                messagebox.showerror("Error", "The categories don't add up to the totals.")
+                return
+        except ValueError:  # Handle the case where user inputs non-numeric values
+            messagebox.showerror("Error", "Please enter valid numeric values.")
+            return
+
+        # If everything is correct, then proceed
+        self.values = values
+        self.dialog.destroy()
+
+
+CustomDialog.ok_clicked = new_ok_clicked
+
 windows = gw.getAllWindows()
 
 qb_window = None
@@ -55,12 +106,23 @@ for window in windows:
 root = Tk()
 root.withdraw()  # Hide the root window
 
-
 second_bill = messagebox.askyesno("Billing Lifecycle", "Is this the second entry in the billing cycle?")
-completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
 
+field_names = [
+        "Number of previous invoice",
+        "Total Billed this period (without retention taken out):",
+        "Billed Roofing Labor:", 
+        "Billed Roofing Material:", 
+        "Billed Sheet Metal Labor:", 
+        "Billed Sheet Metal Material:",
+    ]
 
-retention_amount_dialog = OptionButtons(Tk(), title="Retention Level", button_names=["10%", "5%"])
+category_values = show_custom_dialog(field_names)
+target_invoice = category_values["Number of previous invoice"]
+
+completed_through = category_values["Total Billed this period (without retention taken out):"]
+retention_amount_dialog = OptionButtons(root, title="Retention Level", button_names=["10%", "5%"])
+
 if retention_amount_dialog.result == '10%':
     retention_percent = 10
 else:
@@ -70,6 +132,9 @@ print(retention_percent)
 
 # Focuses the Quickbooks window and goes to the customer:job pane
 qb_window.activate()
+
+find_invoice(target_invoice)
+
 hotkey('alt', 'j')
 time.sleep(.5)
 
@@ -151,8 +216,12 @@ else:
     hotkey('shift', 'tab')
     write('PREV')
     press('down')
+    sleep(1)
     write('PREV RET')
-    press('tab', presses=2)
+    press('tab')
+    highlight_line()
+    write("Previously retained")
+    press('tab')
     write(str(new_prev_retained))
     press('tab')
     write('0')
@@ -184,8 +253,8 @@ if print_bin:
     sleep(1)
     qb_window.activate()
     hotkey('ctrl', 'p')
-    sleep(5)
-    press('space') 
+    # sleep(5)
+    # press('space') 
 else:
     sys.exit()
 

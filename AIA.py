@@ -1,8 +1,10 @@
 # If you're making a progress invoice, you'll start by manually copying the old invoice 
 # TODO: Add GUI elements to create a copy of the invoice if you need it
+# Potentially I could just put everything on print later for the invoices so
+# i don't have to mess around with the printing interface
 
 import pyautogui, openpyxl, datetime, calendar, os, sys, re
-import subprocess, time
+import subprocess, time, win32, win32com.client
 from openpyxl import Workbook, load_workbook
 from datetime import datetime, timedelta, date
 
@@ -46,6 +48,16 @@ def assign_values_to_cells(values, mapping, sheet):
     for field_name, cell in mapping.items():
         sheet[cell] = int(values[field_name])
 
+def print_excel(workbook_path):
+    excel = win32com.client.gencache.EnsureDispatch('Excel.Application')
+    wb = excel.Workbooks.Open(workbook_path)
+
+    # Print the workbook to the default printer
+    wb.PrintOut()
+
+    # Clean up
+    wb.Close(False)
+    excel.Application.Quit()
 
 if __name__ =="__main__":
     # Create the Tkinter root window
@@ -89,7 +101,7 @@ if __name__ =="__main__":
 
 
     if noe_token == 0:
-        old_invoice_number = simpledialog.askinteger("Invoice Prompt", "Enter the old invoice number:")
+        old_invoice_number = target_invoice
         target_number = old_invoice_number  # Replace with the specific number you are looking for
 
         file_path = find_file_by_number(folder_path, target_number)
@@ -153,23 +165,25 @@ if __name__ =="__main__":
     # J9
     invoice_number = sheet1["J9"]
 
+    sheet1["B29"].value = retention_percent
+
     # add work from this period to completed and stored to date
     completed_through_cell = sheet1["E26"]
+    retention_percentage = sheet1['B29'].value
+    current_payment_due = sheet1["E39"]
     if noe_token == 0:
         completed_through_cell.value += int(completed_through)
         old_invoice_number = invoice_number.value
         invoice_number.value = new_inv
         # add old current payment E39 to previous payments E38
-        retention_percentage = sheet1['B29'].value
         sheet1["E38"].value += sheet1["E39"].value
-        sheet1["E39"].value = completed_through * (1-retention_percentage*.01)
+        current_payment_due.value = int(completed_through) * (1-int(retention_percent)*.01)
     if noe_token == 1:
         # Contract
         sheet1["E23"].value = int(contract_amount)
         completed_through_cell.value = int(completed_through)
         invoice_number.value = new_inv
-        current_payment_due = sheet1["E39"]
-        current_payment_due.value = (int(completed_through) * .9)
+        current_payment_due.value = (int(completed_through) * (1-int(retention_percent)*.01))
 
 
     # Page 2
@@ -226,12 +240,13 @@ if __name__ =="__main__":
     if open_or_print is True:
         # Code to open the file
         subprocess.run([excel_path, new_workbook_path])
+        print('Selected open')
     elif open_or_print is False:
         # Code to print the file
-        os.system(f'start excel /p "{new_workbook_path}"')
-        
+        print_excel(new_workbook_path)
+        print('Selected print')
     else:
-        pass
+        print('Selected cancel')
 
     print("AIA creation complete!")
 

@@ -124,6 +124,8 @@ class CustomDialog:
         # OK button now both fetches values and destroys the dialog
         ok_button = Button(self.dialog, text="OK", command=self.ok_clicked)
         ok_button.pack()
+        
+        self.dialog.bind("<Return>", lambda event=None: self.ok_clicked())
 
         self.dialog.wait_window(self.dialog)
 
@@ -169,127 +171,130 @@ def show_custom_dialog(field_names):
 
     return dialog.values
 
-field_names = [
-    "Total Roofing Labor Contract Amount:", 
-    "Total Roofing Material Contract Amount:", 
-    "Total Sheet Metal Labor Contract Amount:", 
-    "Total Sheet Metal Material Contract Amount:",
-    "Billed Roofing Labor:", 
-    "Billed Roofing Material:", 
-    "Billed Sheet Metal Labor:", 
-    "Billed Sheet Metal Material:",
-    "Total Contract Amount:",  # New field
-    "Total Billed this period (without retention taken out):",
-]
+
+if __name__ == "__main__":
+    field_names = [
+        "Total Roofing Labor Contract Amount:", 
+        "Total Roofing Material Contract Amount:", 
+        "Total Sheet Metal Labor Contract Amount:", 
+        "Total Sheet Metal Material Contract Amount:",
+        "Billed Roofing Labor:", 
+        "Billed Roofing Material:", 
+        "Billed Sheet Metal Labor:", 
+        "Billed Sheet Metal Material:",
+        "Total Contract Amount:",  # New field
+        "Total Billed this period (without retention taken out):",
+    ]
 
 
-category_values = show_custom_dialog(field_names)
+    category_values = show_custom_dialog(field_names)
 
-contract_amount = category_values["Total Contract Amount:"]
-completed_through = category_values["Total Billed this period (without retention taken out):"]
+    contract_amount = category_values["Total Contract Amount:"]
+    completed_through = category_values["Total Billed this period (without retention taken out):"]
+    root = Tk() 
+    root.withdraw()  # Hide the root window
+    retention_amount_dialog = OptionButtons(root, title="Retention Level", button_names=["10%", "5%"])
+    if retention_amount_dialog.result == '10%':
+        retention_percent = 10
+    else:
+        retention_percent = 5
+    print(retention_percent)
 
-retention_amount_dialog = OptionButtons(Tk(), title="Retention Level", button_names=["10%", "5%"])
-if retention_amount_dialog.result == '10%':
-    retention_percent = 10
-else:
-    retention_percent = 5
-print(retention_percent)
+    windows = gw.getAllWindows()
 
-windows = gw.getAllWindows()
+    qb_window = None
 
-qb_window = None
-
-for window in windows:
-    if "QuickBooks" in window.title:
-        qb_window = window
-        break
-
-
-invoice_status = messagebox.askyesno("Confirmation", "Have you already created the invoice?")
-
-# contract_amount = simpledialog.askinteger("Contract Prompt", "What is the total contract amount:")
-
-# completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
-
-qb_window.activate()
-
-# If you haven't started an invoice yet, this will create a contract invoice
-if not invoice_status:
-    hotkey('ctrl', 't')
-    time.sleep(.5)
-    press('up', presses=25)
-    press('down', presses=3)
-    hotkey('alt', 't')
-    sleep(2)
-
-bill_bin = messagebox.askyesno("Confirmation", "Are you ready to have this invoice information used?")
-sleep(1)
-qb_window.activate()
-sleep(.5)
-hotkey('alt', 'j')
-time.sleep(.5)
-
-sleep(1)
-
-today = date.today()
-print(today)
-res = calendar.monthrange(today.year, today.month)[1]
-completed_date = f"Completed through {today.month}/{res}/{today.year}"
+    for window in windows:
+        if "QuickBooks" in window.title:
+            qb_window = window
+            break
 
 
+    invoice_status = messagebox.askyesno("Confirmation", "Have you already created the invoice?")
 
-# 8 tabs to the first item
-# 10 tabs to the first price cell
+    # contract_amount = simpledialog.askinteger("Contract Prompt", "What is the total contract amount:")
 
-# get the new invoice number
-press('tab', presses=3)
-new_inv = copy_clipboard()
+    # completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
 
-sleep(1)
+    qb_window.activate()
 
-press('tab')
-highlight_3_line()
-bill_to = copy_clipboard()
-sleep(1)
+    # If you haven't started an invoice yet, this will create a contract invoice
+    if not invoice_status:
+        hotkey('ctrl', 't')
+        time.sleep(.5)
+        press('up', presses=25)
+        press('down', presses=3)
+        hotkey('alt', 't')
+        sleep(2)
 
-press('tab', presses=2)
-highlight_3_line()
-ship_to = copy_clipboard()
-sleep(.5)
-
-
-press('tab', presses=4)
-write(str(contract_amount))
-press('down', presses=1)
-sleep(.5)
-write(str(completed_through))
-sleep(.5)
-hotkey('shift', 'tab')
-
-
-highlight_line()
-
-press('backspace')
-write(completed_date)
-press('tab')
-
-press('down')
-write(f'-{retention_percent}%')
-press('tab')
-
-
-print_bin = messagebox.askyesno("Confirmation", "Do you want to print this?")
-
-if print_bin:
+    bill_bin = messagebox.askyesno("Confirmation", "Are you ready to have this invoice information used?")
     sleep(1)
     qb_window.activate()
-    hotkey('ctrl', 'p')
-    sleep(5)
-    press('space') 
-else:
-    sys.exit()
+    sleep(.5)
+    hotkey('alt', 'j')
+    time.sleep(.5)
+
+    sleep(1)
+
+    today = date.today()
+    print(today)
+    res = calendar.monthrange(today.year, today.month)[1]
+    completed_date = f"Completed through {today.month}/{res}/{today.year}"
 
 
-# This is some code from ChatGPT that lets you find a file by the number
-# even if it's not the only thing in the file name
+
+    # 8 tabs to the first item
+    # 10 tabs to the first price cell
+
+    # get the new invoice number
+    press('tab', presses=3)
+    new_inv = copy_clipboard()
+
+    sleep(1)
+
+    press('tab')
+    highlight_3_line()
+    bill_to = copy_clipboard()
+    sleep(1)
+
+    press('tab', presses=2)
+    highlight_3_line()
+    ship_to = copy_clipboard()
+    sleep(.5)
+
+
+    press('tab', presses=4)
+    write(str(contract_amount))
+    press('down', presses=1)
+    sleep(.5)
+    write(str(completed_through))
+    sleep(.5)
+    hotkey('shift', 'tab')
+
+
+    highlight_line()
+
+    press('backspace')
+    write(completed_date)
+    press('tab')
+
+    press('down')
+    write(f'-{retention_percent}%')
+    press('tab')
+
+
+    print_bin = messagebox.askyesno("Confirmation", "Do you want to print this?")
+
+    if print_bin:
+        sleep(1)
+        qb_window.activate()
+        hotkey('ctrl', 'p')
+        # sleep(5)
+        # press('space') 
+    else:
+        sys.exit()
+
+
+    # This is some code from ChatGPT that lets you find a file by the number
+    # even if it's not the only thing in the file name
 
