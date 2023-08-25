@@ -91,7 +91,10 @@ mail_contacts = {
     'Hanna':'mrosales@hannadesigngroup.com',
     'G&H':'theresa@nationalplazas.com',
     'Builtech':'dwiniarz@builtechllc.com',
-    'Englewood':'VLara@eci.build'}
+    'Englewood':'VLara@eci.build',
+    'Ott':'kate@ottdevelopment.com',
+    'R.':'nickc@rcarlsonandsons.com',
+    '41':'amy.hillgamyer@41northcontractors.com'}
 
 billing_message = 'Hello,\nPlease see attached billing.\nThank you,\nMichael Wormley\nWBR Roofing\n25084 W Old Rand Rd\nWauconda, IL 60084\n​O: 847-487-8787​\nwbrroof@aol.com'
 # Create the Tkinter root window

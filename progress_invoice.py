@@ -48,9 +48,9 @@ def find_invoice(invoice_number):
     press('tab', presses=4)
     write(str(invoice_number))
     press('enter')
-    sleep(1)
+    sleep(1.5)
     hotkey('alt', 'g')
-    
+    sleep(1)
     
     APP_PATH = r"C:\Program Files (x86)\Intuit\QuickBooks 2019\QBW32.EXE"
     MAIN_WINDOW_TITLE_REGEX = ".*QuickBooks Desktop Pro 2019.*"
@@ -118,6 +118,7 @@ field_names = [
     ]
 
 category_values = show_custom_dialog(field_names)
+
 target_invoice = category_values["Number of previous invoice"]
 
 completed_through = category_values["Total Billed this period (without retention taken out):"]

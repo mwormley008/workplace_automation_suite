@@ -46,7 +46,8 @@ def find_file_by_number(folder_path, target_number):
 
 def assign_values_to_cells(values, mapping, sheet):
     for field_name, cell in mapping.items():
-        sheet[cell] = int(values[field_name])
+        if field_name in values:
+            sheet[cell] = int(values[field_name])
 
 def print_excel(workbook_path):
     excel = win32com.client.gencache.EnsureDispatch('Excel.Application')
@@ -64,11 +65,15 @@ if __name__ =="__main__":
     root = Tk() 
     root.withdraw()  # Hide the root window
     noe_token = 0
-    new_or_existing = OptionButtons(root, title="New or Existing", button_names=["New Billing Cycle", "Existing Billing Cycle"])
+    new_or_existing = OptionButtons(root, title="New or Existing", button_names=["New Billing Cycle", "Existing Billing Cycle", "Retention/Final Billing"])
     print("You clicked:", new_or_existing.result)
 
     if new_or_existing.result == 'New Billing Cycle':
         noe_token = 1
+    elif new_or_existing.result == "Existing Billing Cycle":
+        noe_token = 0
+    else:
+        noe_token = "Retention"
 
     qb_response = messagebox.askyesno("Confirmation", "Do you want to start in Quickbooks?")
     sleep(1)
@@ -91,6 +96,9 @@ if __name__ =="__main__":
         contract_date = simpledialog.askstring("Contract Prompt", "What is the contract date MM/DD/YY:")
         bill_to = simpledialog.askstring("Contractor", "Who is the contractor?")
         ship_to = simpledialog.askstring("Project", "What is the project name?")
+    elif new_or_existing.result == "Retention/Final Billing":
+        qtoken = 1
+        exec(open('retention_invoice.py').read())
     else:
         qtoken = 0
 
@@ -211,8 +219,8 @@ if __name__ =="__main__":
         for x, y in zip(prev_apps, this_period):
             sheet2[x].value += sheet2[y].value
             sheet2[y].value = 0
-    else:
-        assign_values_to_cells(category_values, mapping, sheet2)
+    
+    assign_values_to_cells(category_values, mapping, sheet2)
 
 
 
