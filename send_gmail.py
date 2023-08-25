@@ -57,6 +57,9 @@ def create_message_with_attachment(to, subject, message_text, file_path):
     # Return the message object encoded in base64 and formatted as ASCII
     return {'raw': base64.urlsafe_b64encode(message.as_bytes()).decode("utf-8")}
 
+def initialize_service():
+    return Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
+
 if __name__ == "__main__":
     # sender_email = "wbrroof@gmail.com"
     receiver_email = "throwod@gmail.com"
@@ -68,7 +71,8 @@ if __name__ == "__main__":
 
 
     # Setup the Gmail service
-    service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
+    service = initialize_service()
+    #  service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 
     # Define your message here (this is just an example structure, you'd fill it with relevant data)
     # message_body = {
