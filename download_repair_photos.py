@@ -283,13 +283,13 @@ def print_pdfs_from_folder(folder_path):
     else:
         print(f"The folder '{folder_path}' contains non-PDF files. Skipping...")
 
-
+CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
+API_NAME = 'gmail'
+API_VERSION = 'v1'
+SCOPES = ['https://www.googleapis.com/auth/gmail.send', 'https://www.googleapis.com/auth/gmail.modify', 'https://www.googleapis.com/auth/gmail.readonly']
 
 if __name__ == "__main__":
-    CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
-    API_NAME = 'gmail'
-    API_VERSION = 'v1'
-    SCOPES = ['https://www.googleapis.com/auth/gmail.send', 'https://www.googleapis.com/auth/gmail.modify', 'https://www.googleapis.com/auth/gmail.readonly']
+    
     service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
     user_email = "wbrroof@gmail.com"  # Replace with the email address you want to send the message from
     store_directory = r"C:\Users\Michael\Desktop\python-work\repair_photos"

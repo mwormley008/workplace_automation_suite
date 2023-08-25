@@ -46,7 +46,8 @@ mail_contacts = {
     'Valenti':'Melissa.Sanson@valentibuilders.com', 
     'Hanna':'mrosales@hannadesigngroup.com',
     'G&H':'theresa@nationalplazas.com',
-    'Builtech':'dwiniarz@builtechllc.com'}
+    'Builtech':'dwiniarz@builtechllc.com',
+    'Englewood':'VLara@eci.build'}
 # Create the Tkinter root window
 root = Tk()
 root.withdraw()  # Hide the root window
