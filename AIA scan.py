@@ -21,6 +21,7 @@ from tkinter.filedialog import askopenfilename
 from pyautogui import press, write, hotkey
 from time import sleep
 
+from download_repair_photos import send_message
 
 # This is to do things relatively, this one would be to do things like click the make a copy button in QB or the scan button in scansmart
 """

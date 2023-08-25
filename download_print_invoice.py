@@ -221,203 +221,204 @@ def mark_as_read(service, user_id, msg_id):
         return None
     
 
-service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
-user_email = "wbrroof@gmail.com"  # Replace with the email address you want to send the message from
-store_directory = r"C:\Users\Michael\Desktop\python-work\Invoices"
+if __name__ =="__main__":
+    service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
+    user_email = "wbrroof@gmail.com"  # Replace with the email address you want to send the message from
+    store_directory = r"C:\Users\Michael\Desktop\python-work\Invoices"
 
-print("print invoice")
-today = datetime.utcnow().date()
-start_of_today = datetime.combine(today, time.min)
-start_of_tomorrow = start_of_today + timedelta(days=1)
+    print("print invoice")
+    today = datetime.utcnow().date()
+    start_of_today = datetime.combine(today, time.min)
+    start_of_tomorrow = start_of_today + timedelta(days=1)
 
-start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
-start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
+    start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
+    start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
 
-# Load access token from pickle file
-pickle_file = f'token_{API_NAME}_{API_VERSION}.pickle'
-with open(pickle_file, 'rb') as token_file:
-    access_token = pickle.load(token_file)
-    print('pickle')
-    print(access_token.token)
-print(pickle_file)
+    # Load access token from pickle file
+    pickle_file = f'token_{API_NAME}_{API_VERSION}.pickle'
+    with open(pickle_file, 'rb') as token_file:
+        access_token = pickle.load(token_file)
+        print('pickle')
+        print(access_token.token)
+    print(pickle_file)
 
-email_list = [
-    "from:carolyn@profastening.net subject:'Invoice'", 
-    "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
-    "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
-    "amy@profastening.net subject:'Invoice'",
-    "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
-    "lia@stevensoncrane.com subject:'invoice'"
-    ]
+    email_list = [
+        "from:carolyn@profastening.net subject:'Invoice'", 
+        "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
+        "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
+        "amy@profastening.net subject:'Invoice'",
+        "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
+        "lia@stevensoncrane.com subject:'invoice'"
+        ]
 
-# Asks how many days back to check
-desired_date = simpledialog.askinteger("Desired Dates", "How many days into the past do you want to select emails?")
-print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
-query_date = datetime.now() - timedelta(days=desired_date)  # Using the desired_date variable instead of fixed 7
-query_date_str = query_date.strftime('%Y-%m-%d')
+    # Asks how many days back to check
+    desired_date = simpledialog.askinteger("Desired Dates", "How many days into the past do you want to select emails?")
+    print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
+    query_date = datetime.now() - timedelta(days=desired_date)  # Using the desired_date variable instead of fixed 7
+    query_date_str = query_date.strftime('%Y-%m-%d')
 
-# Define the watch reuest body
-request = {
-    'labelIds': ['INBOX'],
-    'topicName': 'projects/gmail-project-394016/topics/Base_Topic',
-    'labelFilterBehavior': 'INCLUDE'
-}
-# Set up the watch
-watch_response = service.users().watch(userId='me', body=request).execute()
+    # Define the watch reuest body
+    request = {
+        'labelIds': ['INBOX'],
+        'topicName': 'projects/gmail-project-394016/topics/Base_Topic',
+        'labelFilterBehavior': 'INCLUDE'
+    }
+    # Set up the watch
+    watch_response = service.users().watch(userId='me', body=request).execute()
 
-# Print the response
-print('Watch response:', watch_response)
+    # Print the response
+    print('Watch response:', watch_response)
 
-# app = Flask(__name__)
-
-
-# @app.route('/', methods=['GET'])
-# def home():
-#     return 'Server is running!'
+    # app = Flask(__name__)
 
 
-# @app.route('/subscribe', methods=['POST'])
-# def subscribe():
-#     print('hw')
-#     watch_payload = {
-#         "topicName": "projects/gmail-project-394016/topics/Base_Topic",
-#         "labelIds": ["INBOX"],
-#         "labelFilterBehavior": "INCLUDE"
-#     }
-    
-#     headers = {
-#         "Authorization": f"Bearer {access_token}",
-#         "Content-Type": "application/json"
-#     }
-    
-#     response = requests.post(
-#         "https://www.googleapis.com/gmail/v1/users/me/watch",
-#         json=watch_payload,
-#         headers=headers
-#     )
-    
-#     if response.status_code == 200:
-#         return "Subscribed to Gmail notifications."
-#     else:
-#         return f"Failed to subscribe. Error: {response.text}", 400
+    # @app.route('/', methods=['GET'])
+    # def home():
+    #     return 'Server is running!'
 
 
-# @app.route('/notification', methods=['POST'])
-# def notification():
-#     try:
-#         notification_data = request.json  # Assuming Gmail sends JSON notifications
-#         resource_state = notification_data['message']['data']['emailHistoryId']  # Extract the resource state
-#         print(f'Received notification with resource state: {resource_state}')
-
-#         if resource_state == 'exists':
-#             # Fetch email details using historyId or message.id
-#             history_id = notification_data['historyId']  # Extract the historyId
-#             message_id = notification_data['message']['data']['message']['id']  # Extract the message ID
-
-#             # Use historyId or message_id to fetch email details using Gmail API
-#             # Implement your logic to process the email here
-#             # ...
-
-#             print(f'Processing email with historyId: {history_id} and message ID: {message_id}')
-#         else:
-#             print('Received notification for resource state other than "exists"')
-
-#         return 'OK', 200
-#     except Exception as e:
-#         print(f'An error occurred: {e}')
-#         return 'Error', 500
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
-
-check_unread = messagebox.askyesno("Check Unread?", "Would you like to only check the unread emails after your search date?")
-
-read_list = []
-smaller_list = []
-
-for email_query in email_list:
-    if check_unread:
-        query = f"is:unread {email_query} after:{query_date_str}"
-    else:
-        query = f"{email_query} after:{query_date_str}"
-    print(email_query)
-    try:
-        response = service.users().messages().list(userId=user_email, q=query).execute()
-        messages = response.get('messages', [])
-        all_attachments = []
-        for message in messages:
-            msg_id = message['id']
-            attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date)
-
-            subject = get_subject_from_message(service, user_email, msg_id)  # Get the subject of the message
-
-            if attachments:
-                all_attachments.extend(attachments)
-                smaller_list.append({'id': subject})  # Append subject instead of ID
-                mark_as_read(service, user_email, msg_id)
-            print(attachments)
-
-            
+    # @app.route('/subscribe', methods=['POST'])
+    # def subscribe():
+    #     print('hw')
+    #     watch_payload = {
+    #         "topicName": "projects/gmail-project-394016/topics/Base_Topic",
+    #         "labelIds": ["INBOX"],
+    #         "labelFilterBehavior": "INCLUDE"
+    #     }
+        
+    #     headers = {
+    #         "Authorization": f"Bearer {access_token}",
+    #         "Content-Type": "application/json"
+    #     }
+        
+    #     response = requests.post(
+    #         "https://www.googleapis.com/gmail/v1/users/me/watch",
+    #         json=watch_payload,
+    #         headers=headers
+    #     )
+        
+    #     if response.status_code == 200:
+    #         return "Subscribed to Gmail notifications."
+    #     else:
+    #         return f"Failed to subscribe. Error: {response.text}", 400
 
 
-        sleep(1)
-        if print_status:
-            for attachment in all_attachments:
-                print_file_with_ghostscript(attachment)
-    except Exception as e:
-        print('An error occurred: %s' % e)
-    print(f"read list: {read_list}")
-    print(f"smaller list: {smaller_list}")
+    # @app.route('/notification', methods=['POST'])
+    # def notification():
+    #     try:
+    #         notification_data = request.json  # Assuming Gmail sends JSON notifications
+    #         resource_state = notification_data['message']['data']['emailHistoryId']  # Extract the resource state
+    #         print(f'Received notification with resource state: {resource_state}')
+
+    #         if resource_state == 'exists':
+    #             # Fetch email details using historyId or message.id
+    #             history_id = notification_data['historyId']  # Extract the historyId
+    #             message_id = notification_data['message']['data']['message']['id']  # Extract the message ID
+
+    #             # Use historyId or message_id to fetch email details using Gmail API
+    #             # Implement your logic to process the email here
+    #             # ...
+
+    #             print(f'Processing email with historyId: {history_id} and message ID: {message_id}')
+    #         else:
+    #             print('Received notification for resource state other than "exists"')
+
+    #         return 'OK', 200
+    #     except Exception as e:
+    #         print(f'An error occurred: {e}')
+    #         return 'Error', 500
+
+    # if __name__ == '__main__':
+    #     app.run(debug=True)
+
+    check_unread = messagebox.askyesno("Check Unread?", "Would you like to only check the unread emails after your search date?")
+
+    read_list = []
+    smaller_list = []
+
+    for email_query in email_list:
+        if check_unread:
+            query = f"is:unread {email_query} after:{query_date_str}"
+        else:
+            query = f"{email_query} after:{query_date_str}"
+        print(email_query)
+        try:
+            response = service.users().messages().list(userId=user_email, q=query).execute()
+            messages = response.get('messages', [])
+            all_attachments = []
+            for message in messages:
+                msg_id = message['id']
+                attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date)
+
+                subject = get_subject_from_message(service, user_email, msg_id)  # Get the subject of the message
+
+                if attachments:
+                    all_attachments.extend(attachments)
+                    smaller_list.append({'id': subject})  # Append subject instead of ID
+                    mark_as_read(service, user_email, msg_id)
+                print(attachments)
+
+                
 
 
-# def main():
-#     # ... (Your existing code for authentication and obtaining the service object)
-#     service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
+            sleep(1)
+            if print_status:
+                for attachment in all_attachments:
+                    print_file_with_ghostscript(attachment)
+        except Exception as e:
+            print('An error occurred: %s' % e)
+        print(f"read list: {read_list}")
+        print(f"smaller list: {smaller_list}")
 
-#     user_email = "wbrroof@gmail.com"  # Replace with the email address you want to fetch messages from
-#     store_directory = r"C:\Users\Michael\Desktop\python-work\Invoices"
 
-#     today = datetime.utcnow().date()
-#     start_of_today = datetime.combine(today, time.min)
-#     start_of_tomorrow = start_of_today + timedelta(days=1)
+    # def main():
+    #     # ... (Your existing code for authentication and obtaining the service object)
+    #     service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 
-#     start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
-#     start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
+    #     user_email = "wbrroof@gmail.com"  # Replace with the email address you want to fetch messages from
+    #     store_directory = r"C:\Users\Michael\Desktop\python-work\Invoices"
 
-#     query_list = [
-#         "from:carolyn@profastening.net subject:'Invoice'",
-#         "from:Sales@gemcoroofingsupply.com subject:'Invoice'",
-#         "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
-#         "from:wbrroof@aol.com"
-#     ]
+    #     today = datetime.utcnow().date()
+    #     start_of_today = datetime.combine(today, time.min)
+    #     start_of_tomorrow = start_of_today + timedelta(days=1)
 
-#     print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
+    #     start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
+    #     start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
 
-#     for query in query_list:
-#         try:
-#             response = service.users().messages().list(userId=user_email, q=query).execute()
-#             messages = response.get('messages', [])
-#             all_attachments = []
-#             for message in messages:
-#                 msg_id = message['id']
-#                 attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice")
-#                 if attachments:
-#                     all_attachments.extend(attachments)
-#                 print(attachments)
+    #     query_list = [
+    #         "from:carolyn@profastening.net subject:'Invoice'",
+    #         "from:Sales@gemcoroofingsupply.com subject:'Invoice'",
+    #         "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
+    #         "from:wbrroof@aol.com"
+    #     ]
 
-#             sleep(1)
-#             if print_status:
-#                 for attachment in all_attachments:
-#                     print_file_with_ghostscript(attachment)
-#         except Exception as e:
-#             print('An error occurred: %s' % e)
+    #     print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
 
-# if __name__ == "__main__":
-#     main()
-# recipient_email = "throwod@gmail.com"  # Replace with the recipient's email address
-# message_subject = "Testing Gmail API"
-# message_text = "Bruh, this is a message sent via the Gmail API! Let's go!"
+    #     for query in query_list:
+    #         try:
+    #             response = service.users().messages().list(userId=user_email, q=query).execute()
+    #             messages = response.get('messages', [])
+    #             all_attachments = []
+    #             for message in messages:
+    #                 msg_id = message['id']
+    #                 attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice")
+    #                 if attachments:
+    #                     all_attachments.extend(attachments)
+    #                 print(attachments)
 
-# message = create_message(user_email, recipient_email, message_subject, message_text)
-# if message:
-#     send_message(service, user_email, message)
+    #             sleep(1)
+    #             if print_status:
+    #                 for attachment in all_attachments:
+    #                     print_file_with_ghostscript(attachment)
+    #         except Exception as e:
+    #             print('An error occurred: %s' % e)
+
+    # if __name__ == "__main__":
+    #     main()
+    # recipient_email = "throwod@gmail.com"  # Replace with the recipient's email address
+    # message_subject = "Testing Gmail API"
+    # message_text = "Bruh, this is a message sent via the Gmail API! Let's go!"
+
+    # message = create_message(user_email, recipient_email, message_subject, message_text)
+    # if message:
+    #     send_message(service, user_email, message)

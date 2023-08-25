@@ -23,12 +23,9 @@ from pywinauto import Desktop, Application
 
 import shutil
 
-CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
-API_NAME = 'gmail'
-API_VERSION = 'v1'
-SCOPES = ['https://www.googleapis.com/auth/gmail.send', 'https://www.googleapis.com/auth/gmail.modify', 'https://www.googleapis.com/auth/gmail.readonly']
 
 def create_message(sender, to, subject, message_text):
+
   message = MIMEText(message_text)
   message['to'] = to
   message['from'] = sender
@@ -288,171 +285,175 @@ def print_pdfs_from_folder(folder_path):
 
 
 
+if __name__ == "__main__":
+    CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
+    API_NAME = 'gmail'
+    API_VERSION = 'v1'
+    SCOPES = ['https://www.googleapis.com/auth/gmail.send', 'https://www.googleapis.com/auth/gmail.modify', 'https://www.googleapis.com/auth/gmail.readonly']
+    service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
+    user_email = "wbrroof@gmail.com"  # Replace with the email address you want to send the message from
+    store_directory = r"C:\Users\Michael\Desktop\python-work\repair_photos"
 
-service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
-user_email = "wbrroof@gmail.com"  # Replace with the email address you want to send the message from
-store_directory = r"C:\Users\Michael\Desktop\python-work\repair_photos"
-
-print('repair photos')
-# Tells how many days back to check
-desired_date = simpledialog.askinteger("Desired Dates", "How many days into the past do you want to select emails?")
-check_unread = messagebox.askyesno("Check Unread?", "Would you like to only check the unread emails after your search date?")
-
-
-today = datetime.utcnow().date()
-start_of_today = datetime.combine(today, time.min)
-start_of_tomorrow = start_of_today + timedelta(days=1)
-
-start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
-start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
-
-# def list_labels(service, user_id):
-#     try:
-#         response = service.users().labels().list(userId=user_id).execute()
-#         labels = response.get('labels', [])
-#         return labels
-#     except Exception as e:
-#         print(f'An error occurred: {e}')
-#         return None
-
-# # Usage example:
-# user_email = "wbrroof@gmail.com"
-# labels = list_labels(service, user_email)
-# for label in labels:
-#     print(label['name'], label['id'])
+    print('repair photos')
+    # Tells how many days back to check
+    desired_date = simpledialog.askinteger("Desired Dates", "How many days into the past do you want to select emails?")
+    check_unread = messagebox.askyesno("Check Unread?", "Would you like to only check the unread emails after your search date?")
 
 
-email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com"]  # List of email addresses
+    today = datetime.utcnow().date()
+    start_of_today = datetime.combine(today, time.min)
+    start_of_tomorrow = start_of_today + timedelta(days=1)
+
+    start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
+    start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
+
+    # def list_labels(service, user_id):
+    #     try:
+    #         response = service.users().labels().list(userId=user_id).execute()
+    #         labels = response.get('labels', [])
+    #         return labels
+    #     except Exception as e:
+    #         print(f'An error occurred: {e}')
+    #         return None
+
+    # # Usage example:
+    # user_email = "wbrroof@gmail.com"
+    # labels = list_labels(service, user_email)
+    # for label in labels:
+    #     print(label['name'], label['id'])
 
 
-email_to_label_mapping = {
-    "oblivion969.dm@gmail.com": "Label_7", # PICS-JR - Dave Myers
-    "fespitia76@gmail.com": "Label_6",     # PICS-Frank Espitia
-    "mmblidy92@gmail.com": "Label_8",      # PICS-Mike Blidy
-    "tawormley@aol.com": "Label_9",        # PICS-Troy
-    "edinc99@gmail.com": "Label_11",       # Time Sheets - Expenses
-    # Add more mappings if needed
-}
+    email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com"]  # List of email addresses
 
 
-# print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
+    email_to_label_mapping = {
+        "oblivion969.dm@gmail.com": "Label_7", # PICS-JR - Dave Myers
+        "fespitia76@gmail.com": "Label_6",     # PICS-Frank Espitia
+        "mmblidy92@gmail.com": "Label_8",      # PICS-Mike Blidy
+        "tawormley@aol.com": "Label_9",        # PICS-Troy
+        "edinc99@gmail.com": "Label_11",       # Time Sheets - Expenses
+        # Add more mappings if needed
+    }
 
-for email_address in email_addresses:
-    query_date = datetime.now() - timedelta(days=desired_date)  # Using the desired_date variable instead of fixed 7
-    query_date_str = query_date.strftime('%Y-%m-%d')
 
-    if check_unread:
-        query = f"is:unread from:{email_address} after:{query_date_str}"
-    else:
-        query = f"from:{email_address} after:{query_date_str}"
+    # print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
+
+    for email_address in email_addresses:
+        query_date = datetime.now() - timedelta(days=desired_date)  # Using the desired_date variable instead of fixed 7
+        query_date_str = query_date.strftime('%Y-%m-%d')
+
+        if check_unread:
+            query = f"is:unread from:{email_address} after:{query_date_str}"
+        else:
+            query = f"from:{email_address} after:{query_date_str}"
+            
+
+        try:
+            response = service.users().messages().list(userId=user_email, q=query).execute()
+            
+            messages = response.get('messages', [])
+            all_attachments = []
+            for message in messages:
+                
+                msg_id = message['id']
+                msg = service.users().messages().get(userId=user_email, id=msg_id).execute()
+                subject = [header['value'] for header in msg['payload']['headers'] if header['name'] == 'Subject'][0]
+                attachments = download_attachments(service, user_email, msg_id, store_directory, email_address, desired_date)
+                
+                label_id_to_add = email_to_label_mapping[email_address]
+
+                if attachments:
+                    all_attachments.extend(attachments)
+                
+                # Check if subject contains special terms
+                if any(term in subject.lower() for term in ['time', 'expense', 'fwd']):
+                    label_id_to_add = 'Label_11'  # Replace with appropriate label ID
+                
+                mark_as_read(service, user_email, msg_id)
+
+            # Modify labels for the message
+                # if 'special_word' in subject:
+                    # label_id_to_add = 'special_label_id'
+                # else:
+                    # label_id_to_add = 'regular_label_id_for_' + email_address  # You should define these label IDs
+
+                service.users().messages().modify(
+                    userId=user_email,
+                    id=msg_id,
+                    body={'addLabelIds': [label_id_to_add]}
+                ).execute()
+
+            sleep(1)
+            # if print_status:
+            #     for attachment in all_attachments:
+            #         print_file_with_ghostscript(attachment)
+        except Exception as e:
+            print('An error occurred: %s' % e)
+    # TODO: I'd like to add some printing properties here but it looks like I'm going to need to figure out how to do a right click
+    print_status = messagebox.askyesno("Confirmation", "Do you want to print?")
+    if print_status:
+
+        print_folder1 = r"C:\Users\Michael\Desktop\python-work\repair_photos"
+        print_folder2 = r"C:\Users\Michael\Desktop\python-work\time_sheets"
         
+        print_folders = [print_folder1, print_folder2]
 
-    try:
-        response = service.users().messages().list(userId=user_email, q=query).execute()
-        
-        messages = response.get('messages', [])
-        all_attachments = []
-        for message in messages:
-            
-            msg_id = message['id']
-            msg = service.users().messages().get(userId=user_email, id=msg_id).execute()
-            subject = [header['value'] for header in msg['payload']['headers'] if header['name'] == 'Subject'][0]
-            attachments = download_attachments(service, user_email, msg_id, store_directory, email_address, desired_date)
-            
-            label_id_to_add = email_to_label_mapping[email_address]
+        for folder in print_folders:
+            subfolders = [os.path.join(folder, subfolder) for subfolder in os.listdir(folder) if os.path.isdir(os.path.join(folder, subfolder))]
 
-            if attachments:
-                all_attachments.extend(attachments)
-            
-             # Check if subject contains special terms
-            if any(term in subject.lower() for term in ['time', 'expense', 'fwd']):
-                label_id_to_add = 'Label_11'  # Replace with appropriate label ID
-            
-            mark_as_read(service, user_email, msg_id)
-
-        # Modify labels for the message
-            # if 'special_word' in subject:
-                # label_id_to_add = 'special_label_id'
-            # else:
-                # label_id_to_add = 'regular_label_id_for_' + email_address  # You should define these label IDs
-
-            service.users().messages().modify(
-                userId=user_email,
-                id=msg_id,
-                body={'addLabelIds': [label_id_to_add]}
-            ).execute()
-
-        sleep(1)
-        # if print_status:
-        #     for attachment in all_attachments:
-        #         print_file_with_ghostscript(attachment)
-    except Exception as e:
-        print('An error occurred: %s' % e)
-# TODO: I'd like to add some printing properties here but it looks like I'm going to need to figure out how to do a right click
-print_status = messagebox.askyesno("Confirmation", "Do you want to print?")
-if print_status:
-
-    print_folder1 = r"C:\Users\Michael\Desktop\python-work\repair_photos"
-    print_folder2 = r"C:\Users\Michael\Desktop\python-work\time_sheets"
-    
-    print_folders = [print_folder1, print_folder2]
-
-    for folder in print_folders:
-        subfolders = [os.path.join(folder, subfolder) for subfolder in os.listdir(folder) if os.path.isdir(os.path.join(folder, subfolder))]
-
-        sleep(5)
-        # if only pdfs
-        for subfolder in subfolders:
-            if only_pdfs_in_folder(subfolder):
-                print_pdfs_from_folder(subfolder)
-                # Branch for subfolders with only .pdf files
-                print("This subfolder only contains .pdf files:", subfolder)
-                # Add your desired logic for when the subfolder only contains .pdf files here 
-        print_items = os.listdir(folder)
-        subprocess.run(['explorer', os.path.realpath(folder)])
-        sleep(2)
-        # Selects the first item in the list
-        press('home')
-        sleep(.2)
-        press('down')
-        sleep(.2)
-        press('up')
-        sleep(1)
-        for item in print_items:
-            sleep(1)
-            press('enter')
-            sleep(1)
-            press('0')
-            sleep(3)
-            hotkey('shift', 'F10')
-            sleep(1)
-            press('p')
             sleep(5)
-            hotkey('shift', 'F10')
-            sleep(3)
-            press('d')
-            sleep(3)
-            hotkey('ctrl', 'a')
+            # if only pdfs
+            for subfolder in subfolders:
+                if only_pdfs_in_folder(subfolder):
+                    print_pdfs_from_folder(subfolder)
+                    # Branch for subfolders with only .pdf files
+                    print("This subfolder only contains .pdf files:", subfolder)
+                    # Add your desired logic for when the subfolder only contains .pdf files here 
+            print_items = os.listdir(folder)
+            subprocess.run(['explorer', os.path.realpath(folder)])
             sleep(2)
-            hotkey('shift', 'F10')
-            sleep(2)
-            press('p')
-            sleep(3)
-            press('tab', presses=5)
-            sleep(2)
-            if folder is print_folder1:
-                press('down', presses=6)
-            sleep(2)
-            press('enter')
-            sleep(10)
-            if folder is print_folder2:
-                sleep(10)
-            hotkey('alt', 'left')
-            sleep(3)
+            # Selects the first item in the list
+            press('home')
+            sleep(.2)
             press('down')
-            sleep(2)
-print("download_repair_photos.py is complete.")
+            sleep(.2)
+            press('up')
+            sleep(1)
+            for item in print_items:
+                sleep(1)
+                press('enter')
+                sleep(1)
+                press('0')
+                sleep(3)
+                hotkey('shift', 'F10')
+                sleep(1)
+                press('p')
+                sleep(5)
+                hotkey('shift', 'F10')
+                sleep(3)
+                press('d')
+                sleep(3)
+                hotkey('ctrl', 'a')
+                sleep(2)
+                hotkey('shift', 'F10')
+                sleep(2)
+                press('p')
+                sleep(3)
+                press('tab', presses=5)
+                sleep(2)
+                if folder is print_folder1:
+                    press('down', presses=6)
+                sleep(2)
+                press('enter')
+                sleep(10)
+                if folder is print_folder2:
+                    sleep(10)
+                hotkey('alt', 'left')
+                sleep(3)
+                press('down')
+                sleep(2)
+    print("download_repair_photos.py is complete.")
 
 
-    
+        
 
