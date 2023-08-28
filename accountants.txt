@@ -1,6 +1,1 @@
 These need to be added to the recipients list
-'Ott':'throwod@gmail.com'
-'Ott':'kate@ottdevelopment.com'
-'R.':'nickc@rcarlsonandsons.com'
-'41':'amy.hillgamyer@41northcontractors.com'
-'41':'amy.hillgamyer@41northcontractors.com'

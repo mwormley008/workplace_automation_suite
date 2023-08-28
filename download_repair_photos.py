@@ -336,7 +336,7 @@ if __name__ == "__main__":
     }
 
 
-    # print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
+    print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
 
     for email_address in email_addresses:
         query_date = datetime.now() - timedelta(days=desired_date)  # Using the desired_date variable instead of fixed 7
