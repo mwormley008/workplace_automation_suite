@@ -109,7 +109,7 @@ for filename in os.listdir(folder_path):
             img = cv2.imread('out.jpg')
             # print(f"Content on {ocr_core(img)}")
             content, inv_text, amt_text = ocr_core(img)
-            print(inv_text, amt_text)
+            print(content, amt_text)
             
 
             # Finds the vendor
@@ -127,6 +127,9 @@ for filename in os.listdir(folder_path):
             elif content.startswith("Stevenson Crane Service"):
                 print("Vendor: Stevenson Crane")
                 vendor = "Stevenson Crane"
+            elif "BEACON" in content:
+                vendor = "Beacon"
+                print(f"Vendor: {vendor}")
 
             if vendor == "Gemco":
                 ## Finds the invoice number and checks for uniqueness
@@ -248,7 +251,67 @@ for filename in os.listdir(folder_path):
 
                 else:
                     print("No 'unique invoice number' found")
+            # elif vendor == "Beacon":
+                ## TODO: still gotta work on finding the total
+                ## Finds the invoice number and checks for uniqueness
+                inv_number_pattern = r'([A-Z]+\d+)'
+                inv_date_pattern = r'INVOICE DATE (\d{2}/\d{2}/\d{2})'
 
+
+                # inv_pattern2 = r'office (\d+-?\d*)'
+                # page_pattern = r"page\s(\d+)\sof\s([2-9])"
+
+                inv_number_match = re.search(inv_number_pattern, inv_text)
+                inv_date_match = re.search(inv_date_pattern, inv_text)
+                if inv_number_match:
+                    invoice_number = inv_number_match.group(1)
+                    print("Invoice Number:", invoice_number)
+                else:
+                    print("Invoice number not found in the text")
+                    
+                if inv_date_match:
+                    invoice_date = inv_date_match.group(1)
+                    print("Invoice Date:", invoice_date)
+                else:
+                    print("Invoice date not found in the text")
+                if invoice_number not in unique_invoices:
+                    invoice_counter += 1
+                    unique_invoices.append(invoice_no)
+                    ws[f'A{invoice_counter}'] = 'Beacon'
+                    ws[f'B{invoice_counter}'] = f'{invoice_date}'
+                    ws[f'C{invoice_counter}'] = f'{invoice_number}'
+
+                    ## Finds the invoice amount due
+                    decimal_pattern = r'(\d+(\.\d*)?)'
+                                        
+                    total_match = re.search(decimal_pattern, content)
+                    line_of_text = "1597.50 127.80 .00 230.78 1956.08"
+
+                    # Define a pattern to match five decimal numbers separated by spaces
+
+                    # Find all matches of the decimal pattern in the line
+                    matches = re.findall(decimal_pattern, content)
+
+                    # Filter and extract the valid decimal numbers
+                    decimal_numbers = [match[0] for match in matches if match[0]]
+
+                    if len(decimal_numbers) == 5:
+                        print("All five decimal numbers:", decimal_numbers)
+                    else:
+                        print("The line does not match the pattern for five decimal numbers.")
+                    if total_match:
+                        # If a match was found, 'group(1)' contains the first parenthesized subgroup - the balance amount.
+                        decimal_numbers = total_match.groups()
+                        print(decimal_numbers)
+                        balance_amount =  total_match.replace(' :', ',')
+                        balance_amount = balance_amount.replace(":", ",")
+                        print(f"Found 'balance amount': ${balance_amount}")
+                        ws[f'D{invoice_counter}'].value = balance_amount
+                    else:
+                        print("No 'balance amount' found")
+
+                else:
+                    print("No 'unique invoice number' found")
             elif vendor == "Sheet Metal Supply":
                 ## Finds the invoice number and checks for uniqueness
                 inv_pattern = r'DATE INVOICE #\n([01]?\d/[0123]?\d/\d{4}) (\d{6}|\d+-\d{2})'
