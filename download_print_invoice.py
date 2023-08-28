@@ -248,7 +248,8 @@ if __name__ =="__main__":
         "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
         "amy@profastening.net subject:'Invoice'",
         "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
-        "lia@stevensoncrane.com subject:'invoice'"
+        "lia@stevensoncrane.com subject:'invoice'",
+        "customercareBT@becn.com subject: 'invoice'",
         ]
 
     # Asks how many days back to check
