@@ -251,7 +251,7 @@ for filename in os.listdir(folder_path):
 
                 else:
                     print("No 'unique invoice number' found")
-            # elif vendor == "Beacon":
+            elif vendor == "Beacon":
                 ## TODO: still gotta work on finding the total
                 ## Finds the invoice number and checks for uniqueness
                 inv_number_pattern = r'([A-Z]+\d+)'
@@ -282,28 +282,29 @@ for filename in os.listdir(folder_path):
                     ws[f'C{invoice_counter}'] = f'{invoice_number}'
 
                     ## Finds the invoice amount due
-                    decimal_pattern = r'(\d+(\.\d*)?)'
+                    decimal_pattern = r'(?:\d*\.\d{2}\s*){5}'
                                         
                     total_match = re.search(decimal_pattern, content)
+                    print(total_match)
                     line_of_text = "1597.50 127.80 .00 230.78 1956.08"
+                    total_match = re.search(decimal_pattern, line_of_text)
 
                     # Define a pattern to match five decimal numbers separated by spaces
 
                     # Find all matches of the decimal pattern in the line
                     matches = re.findall(decimal_pattern, content)
-
-                    # Filter and extract the valid decimal numbers
-                    decimal_numbers = [match[0] for match in matches if match[0]]
-
-                    if len(decimal_numbers) == 5:
-                        print("All five decimal numbers:", decimal_numbers)
-                    else:
-                        print("The line does not match the pattern for five decimal numbers.")
+                    print(total_match)
+                   
                     if total_match:
                         # If a match was found, 'group(1)' contains the first parenthesized subgroup - the balance amount.
-                        decimal_numbers = total_match.groups()
-                        print(decimal_numbers)
-                        balance_amount =  total_match.replace(' :', ',')
+                        
+                        balance_amount =  total_match.group(0).replace(' :', ',')
+                        balance_amount = balance_amount.replace(":", ",")
+                        balance_amount = balance_amount.split()[-1]
+                        print(f"Found 'balance amount': ${balance_amount}")
+                        ws[f'D{invoice_counter}'].value = balance_amount
+                    elif total_match2:
+                        balance_amount =  total_match2.group(1).replace(' :', ',')
                         balance_amount = balance_amount.replace(":", ",")
                         print(f"Found 'balance amount': ${balance_amount}")
                         ws[f'D{invoice_counter}'].value = balance_amount
@@ -410,7 +411,6 @@ for filename in os.listdir(folder_path):
 
                 else:
                     print("No 'unique invoice number' found")
-
             
     else:
         continue

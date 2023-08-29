@@ -87,7 +87,7 @@ scan_window, wbr_window = find_scan_and_email_windows()
 
 mail_contacts = {
     'Novak':'DCaporale@novakconstruction.com', 
-    'Valenti':'Melissa.Sanson@valentibuilders.com', 
+    'Valenti':'billings@valentibuilders.com', 
     'Hanna':'mrosales@hannadesigngroup.com',
     'G&H':'theresa@nationalplazas.com',
     'Builtech':'dwiniarz@builtechllc.com',
