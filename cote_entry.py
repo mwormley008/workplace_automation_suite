@@ -35,14 +35,20 @@ first_row_skipped = False
 
 # List to store row numbers with a cell value
 
-column_values = {"A":"PO", "B":"Cost", "C":"Lakes of Boulder Ridge", "D":"Ponds of Stoney Creek"}
+column_values = {"A":"PO", 
+                 "B":"Cost", 
+                 "C":"Lakes of Boulder Ridge", 
+                 "D":"Ponds of Stoney Creek",
+                 "E": "Fox Pointe",
+                 "F": "Keyton Farms",
+}
 jobs = []
 
 qb_window.activate()
 sleep(1)
 # Replace 'A' with the column letter you want to check (e.g., 'B', 'C', 'D', etc.)
 
-for row in ws.iter_rows(min_col=3, max_col=4):
+for row in ws.iter_rows(min_col=3, max_col=6):
     # Skip the first row (header row)
     if not first_row_skipped:
         first_row_skipped = True
@@ -58,20 +64,24 @@ for row in ws.iter_rows(min_col=3, max_col=4):
 qb_window.activate()
 sleep(1)
 
+# From the memorized transaction list, this creates a cote inv
 for i, j in enumerate(jobs):
     hotkey('alt', 't')
     print(j)
     sleep(1)
     hotkey('alt','j')
     sleep(1)
+    # Writes the job name
     write(f"Tim Cote Inc.:{column_values[jobs[i]]}")
     sleep(2)
+    # all of these tabs move us to the PO number
     press('tab')
     sleep(1)
     pyautogui.press('tab', presses=2)
     sleep(2)
     pyautogui.press('tab', presses=4)
     sleep(2)
+    # Writes the PO number
     write(str(ws['A'+str(i+2)].value))
     sleep(1)
     pyautogui.press('tab', presses=3)

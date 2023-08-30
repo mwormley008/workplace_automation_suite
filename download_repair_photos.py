@@ -307,20 +307,6 @@ if __name__ == "__main__":
     start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
     start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
 
-    # def list_labels(service, user_id):
-    #     try:
-    #         response = service.users().labels().list(userId=user_id).execute()
-    #         labels = response.get('labels', [])
-    #         return labels
-    #     except Exception as e:
-    #         print(f'An error occurred: {e}')
-    #         return None
-
-    # # Usage example:
-    # user_email = "wbrroof@gmail.com"
-    # labels = list_labels(service, user_email)
-    # for label in labels:
-    #     print(label['name'], label['id'])
 
 
     email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com"]  # List of email addresses
