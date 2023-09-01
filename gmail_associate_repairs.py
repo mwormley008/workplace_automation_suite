@@ -210,10 +210,10 @@ def forward_combined_email(service, user_email, original_to_email, original_subj
 
     Please see attached photos, thank you.
 
-    Your Name
-    Company
-    O: 123-456-7890
-    email@email.com
+    Michael Wormley
+    WBR Roofing
+    ​O: 847-487-8787​
+    ​wbrroof@aol.com
     """
     mime_msg.attach(MIMEText(body_text, 'plain'))
     
