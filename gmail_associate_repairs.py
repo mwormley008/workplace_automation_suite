@@ -23,9 +23,9 @@ def display_emails(emails):
     selected_emails = []
     repairmen = ["Frank E", "Jr.", "Mike Blidy"]
     email_to_label_mapping = {
-                "Jr.": "Label_7", # PICS-JR - Dave Myers
+                "Jr.": "pics-jr---dave-myers", # PICS-JR - Dave Myers
                 "Frank E": "pics-frank-espitia",     # PICS-Frank Espitia
-                "Mike Blidy": "Label_8",      # PICS-Mike Blidy
+                "Mike Blidy": "pics-mike-blidy",      # PICS-Mike Blidy
                 # Add more mappings if needed
             }
 
@@ -43,75 +43,80 @@ def display_emails(emails):
         selected_emails.append((var, email))
 
     def on_submit():
+        def create_on_repairman_submit_function(email_id, email_to, email_subject, repairman_window):
+            def on_repairman_submit():
+                selected_repairman = repairman_var.get()
+                keyword = keyword_entry.get()
+
+                print(f"Selected Repairman: {selected_repairman}")
+                print(f"Keyword: {keyword}")
+
+                label_id = email_to_label_mapping[selected_repairman]
+
+                repairman_emails = fetch_repairman_emails(service, 'me', label_id, keyword)
+                print(repairman_emails)
+
+                # If no emails are found, maybe inform the user
+                if not repairman_emails:
+                    tk.messagebox.showinfo("Info", "No emails found for the given criteria.")
+                    return
+
+                display_repairman_emails(repairman_emails, email_id, email_to, email_subject)
+                repairman_window.destroy()
+
+            return on_repairman_submit
+
         selected_email_details = [(email['id'], email['to'], email['subject']) for var, email in selected_emails if var.get()]
 
         # If there are no selected emails, return early
         if not selected_email_details:
             return
 
-        # Assuming only one email is selected
-        selected_email_id, selected_email_to, selected_email_subject = selected_email_details[0]
-        # display_repairman_emails(selected_email_id, selected_email_to, selected_email_subject)
-
-
-        # Create a new window for selecting repairman and keyword
-        repairman_window = tk.Toplevel(root)
-        repairman_window.title("Select Repairman and Keyword")
-
-        # Radio buttons for repairman
-        repairman_var = tk.StringVar(value="")  # Default value as empty string
-        
-
-        tk.Label(repairman_window, text="Choose a repairman:").pack(pady=10)
-        for repairman in repairmen:
-            tk.Radiobutton(repairman_window, text=repairman, variable=repairman_var, value=repairman).pack(anchor=tk.W)
-
-        # Entry for keyword
-        tk.Label(repairman_window, text="Enter a keyword for the repair photo invoice:").pack(pady=10)
-        keyword_entry = ttk.Entry(repairman_window)
-        keyword_entry.pack(pady=5)
-
-        def on_repairman_submit():
-            selected_repairman = repairman_var.get()
-            keyword = keyword_entry.get()
-
-            print(f"Selected Repairman: {selected_repairman}")
-            print(f"Keyword: {keyword}")
-
-            label_id = email_to_label_mapping[selected_repairman]
+        # # Assuming only one email is selected
+        # selected_email_id, selected_email_to, selected_email_subject = selected_email_details[0]
+        # Process each email one-by-one
+        for email_id, email_to, email_subject in selected_email_details:
+            # Create a new window for selecting repairman and keyword
+            match = re.search(r"Invoice (\d+)", email_subject)
+            if match:
+                invoice_number = match.group(1)
+                new_subject = f"Invoice {invoice_number}"
             
-            repairman_emails = fetch_repairman_emails(service, 'me', label_id, keyword)
-            print(repairman_emails)
+            repairman_window = tk.Toplevel(root)
+            repairman_window.title(f"Select Repairman for {new_subject}")  # To give context to the user
+            # Set window size
+            repairman_window.geometry("400x300")
+            # Radio buttons for repairman
+            repairman_var = tk.StringVar(value="")  # Default value as empty string
+            tk.Label(repairman_window, text="Choose a repairman:").pack(pady=10)
+            for repairman in repairmen:
+                tk.Radiobutton(repairman_window, text=repairman, variable=repairman_var, value=repairman).pack(anchor=tk.W)
 
-            # If no emails are found, maybe inform the user
-            if not repairman_emails:
-                tk.messagebox.showinfo("Info", "No emails found for the given criteria.")
-                return
-
-            # If you want to forward the emails or process them further
-            # for email in repairman_emails:
-            # #     # If you have a forward_email function
-            #     forward_email(service, 'me', email['id'])  # replace desired_recipient_email with your actual recipient
+            # Entry for keyword
+            tk.Label(repairman_window, text="Enter a keyword for the repair photo invoice:").pack(pady=10)
+            keyword_entry = ttk.Entry(repairman_window)
+            keyword_entry.pack(pady=5)
             
-            # # # Provide feedback to the user
-            # tk.messagebox.showinfo("Success", f"{len(repairman_emails)} emails forwarded successfully!")
+            # Assuming you have a button or something to confirm the selection
+            # The loop will pause for each email until the user takes an action on the 'repairman_window' before moving to the next email
+            configured_on_repairman_submit = create_on_repairman_submit_function(email_id, email_to, email_subject, repairman_window)
+
+            btn = ttk.Button(repairman_window, text="Submit", command=configured_on_repairman_submit)
+            btn.pack(pady=5)
+            print("Button created and packed.")
 
             
-            # Close the repairman_window
-            repairman_window.destroy()
-
-            # display_repairman_emails(repairman_emails)
-            display_repairman_emails(repairman_emails, selected_email_id, selected_email_to, selected_email_subject)
+            repairman_window.wait_window()  # Waits for the repairman_window to close before processing the next email
 
 
-            # Submit button
-        ttk.Button(repairman_window, text="Submit", command=on_repairman_submit).pack(pady=10)
-
-
-
+      
+        # # Submit button
+        # ttk.Button(repairman_window, text="Submit", command=on_repairman_submit).pack(pady=10)
     # The submit button for the initial email selection window
     btn = ttk.Button(root, text="Submit", command=on_submit)
     btn.pack()
+    
+    # ttk.Button(root, text="Submit", command=on_repairman_submit).pack(pady=10)
 
     root.mainloop()
 
@@ -279,6 +284,41 @@ def display_repairman_emails(repairman_emails, original_email_id, original_email
     btn.pack()
     root.mainloop()
 
+def display_repairman_emails_and_associate(repairmain_emails, original_email_id, original_email_to, original_email_subject, root):
+    """I started working on this but I think it's currently abandoned"""
+    
+    # Create a new window for selecting repairman and keyword
+    repairman_window = tk.Toplevel()
+    repairman_window.title("Select Repairman and Keyword for " + original_email_subject)
+
+    # Display repairman emails for the user to select which email to forward to
+    repairman_email_list = repairmain_emails
+    repairman_email_vars = []
+    for email in repairman_email_list:
+        email_var = tk.BooleanVar(value=False)
+        repairman_email_vars.append(email_var)
+        tk.Checkbutton(repairman_window, text=email['subject'], variable=email_var).pack()
+
+    # Entry for the user to input keyword
+    tk.Label(repairman_window, text="Keyword:").pack(pady=(20, 5))
+    keyword_entry = tk.Entry(repairman_window)
+    keyword_entry.pack(pady=(0, 20))
+
+    def associate_and_forward():
+        # Here you would handle forwarding the original email to the selected repairman email addresses
+        for idx, email_var in enumerate(repairman_email_vars):
+            if email_var.get():
+                selected_repairman_email = repairman_email_list[idx]
+                # Use both the original_email_id and selected_repairman_email to handle forwarding
+                forward_email(original_email_id, selected_repairman_email, keyword_entry.get())
+        repairman_window.destroy()
+
+    tk.Button(repairman_window, text="Associate and Forward", command=associate_and_forward).pack()
+
+    # Make sure the repairman_window is modal, i.e., user has to close it before interacting with other windows
+    repairman_window.transient(repairman_window.master)
+    repairman_window.grab_set()
+    repairman_window.wait_window()
 if __name__ == "__main__":
     service = initialize_service()
     emails = fetch_quickbooks_emails(service, 'me')
