@@ -1,4 +1,4 @@
-from download_repair_photos import send_message, CLIENT_SECRET_FILE, SCOPES, API_NAME, API_VERSION
+from photos_timesheets import send_message, CLIENT_SECRET_FILE, SCOPES, API_NAME, API_VERSION
 from Google import Create_Service
 import base64
 from email.mime.text import MIMEText

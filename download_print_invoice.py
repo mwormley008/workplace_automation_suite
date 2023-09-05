@@ -1,6 +1,6 @@
 # trying to get this gmail thing going we'll see 
 from Google import Create_Service
-import base64, os, datetime, pickle, time, tkinter
+import base64, os, datetime, pickle, time, tkinter, shutil
 from time import sleep
 import win32print, subprocess
 from email.mime.multipart import MIMEMultipart
@@ -220,11 +220,28 @@ def mark_as_read(service, user_id, msg_id):
         print(f'An error occurred: {e}')
         return None
     
+def clear_directory(folder_path):
+    """
+    Deletes all files and subfolders in the given directory without deleting the directory itself.
+    """
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print(f"Failed to delete {file_path}. Reason: {e}")
+
+
+
 
 if __name__ =="__main__":
     service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
     user_email = "wbrroof@gmail.com"  # Replace with the email address you want to send the message from
     store_directory = r"C:\Users\Michael\Desktop\python-work\Invoices"
+    clear_directory(store_directory)
 
     print("print invoice")
     today = datetime.utcnow().date()

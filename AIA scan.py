@@ -22,7 +22,7 @@ from pyautogui import press, write, hotkey
 from time import sleep
 from pywinauto import Application
 
-from download_repair_photos import send_message
+from photos_timesheets import send_message
 
 from send_gmail import initialize_service, create_message, create_message_with_attachment, send_message, CLIENT_SECRET_FILE, SCOPES, API_NAME, API_VERSION
 

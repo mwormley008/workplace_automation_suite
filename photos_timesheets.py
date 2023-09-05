@@ -21,7 +21,7 @@ from pyautogui import press, write, hotkey
 
 from pywinauto import Desktop, Application
 
-import shutil
+import shutil, PyPDF2
 
 
 def create_message(sender, to, subject, message_text):
@@ -251,6 +251,33 @@ def print_file_with_ghostscript(filepath):
     except Exception as e:
         print(f"An error occurred while printing: {e}")
 
+def print_first_page_with_ghostscript(filepath):
+    ghostscript_path = r"C:\Program Files\gs\gs10.01.2\bin\gswin64c.exe"  # Replace with the path to Ghostscript executable
+    printer_name = win32print.GetDefaultPrinter()
+
+    if not os.path.exists(filepath):
+        print(f"File '{filepath}' does not exist.")
+        return
+
+    command = [
+        ghostscript_path,
+        "-dNOPAUSE",
+        "-dBATCH",
+        "-dPrinted",
+        f"-sDEVICE=mswinpr2",  # Use the Windows printer device
+        f"-sOutputFile=%printer%{printer_name}",
+        filepath,
+        "-dLastPage=1",
+        "-sPageList=1",
+    ]
+
+    try:
+        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        print(f"File '{filepath}' printed successfully.")
+        print(f'{command}')
+    except Exception as e:
+        print(f"An error occurred while printing: {e}")
+
 
 def only_pdfs_in_folder(folder):
     """
@@ -283,6 +310,66 @@ def print_pdfs_from_folder(folder_path):
     else:
         print(f"The folder '{folder_path}' contains non-PDF files. Skipping...")
 
+def print_first_pdfs_from_folder(folder_path):
+    # List all files in the directory
+    files = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+
+    # Check if all files are PDFs
+    if all(f.lower().endswith('.pdf') for f in files):
+        for pdf_file in files:
+            full_path = os.path.join(folder_path, pdf_file)
+            extract_first_page_and_overwrite(full_path)
+            print_first_page_with_ghostscript(full_path)
+            sleep(.5)
+            os.remove(full_path)  # Delete the PDF after printing
+            sleep(.5)
+        # Check if the folder is empty
+        if not os.listdir(folder_path):
+            try:
+                shutil.rmtree(folder_path)
+                print(f"Folder '{folder_path}' has been deleted.")
+            except Exception as e:
+                print(f"An error occurred while deleting the folder: {e}")
+        else:
+            print(f"Folder '{folder_path}' still contains some files. Not deleted.")
+    else:
+        print(f"The folder '{folder_path}' contains non-PDF files. Skipping...")
+
+def clear_directory(folder_path):
+    """
+    Deletes all files and subfolders in the given directory without deleting the directory itself.
+    """
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print(f"Failed to delete {file_path}. Reason: {e}")
+
+def extract_first_page_and_overwrite(source_pdf):
+    with open(source_pdf, 'rb') as src_file:
+        reader = PyPDF2.PdfReader(src_file)
+
+        if len(reader.pages) == 0:
+            print("The source PDF has no pages.")
+            return
+
+        writer = PyPDF2.PdfWriter()
+        writer.add_page(reader.pages[0])
+
+        # Temporarily store content
+        temp_data = writer
+
+    # Overwrite the source file
+    with open(source_pdf, 'wb') as out_file:
+        temp_data.write(out_file)
+
+    print(f"Overwritten {source_pdf} with just its first page.")
+
+
 CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
 API_NAME = 'gmail'
 API_VERSION = 'v1'
@@ -293,6 +380,9 @@ if __name__ == "__main__":
     service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
     user_email = "wbrroof@gmail.com"  # Replace with the email address you want to send the message from
     store_directory = r"C:\Users\Michael\Desktop\python-work\repair_photos"
+    timesheets_directory = r"C:\Users\Michael\Desktop\python-work\time_sheets"
+    clear_directory(store_directory)
+    clear_directory(timesheets_directory)
 
     print('repair photos')
     # Tells how many days back to check
@@ -322,7 +412,7 @@ if __name__ == "__main__":
     }
 
 
-    print_status = messagebox.askyesno("Confirmation", "Do you want to print matching invoices?")
+    print_status = messagebox.askyesno("Confirmation", "Do you want to print matching repair photos and time sheets?")
 
     for email_address in email_addresses:
         query_date = datetime.now() - timedelta(days=desired_date)  # Using the desired_date variable instead of fixed 7
@@ -368,6 +458,13 @@ if __name__ == "__main__":
                     id=msg_id,
                     body={'addLabelIds': [label_id_to_add]}
                 ).execute()
+
+                if email_address ==  "edinc99@gmail.com":
+                    path_to_print = (os.path.join(timesheets_directory, subject))
+                    path_to_print = path_to_print.replace('\\\\', '\\')
+                    print_first_pdfs_from_folder(path_to_print)
+                    sleep(.5)
+                    # print_first_pdfs_from_folder(os.path.join(store_directory, subject))
 
             sleep(1)
             # if print_status:

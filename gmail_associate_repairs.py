@@ -1,7 +1,7 @@
 # This is a program designed to associate sent quickbooks invoices with 
 # repair photo emails so that it can forward silently in the gmail api
 
-from download_repair_photos import send_message, CLIENT_SECRET_FILE, SCOPES, API_NAME, API_VERSION
+from photos_timesheets import send_message, CLIENT_SECRET_FILE, SCOPES, API_NAME, API_VERSION
 from Google import Create_Service
 import base64
 import re
