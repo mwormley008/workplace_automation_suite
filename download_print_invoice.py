@@ -13,6 +13,7 @@ from tkinter.filedialog import askopenfilename, Frame, Button
 
 from flask import Flask, request
 import requests
+from photos_timesheets import extract_first_page_and_overwrite
 
 # from download_repair_photos import mark_as_read
 
@@ -267,6 +268,7 @@ if __name__ =="__main__":
         "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
         "lia@stevensoncrane.com subject:'invoice'",
         "customercareBT@becn.com subject: 'invoice'",
+        "donotreply@waterinvoice.com subject: 'eInvoice'",
         ]
 
     # Asks how many days back to check
@@ -380,9 +382,14 @@ if __name__ =="__main__":
 
 
             sleep(1)
-            if print_status:
+            if print_status and email_query == "donotreply@waterinvoice.com subject: 'eInvoice'":
+                for attachment in all_attachments:
+                    extract_first_page_and_overwrite(attachment)
+                    print_file_with_ghostscript(attachment)
+            else:
                 for attachment in all_attachments:
                     print_file_with_ghostscript(attachment)
+
         except Exception as e:
             print('An error occurred: %s' % e)
         print(f"read list: {read_list}")
