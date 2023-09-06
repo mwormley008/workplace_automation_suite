@@ -535,6 +535,12 @@ if __name__ == "__main__":
                 sleep(3)
                 press('down')
                 sleep(2)
+            subprocess.run(['taskkill', '/IM', 'explorer.exe', '/F'])
+            subprocess.Popen(['explorer'])
+
+
+    clear_directory(store_directory)
+    clear_directory(timesheets_directory)
     print("download_repair_photos.py is complete.")
 
 
