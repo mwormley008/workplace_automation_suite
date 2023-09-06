@@ -4,6 +4,10 @@
 from progress_invoice import copy_clipboard
 import tkinter as tk
 from tkinter import simpledialog
+import subprocess
+import time, os
+from time import sleep
+
 
 def get_user_input(text):
     # this prompts the user to provide a trigger text, I'm using it in the add_hotstring
@@ -12,6 +16,8 @@ def get_user_input(text):
     # Replace the print statement with whatever you want to do with the input
     if user_string:
         print(user_string)
+    return user_string
+
 
 
 def add_hotstring():
@@ -20,7 +26,7 @@ def add_hotstring():
     replacement_text = copy_clipboard()
     trigger_text = get_user_input(replacement_text)
     with open(ahk_script, "a") as file:
-        file.write(f"\n :*:{trigger_text}/::{replacement_text}\n")
+        file.write(f"\n:*:{trigger_text}/::{replacement_text}")
     print("Added hotstring.")
 
 root = tk.Tk()
@@ -28,6 +34,14 @@ root.withdraw()  # Hide the root window
 
 
 ahk_script = r"C:\Users\Michael\Desktop\Text Replacement.ahk"
+ahk_executable = r"C:\Program Files\AutoHotkey\AutoHotkey.exe"  # Typical path, adjust if different
+bat_file_path = r"C:\Users\Michael\Desktop\python-work\run_ahk.bat"
+
 
 add_hotstring()
+subprocess.run(bat_file_path, shell=True)
+
+
+
+
 
