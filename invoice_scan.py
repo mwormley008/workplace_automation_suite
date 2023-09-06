@@ -4,6 +4,7 @@
 
 ## TODO: I'm not finding the invoice information / invoice number on sheet metal supply or pfs invoices, looks like there is 
 # legible invoice info on Stevenson
+# Hinckley is scannable
 
 import cv2
 import pypdf
