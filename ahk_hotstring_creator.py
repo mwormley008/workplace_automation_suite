@@ -40,7 +40,7 @@ bat_file_path = r"C:\Users\Michael\Desktop\python-work\run_ahk.bat"
 
 add_hotstring()
 subprocess.run(bat_file_path, shell=True)
-
+time.sleep(3)
 
 
 

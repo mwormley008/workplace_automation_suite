@@ -1,3 +1,5 @@
+# Inputs invoices from ABC myabcsupply, with the open bills window open in QB
+
 import pyautogui, openpyxl, datetime, calendar, os, sys, re
 import subprocess, time
 import pygetwindow as gw

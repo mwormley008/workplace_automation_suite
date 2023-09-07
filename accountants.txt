@@ -3,3 +3,4 @@ These need to be added to the accountants recipients list
 
 
 'Rosewood':'rosewood6727@aol.com'
+'Loberg':'jtakeda@lobergconstruction.com'

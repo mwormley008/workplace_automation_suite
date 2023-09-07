@@ -232,13 +232,15 @@ for filename in os.listdir(folder_path):
                         ws[f'C{invoice_counter}'] = f'{invoice_no}'
 
                         ## Finds the invoice amount due
-                        total_match = re.search(r'THIS AMOUNT \$(\d?\s?(?:[:,])?[\d,]+\.\d{2})', amt_text, re.IGNORECASE)
+                        # total_match = re.search(r'THIS AMOUNT \$(\d?\s?(?:[:,])?[\d,]+\.\d{2})', amt_text, re.IGNORECASE)
+                        total_match = re.search(r'THIS AMOUNT \$(\d?\s?(?:[:,])?[\d,]+\s*\.{0,1}\s*\d{2})', amt_text, re.IGNORECASE)
+                        
 
                         total_match2 = re.search(r'PLERSE PAT \$([\d,]+\.\d{2})', amt_text, re.IGNORECASE)
                         if total_match:
                             # If a match was found, 'group(1)' contains the first parenthesized subgroup - the balance amount.
-                            
-                            balance_amount =  total_match.group(1).replace(' :', ',')
+                            balance_amount = total_match.group(1).replace(" ", ".")
+                            balance_amount =  balance_amount.replace(' :', ',')
                             balance_amount = balance_amount.replace(":", ",")
                             print(f"Found 'balance amount': ${balance_amount}")
                             ws[f'D{invoice_counter}'].value = balance_amount

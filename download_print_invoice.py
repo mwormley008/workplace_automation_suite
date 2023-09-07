@@ -1,4 +1,7 @@
 # trying to get this gmail thing going we'll see 
+# Also that problem with downloading invoices only occurs from April from SMS, which I don't have time to fix right now but 
+# maybe was already solved 
+
 from Google import Create_Service
 import base64, os, datetime, pickle, time, tkinter, shutil
 from time import sleep
@@ -386,7 +389,7 @@ if __name__ =="__main__":
                 for attachment in all_attachments:
                     extract_first_page_and_overwrite(attachment)
                     print_file_with_ghostscript(attachment)
-            else:
+            elif print_status:
                 for attachment in all_attachments:
                     print_file_with_ghostscript(attachment)
 
