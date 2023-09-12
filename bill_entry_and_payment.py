@@ -2,7 +2,7 @@
 # Run the rest of the process by itself, including writing the checks and
 # Creating envelopes as necessary
 
-# Currently starts from the enter bill screen
+# Currently starts from tphe enter bill screen
 
 
 import pyautogui, openpyxl, datetime, calendar, os, sys, re
@@ -39,7 +39,12 @@ print(bill_status)
 first_row_skipped = False
 # List to store row numbers with a cell value
 rows_with_value = []
-check_numbers = simpledialog.askinteger("Check numbers", "What is the first check number?")
+
+check_in_excel = messagebox.askyesno("Check number", f"Is the first check number {ws['I1'].value}")
+if check_in_excel:
+    check_numbers = ws['I1'].value
+else:
+    check_numbers = simpledialog.askinteger("Check numbers", "What is the first check number?")
 
 qb_window.activate()
 sleep(1)
@@ -71,6 +76,7 @@ if not bill_status:
             sleep(1)
             press('n')
             sleep(1)
+            hotkey('alt', 't')
             press('enter')
             sleep(1)
         pyautogui.write(ws['A'+j].value)
@@ -90,7 +96,7 @@ if not bill_status:
 press('alt')
 sleep(.5)
 press('o')
-sleep(.5)
+# sleep(.5)
 press('p')
 sleep(1)
 
@@ -148,7 +154,7 @@ for cell in ws['F']:
         # Print the document to the default printer
         doc.PrintOut()
 
-        # Close the document
+        # Close the documentC
         doc.Close()
 
         # Quit Word

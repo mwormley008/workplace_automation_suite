@@ -4,3 +4,6 @@ These need to be added to the accountants recipients list
 
 'Rosewood':'rosewood6727@aol.com'
 'Loberg':'jtakeda@lobergconstruction.com'
+'Tim':'briana@timcoteinc.com'
+'Osman':'mike.wallis@osmanconstruction.com'
+'Incredible':'tcutrona@incrediblebuilders.com'

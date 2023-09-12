@@ -289,8 +289,8 @@ for filename in os.listdir(folder_path):
                                         
                     total_match = re.search(decimal_pattern, content)
                     print(total_match)
-                    line_of_text = "1597.50 127.80 .00 230.78 1956.08"
-                    total_match = re.search(decimal_pattern, line_of_text)
+                    # line_of_text = "1597.50 127.80 .00 230.78 1956.08"
+                    # total_match = re.search(decimal_pattern, line_of_text)
 
                     # Define a pattern to match five decimal numbers separated by spaces
 

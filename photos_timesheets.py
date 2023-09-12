@@ -536,7 +536,9 @@ if __name__ == "__main__":
                 press('down')
                 sleep(2)
         subprocess.run(['taskkill', '/IM', 'explorer.exe', '/F'])
+        sleep(1)
         subprocess.Popen(['explorer'])
+        sleep(1)
 
 
     clear_directory(store_directory)

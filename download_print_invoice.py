@@ -57,7 +57,7 @@ def send_message(service, user_id, message):
     print('An error occurred: %s' % e)
     return None
   
-def download_attachments(service, user_id, msg_id, store_dir, desired_subject, days_ago):
+def download_attachments(service, user_id, msg_id, store_dir, desired_subject, days_ago, nested):
     
     attachments_paths = []
     try:
@@ -105,47 +105,15 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_subject, d
 
                     # Additional debugging: Check the first few bytes of the 'file_data'
                     print(f"First few bytes of 'file_data': {file_data[:100]}")
-                # elif 'parts' in part:
-                #         print('hallelujah')
-                #         for sub_part in part['parts']:
-                #             print(f"Subpart: {sub_part}")
-                #             if sub_part.get('filename'):
-                #                 print("something")
-                #                 # Extract sub-part information
-                #                 sub_filename = sub_part['filename']
-                #                 sub_attachment_id = sub_part['body']['attachmentId']
-                                
-                #                 # Download the sub-attachment using its ID
-                #                 sub_attachment = service.users().messages().attachments().get(userId=user_id, messageId=msg_id, id=sub_attachment_id).execute()
-                                
-                #                 # Decode the attachment data
-                #                 sub_file_data = base64.urlsafe_b64decode(sub_attachment['data'].encode('UTF-8'))
-
-                #                 # Additional debugging: Check the size and first few bytes of 'sub_file_data'
-                #                 print(f"Size of sub 'file_data': {len(sub_file_data)}")
-                #                 print(f"First few bytes of sub 'file_data': {sub_file_data[:100]}")
-
-                #                 # Check if the sub-file is a PDF
-                #                 _, file_extension = os.path.splitext(sub_filename)
-                #                 if file_extension.lower() == ".pdf":
-                #                     # Save the sub-attachment to the specified 'store_dir'
-                #                     os.makedirs(store_dir, exist_ok=True)
-                #                     filepath = os.path.join(store_dir, sub_filename)
-                #                     with open(filepath, 'wb') as f:
-                #                         f.write(sub_file_data)
-
-                #                     print(f"Sub-attachment '{sub_filename}' downloaded to: {filepath}")
-
-                #                     attachments_paths.append(filepath)
-                #                 else:
-                #                     print(f"Skipped sub-attachment '{sub_filename}' because it is not a PDF or is empty.")
-                #             else:
-                #                 print("Skipping a sub-part with no 'filename' attribute.")
-
-                #         print(f"Attachment '{filename}' downloaded to: {filepath}")
-
-                #         attachments_paths.append(filepath)
-                #         found_valid_attachment = True
+                elif nested == "yes":
+                    print('hallelujah')
+                    for sub_part in part.get('parts', []):  # Safely get 'parts'
+                        if sub_part.get('filename'):
+                            filepath = process_nested_attachment(sub_part, store_dir, service, user_id, msg_id)
+                            if filepath:  # Only append if the file was actually saved
+                                attachments_paths.append(filepath)
+                        else:
+                            print("Skipping a sub-part with no 'filename' attribute.")
 
             if not found_valid_attachment:
                 print("No valid attachments found in the email.")
@@ -238,6 +206,36 @@ def clear_directory(folder_path):
         except Exception as e:
             print(f"Failed to delete {file_path}. Reason: {e}")
 
+def process_nested_attachment(sub_part, store_dir, service, user_id, msg_id):
+    # Extract sub-part information
+    sub_filename = sub_part['filename']
+    sub_attachment_id = sub_part['body']['attachmentId']
+    
+    # Download the sub-attachment using its ID
+    sub_attachment = service.users().messages().attachments().get(userId=user_id, messageId=msg_id, id=sub_attachment_id).execute()
+    
+    # Decode the attachment data
+    sub_file_data = base64.urlsafe_b64decode(sub_attachment['data'].encode('UTF-8'))
+
+    # Additional debugging: Check the size and first few bytes of 'sub_file_data'
+    print(f"Size of sub 'file_data': {len(sub_file_data)}")
+    print(f"First few bytes of sub 'file_data': {sub_file_data[:100]}")
+
+    # Check if the sub-file is a PDF
+    _, file_extension = os.path.splitext(sub_filename)
+    if file_extension.lower() == ".pdf":
+        # Save the sub-attachment to the specified 'store_dir'
+        os.makedirs(store_dir, exist_ok=True)
+        filepath = os.path.join(store_dir, sub_filename)
+        with open(filepath, 'wb') as f:
+            f.write(sub_file_data)
+
+        print(f"Sub-attachment '{sub_filename}' downloaded to: {filepath}")
+        return filepath
+    else:
+        print(f"Skipped sub-attachment '{sub_filename}' because it is not a PDF or is empty.")
+        return None
+
 
 
 
@@ -267,6 +265,7 @@ if __name__ =="__main__":
         "from:carolyn@profastening.net subject:'Invoice'", 
         "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
         "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
+        "from:april@sheetmetalsupplyltd.com subject:'Invoices'",
         "amy@profastening.net subject:'Invoice'",
         "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
         "lia@stevensoncrane.com subject:'invoice'",
@@ -371,7 +370,10 @@ if __name__ =="__main__":
             all_attachments = []
             for message in messages:
                 msg_id = message['id']
-                attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date)
+                if email_query == "from:april@sheetmetalsupplyltd.com subject:'Invoice'" or email_query == "from:april@sheetmetalsupplyltd.com subject:'Invoices'":
+                    attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, "yes")
+                else:    
+                    attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, "no")
 
                 subject = get_subject_from_message(service, user_email, msg_id)  # Get the subject of the message
 

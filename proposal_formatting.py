@@ -77,7 +77,7 @@ for i in range(3):
 
 time.sleep(.1)
 pyautogui.hotkey('shift', 'ctrl', 'f5')
-time.sleep(.1)
+time.sleep(.5)
 send_keys_with_delay('amnt')
 pyautogui.hotkey('alt', 'a')
 time.sleep(.1)
