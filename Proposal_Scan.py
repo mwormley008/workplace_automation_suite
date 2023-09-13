@@ -85,6 +85,10 @@ def find_scan_and_email_windows():
 
     return scan_window, wbr_window
 
+def trim_extension_format_slashes(path, initial_dir):
+    file_name = path.replace(initial_dir.replace("\\", "/"), "")
+    file_name = file_name[1:-4]
+    return file_name
 
 
 scan_window, wbr_window = find_scan_and_email_windows()
@@ -101,7 +105,7 @@ mail_contacts = {
     # '41':'amy.hillgamyer@41northcontractors.com'
     }
 
-proposal_message = 'Hello,\nPlease see attached proposal.\nThank you,\nMichael Wormley\nWBR Roofing\n25084 W Old Rand Rd\nWauconda, IL 60084\n​O: 847-487-8787​\nwbrroof@aol.com'
+proposal_message = 'Hello,\nPlease see attached proposal.\n\nThank you,\nMichael Wormley\nWBR Roofing\n25084 W Old Rand Rd\nWauconda, IL 60084\n​O: 847-487-8787​\nwbrroof@aol.com'
 # Create the Tkinter root window
 root = Tk()
 root.withdraw()  # Hide the root window
@@ -111,17 +115,22 @@ sleep(1)
 
 
 initial_dir=r"\\WBR\data\shared\Proposals"
+initial_scan_dir=r"\\WBR\data\shared\My Scans"
 
 proposal_path = askopenfilename(initialdir=initial_dir)
 print(proposal_path)
 
 # file_name = proposal_path
-file_name = proposal_path.replace(initial_dir.replace("\\", "/"), "")
-
+# file_name = proposal_path.replace(initial_dir.replace("\\", "/"), "")
+file_name = trim_extension_format_slashes(proposal_path, initial_dir)
 
 # file_name = file_name.replace('/' + initial_dir, "")
-file_name = file_name[1:-4]
+# file_name = file_name[1:-4]
 print(file_name)
+if len(file_name) > 74:
+    long_file_name = True
+else:
+    long_file_name = False
 
 scan_window.activate()
 
@@ -157,18 +166,26 @@ sleep(2)
 press('enter')
 sleep(1)
 
+## If the file name is too long, it may be a duplicate because the ending will be cut off 
+if long_file_name:
+    proceed = messagebox.askyesno("Proceed?", "Are you ready to proceed? Your file name was long, so you may have needed a custom file name.")
+
 company = file_name.split(' ')[0]
 if company in mail_contacts:
     recipient = mail_contacts[company]
 else:
-    recipient = simpledialog.askstring("No default email found", f"Enter the email address for accounts receivable at {company}:")
-    with open('accountants.txt', 'a') as file:
+    recipient = simpledialog.askstring("No default email found", f"Enter the email address for estimator at {company}:")
+    with open('estimators.txt', 'a') as file:
         file.write(f"\n'{company}':'{recipient}'")
 
 
 print(recipient)
 
 service = initialize_service()
+if long_file_name:
+    scan_path = askopenfilename(initialdir=initial_scan_dir)
+    file_name = trim_extension_format_slashes(scan_path, initial_scan_dir)
+
 message = create_message_with_attachment(recipient, file_name, proposal_message, rf'\\WBR\shared\My Scans\{file_name}.pdf')
 
 send_message(service, 'me', message)
