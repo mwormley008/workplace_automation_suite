@@ -8,3 +8,5 @@ These need to be added to the estimators recipients list
 'Midwest':'andy@midwestmasonryinc.com'
 'Midwest':'andy@midwestmasonryinc.com'
 'Midwest':'andy@midwestmasonryinc.com'
+'The':'joe@dubsco.com'
+'Stasica':'todd@stasicaconstruction.com'

@@ -4,6 +4,7 @@
 
 # Currently starts from tphe enter bill screen
 
+# Maybe what i should do is prompt to see if we want to use the default mail settings
 
 import pyautogui, openpyxl, datetime, calendar, os, sys, re
 import subprocess
@@ -33,7 +34,8 @@ wb = openpyxl.load_workbook(workbook_path)
 
 ws = wb['Sheet1']
 
-bill_status = messagebox.askyesno("Bill Entry", "Do you need to enter new bills?")
+bill_status = messagebox.askyesno("Bill Entry", "Do you need to enter new bills from the sheet to quickbooks?")
+default_mail_status = messagebox.askyesno("Default mail", "Do you want to use the default envelope settings for each vendor?")
 print(bill_status)
 
 first_row_skipped = False
@@ -63,11 +65,11 @@ for cell in ws[column_to_check]:
 
 print(rows_with_value)
 
-# Write the bills to QB
+# # Write the bills to QB
 qb_window.activate()
 sleep(1)
 
-if not bill_status:
+if bill_status:
     for j in rows_with_value:
         sleep(1)
         if ws['A'+j].value == "Nicor Gas":
@@ -138,17 +140,24 @@ press('enter')
 print_ready = messagebox.askyesno("Ready?", "Have your checks printed?")
 # pyautogui.write(ws['A'+'2'].value)
 # Print any checks needed
-for cell in ws['F']:
-    if cell.value is not None and cell.row > 1:
-        a_value = ws['A' + str(cell.row)].value
+if default_mail_status == True:
+    mail_col = 'G'
+else:
+    mail_col = 'F'
+
+for row in rows_with_value:
+    if ws[mail_col+row]:
+        a_value = ws['A' + str(row)].value
         # Path to your Word document
+        print(a_value)
+    
         file_path = f"C:\\Users\\Michael\\Desktop\\CEnvelopes\\{a_value}.docx"
 
         # Start an instance of Word
         word = win32com.client.Dispatch('Word.Application')
 
         # Open the document
-    
+
         doc = word.Documents.Open(file_path)
 
         # Print the document to the default printer
