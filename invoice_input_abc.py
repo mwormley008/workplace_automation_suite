@@ -71,6 +71,11 @@ with open(os.path.join(folder_path, file_name), 'r', newline='', encoding='utf-8
         sleep(.5)
         pyautogui.write(col_C)
         sleep(.5)
+        # This part is new to tag the invoice entry
+        pyautogui.press('tab', presses=3)
+        sleep(.5)
+        write(f'{col_D}')
+        sleep(.5)
         hotkey('alt', 's')
         sleep(2)
 

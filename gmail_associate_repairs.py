@@ -102,6 +102,8 @@ def display_emails(emails):
             configured_on_repairman_submit = create_on_repairman_submit_function(email_id, email_to, email_subject, repairman_window)
 
             btn = ttk.Button(repairman_window, text="Submit", command=configured_on_repairman_submit)
+            repairman_window.bind('<Return>', lambda event=None: configured_on_repairman_submit())
+
             btn.pack(pady=5)
             print("Button created and packed.")
 
@@ -117,6 +119,7 @@ def display_emails(emails):
     btn.pack()
     
     # ttk.Button(root, text="Submit", command=on_repairman_submit).pack(pady=10)
+    root.bind('<Return>', lambda event=None: on_submit())
 
     root.mainloop()
 

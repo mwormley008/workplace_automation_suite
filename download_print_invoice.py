@@ -268,7 +268,7 @@ if __name__ =="__main__":
         "from:april@sheetmetalsupplyltd.com subject:'Invoices'",
         "amy@profastening.net subject:'Invoice'",
         "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
-        "lia@stevensoncrane.com subject:'invoice'",
+        # "lia@stevensoncrane.com subject:'invoice'",
         "customercareBT@becn.com subject: 'invoice'",
         "donotreply@waterinvoice.com subject: 'eInvoice'",
         ]
