@@ -88,7 +88,10 @@ for j in rows_with_value:
     hotkey('shift', 'tab')
     press('space')
     sleep(.5)
+    # move focus to due date
     press('tab', presses=2)
+    sleep(.1)
+    write('h')
     # Write end of this month
     sleep(.5)
     # move focus to filter by (selects vendor)
@@ -99,10 +102,19 @@ for j in rows_with_value:
     sleep(2)
     press('tab')
     sleep(2)
-    press('tab')
+    # Selects the pay all bills button
+    for i in range(11):
+        print(i)
+        hotkey('shift', 'tab')
+        sleep(.1)
     sleep(2)
     press('space')
-    sleep(1)
+    sleep(2)
+    press('p')
+    # press('tab')
+    # sleep(2)
+    # press('space')
+    # sleep(1)
     press('p')
     sleep(2)
     bills_counter += 1
@@ -131,7 +143,7 @@ else:
     mail_col = 'F'
 
 for row in rows_with_value:
-    if ws[mail_col+row]:
+    if ws[mail_col+row].value is not None:
         a_value = ws['A' + str(row)].value
         # Path to your Word document
         print(a_value)
@@ -154,3 +166,5 @@ for row in rows_with_value:
         # Quit Word
         word.Quit()
         sleep(2)
+    else:
+        print("skipped envelope")

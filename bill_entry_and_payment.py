@@ -2,7 +2,7 @@
 # Run the rest of the process by itself, including writing the checks and
 # Creating envelopes as necessary
 
-# Currently starts from tphe enter bill screen
+# Currently starts from the enter bill screen
 
 # Maybe what i should do is prompt to see if we want to use the default mail settings
 
@@ -48,6 +48,7 @@ if check_in_excel:
 else:
     check_numbers = simpledialog.askinteger("Check numbers", "What is the first check number?")
 
+sleep(1)
 qb_window.activate()
 sleep(1)
 # Replace 'A' with the column letter you want to check (e.g., 'B', 'C', 'D', etc.)
@@ -146,7 +147,7 @@ else:
     mail_col = 'F'
 
 for row in rows_with_value:
-    if ws[mail_col+row]:
+    if ws[mail_col+row].value is not None:
         a_value = ws['A' + str(row)].value
         # Path to your Word document
         print(a_value)
@@ -169,3 +170,5 @@ for row in rows_with_value:
         # Quit Word
         word.Quit()
         sleep(2)
+    else:
+        print("skipped envelope")
