@@ -47,10 +47,18 @@ def find_file_by_number(folder_path, target_number):
 def assign_values_to_cells(values, mapping, sheet):
     for field_name, cell in mapping.items():
         if field_name in values:
-            sheet[cell] = int(values[field_name])
+            cell_value = sheet[cell].value
+            if cell_value is not None:  # Ensure that the cell has a value
+                try:
+                    # Try to convert the cell value to float and check if it's zero or more
+                    if float(cell_value) >= 0:
+                        sheet[cell] = int(values[field_name])
+                except ValueError:
+                    # If the conversion fails, it means the value in the cell isn't a number
+                    pass
 
 def print_excel(workbook_path):
-    excel = win32com.client.gencache.EnsureDispatch('Excel.Application')
+    excel = win32com.client.Dispatch('Excel.Application')
     wb = excel.Workbooks.Open(workbook_path)
 
     # Print the workbook to the default printer
@@ -68,6 +76,7 @@ if __name__ =="__main__":
     new_or_existing = OptionButtons(root, title="New or Existing", button_names=["New Billing Cycle", "Existing Billing Cycle", "Retention/Final Billing"])
     print("You clicked:", new_or_existing.result)
 
+    # New means 1, existing means 0
     if new_or_existing.result == 'New Billing Cycle':
         noe_token = 1
     elif new_or_existing.result == "Existing Billing Cycle":
@@ -217,12 +226,10 @@ if __name__ =="__main__":
 
     if noe_token == 0:
         for x, y in zip(prev_apps, this_period):
-            sheet2[x].value += sheet2[y].value
-            sheet2[y].value = 0
-    
+            if sheet2[x].value or sheet2[y].value:
+                sheet2[x].value += sheet2[y].value
+                sheet2[y].value = 0
     assign_values_to_cells(category_values, mapping, sheet2)
-
-
 
 
     # Save a new file with new name
