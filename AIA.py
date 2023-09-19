@@ -117,7 +117,7 @@ if __name__ =="__main__":
     folder_path = initial_dir 
 
 
-    if noe_token == 0:
+    if noe_token == 0 or noe_token == "Retention":
         old_invoice_number = target_invoice
         target_number = old_invoice_number  # Replace with the specific number you are looking for
 
@@ -188,13 +188,18 @@ if __name__ =="__main__":
     completed_through_cell = sheet1["E26"]
     retention_percentage = sheet1['B29'].value
     current_payment_due = sheet1["E39"]
+    if  noe_token == "Retention":
+        completed_through = 0
     if noe_token == 0 or noe_token == "Retention":
         completed_through_cell.value += int(completed_through)
         old_invoice_number = invoice_number.value
         invoice_number.value = new_inv
         # add old current payment E39 to previous payments E38
         sheet1["E38"].value += sheet1["E39"].value
-        current_payment_due.value = int(completed_through) * (1-int(retention_percent)*.01)
+        if noe_token == 0:
+            current_payment_due.value = int(completed_through) * (1-int(retention_percent)*.01)
+        else:
+            current_payment_due.value = int(new_prev_retained)
     if noe_token == 1:
         # Contract
         sheet1["E23"].value = int(contract_amount)
@@ -224,7 +229,7 @@ if __name__ =="__main__":
         "Billed Sheet Metal Material:": "E25"
     }
 
-    if noe_token == 0:
+    if noe_token == 0 or noe_token == "Retention":
         for x, y in zip(prev_apps, this_period):
             if sheet2[x].value or sheet2[y].value:
                 sheet2[x].value += sheet2[y].value
@@ -233,7 +238,7 @@ if __name__ =="__main__":
 
 
     # Save a new file with new name
-    if noe_token == 0:
+    if noe_token == 0 or  noe_token == 'Retention':
         new_workbook_path = workbook_path.replace(str(old_invoice_number), str(new_inv))
         new_workbook_path = new_workbook_path.split(' ')
         new_workbook_path[-1] = new_workbook_path[-1].replace(str(old_application_number), str(new_application_number))

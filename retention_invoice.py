@@ -50,7 +50,7 @@ for window in windows:
 root = Tk()
 root.withdraw()  # Hide the root window
 
-search_inv = simpledialog.askinteger("Search invoice #", "What's the invoice number of the template invoice?")
+target_invoice = simpledialog.askinteger("Search invoice #", "What's the invoice number of the template invoice?")
 
 
 # Focuses the Quickbooks window and goes to the customer:job pane
@@ -60,7 +60,7 @@ hotkey('ctrl', 'f')
 sleep(1)
 press('tab', presses=4)
 sleep(.1)
-write(str(search_inv))
+write(str(target_invoice))
 sleep(.1)
 press('enter')
 sleep(.3)
