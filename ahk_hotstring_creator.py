@@ -39,8 +39,13 @@ bat_file_path = r"C:\Users\Michael\Desktop\python-work\run_ahk.bat"
 
 
 add_hotstring()
-subprocess.run(bat_file_path, shell=True)
-time.sleep(3)
+task_name = "StartMyAHKScript"
+subprocess.run(["schtasks", "/run", "/tn", task_name])
+# subprocess.Popen([ahk_executable, ahk_script], creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)
+
+# subprocess.Popen([bat_file_path], creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)
+
+time.sleep(1)
 
 
 
