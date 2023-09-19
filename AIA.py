@@ -76,7 +76,7 @@ if __name__ =="__main__":
     new_or_existing = OptionButtons(root, title="New or Existing", button_names=["New Billing Cycle", "Existing Billing Cycle", "Retention/Final Billing"])
     print("You clicked:", new_or_existing.result)
 
-    # New means 1, existing means 0
+    # New means 1, existing means 0, but don't forget about Retention
     if new_or_existing.result == 'New Billing Cycle':
         noe_token = 1
     elif new_or_existing.result == "Existing Billing Cycle":
@@ -152,7 +152,7 @@ if __name__ =="__main__":
 
     application = sheet1["J3"]
     # Increment application number
-    if noe_token == 0:
+    if noe_token == 0 or noe_token == "Retention":
         old_application_number = application.value
         print(application.value)
         application.value = application.value + 1
@@ -188,7 +188,7 @@ if __name__ =="__main__":
     completed_through_cell = sheet1["E26"]
     retention_percentage = sheet1['B29'].value
     current_payment_due = sheet1["E39"]
-    if noe_token == 0:
+    if noe_token == 0 or noe_token == "Retention":
         completed_through_cell.value += int(completed_through)
         old_invoice_number = invoice_number.value
         invoice_number.value = new_inv

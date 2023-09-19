@@ -136,10 +136,17 @@ write('New Ret Due')
 press('tab', presses=2)
 sleep(.5)
 write(str(new_prev_retained))
-
+retention_percent = 0
 
 print_bin = messagebox.askyesno("Confirmation", "Do you want to print this?")
-
+# Does this still find the number of previous invoice
+field_names = [
+            "Billed Roofing Labor:", 
+            "Billed Roofing Material:", 
+            "Billed Sheet Metal Labor:", 
+            "Billed Sheet Metal Material:",
+        ]
+category_values = {field_name: 0 for field_name in field_names}
 if print_bin:
     sleep(1)
     qb_window.activate()
