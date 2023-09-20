@@ -109,7 +109,9 @@ if __name__ == '__main__':
         'Englewood':'VLara@eci.build',
         'Ott':'kate@ottdevelopment.com',
         'R.':'nickc@rcarlsonandsons.com',
-        '41':'amy.hillgamyer@41northcontractors.com'}
+        '41':'amy.hillgamyer@41northcontractors.com',
+        'Niki':'TNGAdmin@thenikigroup.com',
+        'Rosewood':'rosewood6727@aol.com'}
 
     billing_message = 'Hello,\nPlease see attached billing.\nThank you,\nMichael Wormley\nWBR Roofing\n25084 W Old Rand Rd\nWauconda, IL 60084\n​O: 847-487-8787​\nwbrroof@aol.com'
     # Create the Tkinter root window

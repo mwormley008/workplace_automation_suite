@@ -105,7 +105,10 @@ if __name__ == '__main__':
         'Englewood':'VLara@eci.build',
         'Ott':'kate@ottdevelopment.com',
         'R.':'nickc@rcarlsonandsons.com',
-        '41':'amy.hillgamyer@41northcontractors.com'}
+        '41':'amy.hillgamyer@41northcontractors.com',
+        'GAJ':'jlipinski@gajohnson.com',
+        'Niki':'TNGAdmin@thenikigroup.com',
+        'Rosewood':'rosewood6727@aol.com'}
 
     billing_message = 'Hello,\nPlease see attached billing.\nThank you,\nMichael Wormley\nWBR Roofing\n25084 W Old Rand Rd\nWauconda, IL 60084\n​O: 847-487-8787​\nwbrroof@aol.com'
     # Create the Tkinter root window
@@ -134,10 +137,12 @@ if __name__ == '__main__':
         print("File not found.")
         scan_path = askopenfilename(initialdir=initial_dir)
     print(scan_path)
-
+    
+    initialdir = initial_dir.replace("\\", "/")
+    
     file_name = scan_path
 
-    file_name = file_name.replace(initial_dir + "\\", "")
+    file_name = file_name.replace(initialdir + "/", "")
     file_name = file_name[0:-4]
     print(file_name)
 
