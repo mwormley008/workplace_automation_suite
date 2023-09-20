@@ -8,3 +8,6 @@ These need to be added to the accountants recipients list
 'Osman':'mike.wallis@osmanconstruction.com'
 'Incredible':'tcutrona@incrediblebuilders.com'
 'Midwest':'andy@midwestmasonryinc.com'
+'Stratus':'David.Rekstad@stratusunlimited.com'
+'//WBR/data/shared/G702':'None'
+'GAJ':'jlipinski@gajohnson.com'

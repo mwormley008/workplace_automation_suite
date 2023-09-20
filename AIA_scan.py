@@ -1,18 +1,14 @@
 # Script to save a scan and email it once the invoice is scanned, then you just need the
 # invoice number, that's it
+# you'll need your scan window still open as well as a chrome window
+# in the wbr gmail tab
 
-## This starts with the invoice unscanned in the scanner, but with the scanner program started
+# Scan your invoice then begin
 
 
-
-# TODO:
-""" also I can add a branching path so that I can run one program to scan for either billing 
-or for proposals
-
-alright so I can create a database so that I can associate company's with their accountant
-or their estimator 
-
-also I can load gmail contacts from google people in order to ask for better default options"""
+# TODO: I think I'd like to make it so that if you don't have the WBR 
+# gmail open it'll open it for you although that might be solvable with the 
+# gmail api
 
 import pyautogui, openpyxl, datetime, calendar, os, sys, re
 import subprocess
@@ -27,7 +23,7 @@ from time import sleep
 from pywinauto import Application
 
 from photos_timesheets import send_message
-from AIA_scan import find_or_run_scan
+
 from send_gmail import initialize_service, create_message, create_message_with_attachment, send_message, CLIENT_SECRET_FILE, SCOPES, API_NAME, API_VERSION
 
 def find_file_by_number(folder_path, target_number):
@@ -59,7 +55,7 @@ def auto_manual_email_from_aia_scan():
     write(file_name)
     sleep(1)
     press('tab')
-    write(proposal_message)
+    write(billing_message)
     sleep(3)
     press('tab', presses=3)
     press('space')
@@ -85,28 +81,37 @@ def find_scan_and_email_windows():
 
     return scan_window, wbr_window
 
-def trim_extension_format_slashes(path, initial_dir):
-    file_name = path.replace(initial_dir.replace("\\", "/"), "")
-    file_name = file_name[1:-4]
-    return file_name
+
+def run_scanning_executable():
+    # The path to your scanning executable
+    scanning_exe_path =  r"C:\Program Files (x86)\Epson Software\Epson ScanSmart\ScanSmart.exe"
+        
+    # Run the scanning executable
+    subprocess.Popen([scanning_exe_path])
+
+def find_or_run_scan():
+    scan_window, wbr_window = find_scan_and_email_windows()
+    if scan_window is None:
+        run_scanning_executable()
 
 if __name__ == '__main__':
-    find_or_run_scan()
+
+    scan_window, wbr_window = find_scan_and_email_windows()
+    if scan_window is None:
+        run_scanning_executable()
 
     mail_contacts = {
-        # 'Novak':'DCaporale@novakconstruction.com', 
-        # 'Valenti':'billings@valentibuilders.com', 
-        # 'Hanna':'mrosales@hannadesigngroup.com',
-        # 'G&H':'theresa@nationalplazas.com',
-        # 'Builtech':'dwiniarz@builtechllc.com',
-        # 'Englewood':'VLara@eci.build',
-        # 'Ott':'kate@ottdevelopment.com',
-        # 'R.':'nickc@rcarlsonandsons.com',
-        # '41':'amy.hillgamyer@41northcontractors.com'
-        'Stasica':'todd@stasicaconstruction.com'
-        }
+        'Novak':'DCaporale@novakconstruction.com', 
+        'Valenti':'billings@valentibuilders.com', 
+        'Hanna':'mrosales@hannadesigngroup.com',
+        'G&H':'theresa@nationalplazas.com',
+        'Builtech':'dwiniarz@builtechllc.com',
+        'Englewood':'VLara@eci.build',
+        'Ott':'kate@ottdevelopment.com',
+        'R.':'nickc@rcarlsonandsons.com',
+        '41':'amy.hillgamyer@41northcontractors.com'}
 
-    proposal_message = 'Hello,\nPlease see attached proposal.\n\nThank you,\nMichael Wormley\nWBR Roofing\n25084 W Old Rand Rd\nWauconda, IL 60084\n​O: 847-487-8787​\nwbrroof@aol.com'
+    billing_message = 'Hello,\nPlease see attached billing.\nThank you,\nMichael Wormley\nWBR Roofing\n25084 W Old Rand Rd\nWauconda, IL 60084\n​O: 847-487-8787​\nwbrroof@aol.com'
     # Create the Tkinter root window
     root = Tk()
     root.withdraw()  # Hide the root window
@@ -115,24 +120,30 @@ if __name__ == '__main__':
     sleep(1)
 
 
-    initial_dir=r"\\WBR\data\shared\Proposals"
-    initial_scan_dir=r"\\WBR\data\shared\My Scans"
+    invoice_number = simpledialog.askinteger("Invoice Prompt", "Enter the invoice number:")
 
-    proposal_path = askopenfilename(initialdir=initial_dir)
     scan_window, wbr_window = find_scan_and_email_windows()
-    print(proposal_path)
+    initial_dir=r"\\WBR\data\shared\G702 & G703 Forms"
 
-    # file_name = proposal_path
-    # file_name = proposal_path.replace(initial_dir.replace("\\", "/"), "")
-    file_name = trim_extension_format_slashes(proposal_path, initial_dir)
 
-    # file_name = file_name.replace('/' + initial_dir, "")
-    # file_name = file_name[1:-4]
-    print(file_name)
-    if len(file_name) > 74:
-        long_file_name = True
+    file_path = find_file_by_number(initial_dir, invoice_number)
+    if file_path:
+        print(f"File found: {file_path}")
+        use_file = messagebox.askyesno("Confirmation", f"Do you want to use this file?/\n {file_path}")
+        if use_file:
+            workbook_path = file_path
+        else:
+            workbook_path = askopenfilename(initialdir=initial_dir)
     else:
-        long_file_name = False
+        print("File not found.")
+        workbook_path = askopenfilename(initialdir=initial_dir)
+    print(workbook_path)
+
+    file_name = workbook_path
+
+    file_name = file_name.replace(initial_dir + "\\", "")
+    file_name = file_name[0:-5]
+    print(file_name)
 
     scan_window.activate()
 
@@ -168,27 +179,19 @@ if __name__ == '__main__':
     press('enter')
     sleep(1)
 
-    ## If the file name is too long, it may be a duplicate because the ending will be cut off 
-    if long_file_name:
-        proceed = messagebox.askyesno("Proceed?", "Are you ready to proceed? Your file name was long, so you may have needed a custom file name.")
-
     company = file_name.split(' ')[0]
     if company in mail_contacts:
         recipient = mail_contacts[company]
     else:
-        recipient = simpledialog.askstring("No default email found", f"Enter the email address for estimator at {company}:")
-        with open('estimators.txt', 'a') as file:
+        recipient = simpledialog.askstring("No default email found", f"Enter the email address for accounts receivable at {company}:")
+        with open('accountants.txt', 'a') as file:
             file.write(f"\n'{company}':'{recipient}'")
 
 
     print(recipient)
 
     service = initialize_service()
-    if long_file_name:
-        scan_path = askopenfilename(initialdir=initial_scan_dir)
-        file_name = trim_extension_format_slashes(scan_path, initial_scan_dir)
-
-    message = create_message_with_attachment(recipient, file_name, proposal_message, rf'\\WBR\shared\My Scans\{file_name}.pdf')
+    message = create_message_with_attachment(recipient, file_name, billing_message, rf'\\WBR\shared\My Scans\{file_name}.pdf')
 
     send_message(service, 'me', message)
 

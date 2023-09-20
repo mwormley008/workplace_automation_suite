@@ -10,3 +10,4 @@ These need to be added to the estimators recipients list
 'Midwest':'andy@midwestmasonryinc.com'
 'The':'joe@dubsco.com'
 'Stasica':'todd@stasicaconstruction.com'
+'Stratus':'David.Rekstad@stratusunlimited.com'

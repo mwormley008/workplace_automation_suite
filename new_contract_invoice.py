@@ -151,8 +151,9 @@ class CustomDialog:
             
             # Checking if the values match
             if not (abs(total_contract - contract_sum) < 1e-9 and abs(total_billed_period - billed_sum) < 1e-9):
-                messagebox.showerror("Error", "The categories don't add up to the totals.")
-                return
+                proceed = messagebox.askyesno("Warning", "The categories don't add up to the totals. Do you want to proceed anyway?")
+                if not proceed:
+                    return
         except ValueError:  # Handle the case where user inputs non-numeric values
             messagebox.showerror("Error", "Please enter valid numeric values.")
             return

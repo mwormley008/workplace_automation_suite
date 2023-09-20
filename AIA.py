@@ -83,8 +83,20 @@ if __name__ =="__main__":
         noe_token = 0
     else:
         noe_token = "Retention"
+        retention_percent = 0
+        field_names = [
+            "Billed Roofing Labor:", 
+            "Billed Roofing Material:", 
+            "Billed Sheet Metal Labor:", 
+            "Billed Sheet Metal Material:",
+        ]
+        category_values = {field_name: 0 for field_name in field_names}
 
     qb_response = messagebox.askyesno("Confirmation", "Do you want to start in Quickbooks?")
+    if qb_response:
+        qtoken = 1
+    else:
+        qtoken = 2
     sleep(1)
 
     # New contract invoice will start using the memorized new contract invoice document
@@ -105,11 +117,13 @@ if __name__ =="__main__":
         contract_date = simpledialog.askstring("Contract Prompt", "What is the contract date MM/DD/YY:")
         bill_to = simpledialog.askstring("Contractor", "Who is the contractor?")
         ship_to = simpledialog.askstring("Project", "What is the project name?")
-    elif new_or_existing.result == "Retention/Final Billing":
+    elif new_or_existing.result == "Retention/Final Billing" and qb_response:
         qtoken = 1
         exec(open('retention_invoice.py').read())
     else:
         qtoken = 0
+        target_invoice = simpledialog.askinteger("Invoice number", "What is the number of the last invoice?")
+
 
 
     initial_dir=r"\\WBR\data\shared\G702 & G703 Forms"
@@ -190,6 +204,7 @@ if __name__ =="__main__":
     current_payment_due = sheet1["E39"]
     if  noe_token == "Retention":
         completed_through = 0
+        sheet1["E40"].value = 0
     if noe_token == 0 or noe_token == "Retention":
         completed_through_cell.value += int(completed_through)
         old_invoice_number = invoice_number.value
@@ -198,7 +213,7 @@ if __name__ =="__main__":
         sheet1["E38"].value += sheet1["E39"].value
         if noe_token == 0:
             current_payment_due.value = int(completed_through) * (1-int(retention_percent)*.01)
-        else:
+        elif noe_token == "Retention" and qtoken == 1:
             current_payment_due.value = int(new_prev_retained)
     if noe_token == 1:
         # Contract
