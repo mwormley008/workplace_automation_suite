@@ -369,6 +369,54 @@ def extract_first_page_and_overwrite(source_pdf):
 
     print(f"Overwritten {source_pdf} with just its first page.")
 
+def save_info_with_photos(subject, sender, received_date, body, directory, image_paths=[]):
+    filename = directory
+    c = canvas.Canvas(filename, pagesize=letter)
+    width, height = letter  # Get dimensions for portrait orientation
+
+    # Function to add text details
+    def add_text_details():
+        textobject = c.beginText()
+        textobject.setFont('Helvetica', 20)  # Set font and size
+        textobject.setTextOrigin(30, height - 50)  # Start near top-left corner
+
+        lines = [
+            f"Subject: {subject}\n\n",
+            f"From: {sender}\n\n",
+            f"Received Date: {received_date}\n\n",
+            f"Body: {body}"
+        ]
+
+        for line in lines:
+            for sub_line in line.split('\n'):
+                textobject.textLine(sub_line)
+
+        c.drawText(textobject)
+    
+    # Function to add images in a 2x2 grid
+    def add_images(start_index):
+        # Define starting positions and image dimensions
+        img_width = width / 2 - 40  # 20 units margin on each side
+        img_height = (height - 50 - 4 * 24) / 2  # Minus space taken by text and a margin
+        x_positions = [30, width/2 + 10]
+        y_positions = [height - 50 - 4 * 24 - img_height, height - 50 - 4 * 24 - 2*img_height]
+
+        for i in range(4):
+            if start_index + i < len(image_paths):
+                img_path = image_paths[start_index + i]
+                c.drawImage(img_path, x_positions[i % 2], y_positions[i // 2], width=img_width, height=img_height, preserveAspectRatio=True)
+    
+    # Loop through the images and create pages
+    image_index = 0
+    while image_index < len(image_paths):
+        add_text_details()
+        add_images(image_index)
+        
+        image_index += 4
+        if image_index < len(image_paths):
+            c.showPage()  # Start a new page if there are more images to add
+
+    c.save()
 
 CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
 API_NAME = 'gmail'
@@ -440,7 +488,14 @@ if __name__ == "__main__":
 
                 if attachments:
                     all_attachments.extend(attachments)
-                
+                if email_address != "edinc99@gmail.com":
+                    subject_directory = os.path.join(store_directory, subject)
+                    image_files = [os.path.join(subject_directory, file) for file in os.listdir(subject_directory) if file.lower().endswith(('.png', '.jpg', '.jpeg'))]  # Adjust the extensions if needed
+                    pdf_filename = os.path.join(subject_directory, "combined.pdf")
+                    print('new func 4')
+                    save_info_with_photos(subject, email_address, query_date_str, "Body placeholder", pdf_filename, image_files)
+                    print('new func 5')
+
                 # Check if subject contains special terms
                 if any(term in subject.lower() for term in ['time', 'expense', 'fwd']):
                     label_id_to_add = 'Label_11'  # Replace with appropriate label ID
