@@ -16,11 +16,13 @@ from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename, Frame, Button
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter, landscape
+from reportlab.lib.utils import ImageReader
+
 
 from pyautogui import press, write, hotkey
-
+from io import BytesIO
 from pywinauto import Desktop, Application
-
+from PIL import Image
 import shutil, PyPDF2
 
 
@@ -133,8 +135,106 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_sender, da
 
                     attachments_paths.append(filepath)
             
-            save_info_as_pdf(subject, sender, received_date, text, unique_email_dir)
+            # I think I need to take this out or alter it because I'm only going to want it for the timesheets
+            # save_info_as_pdf(subject, sender, received_date, text, unique_email_dir)
+            save_info_with_photos(subject, sender, received_date, text, unique_email_dir, attachments_paths)
+            # details = f"Subject: {subject}\n\nFrom: {sender}\n\nReceived Date: {received_date}\n\nBody:{text}"
+            # details_file = os.path.join(unique_email_dir, "00000000details.txt")
+            # with open(details_file, 'w') as f:
+            #     f.write(details)
 
+        return attachments_paths
+
+    except Exception as error:
+        print(f"An error occurred: {error}")
+
+def download_repair_photos(service, user_id, msg_id, store_dir, desired_sender, days_ago):
+    attachments_paths = []
+    attachments_streams = []
+
+    try:
+        message = service.users().messages().get(userId=user_id, id=msg_id).execute()
+        payload = message['payload']
+        headers = payload['headers']
+        sender = [h['value'] for h in headers if h['name'] == 'From'][0]  # Retrieve sender
+        subject = [h['value'] for h in headers if h['name'] == 'Subject'][0]  # Retrieve subject
+        safe_subject = "".join([c for c in subject if c.isalpha() or c.isdigit() or c==' ']).rstrip()  # Cleaned subject line for directory
+
+        
+
+        # Extract the email address from sender
+        sender_email = re.search(r'<(.*)>', sender)
+        if sender_email:
+            sender = sender_email.group(1)
+
+        received_at = int(message['internalDate']) / 1000  # Convert to seconds
+        received_date = datetime.utcfromtimestamp(received_at).date()
+        today = datetime.utcnow().date()
+        threshold_date = today - timedelta(days_ago)
+
+        if received_date < threshold_date:
+            return  # Skip processing if the email was not received today
+
+        # Retrieve the body of the email
+        if 'parts' in payload:
+            parts = payload.get('parts', [])
+            for part in parts:
+                mimeType = part.get('mimeType')
+                body = part.get('body', {})
+                data = body.get('data')
+                if part.get('parts'):
+                    # If the email part has parts inside it, recursively extract the text from it.
+                    inner_parts = part.get('parts')
+                    for inner_part in inner_parts:
+                        inner_body = inner_part.get('body')
+                        data = inner_body.get('data')
+                        if inner_part.get('mimeType') == "text/plain":
+                            # Decode the plain text body
+                            text = base64.urlsafe_b64decode(data).decode()
+                if mimeType == "text/plain":
+                    # Decode the plain text body
+                    text = base64.urlsafe_b64decode(data).decode()
+        else:
+            if payload['mimeType'] == "text/plain":
+                text = base64.urlsafe_b64decode(payload['body']['data']).decode()
+            else:
+                text = ""
+
+        if desired_sender == sender:
+            parts = payload.get('parts', [])
+            for part in parts:
+                if part.get('filename'):
+                    filename = part['filename']
+                    attachment_id = part['body']['attachmentId']
+                    attachment = service.users().messages().attachments().get(userId=user_id, messageId=msg_id, id=attachment_id).execute()
+                    file_data = base64.urlsafe_b64decode(attachment['data'].encode('UTF-8'))
+                    subject = [h['value'] for h in headers if h['name'] == 'Subject'][0]  # Retrieve subject
+                    safe_subject = "".join([c for c in subject if c.isalpha() or c.isdigit() or c==' ']).rstrip()
+                    
+                    # Instead of writing to a file, keep the data in a BytesIO stream
+                    image_stream = BytesIO(file_data)
+                    attachments_streams.append(image_stream)
+
+                    if 'time' in subject.lower() or 'expense' in subject.lower() or desired_sender == 'edinc99@gmail.com':  # Check if the word "time" is in the subject
+                        print(subject.lower()+'expense')
+                        unique_email_dir = os.path.join(r"C:\Users\Michael\Desktop\python-work\time_sheets", safe_subject)
+                    else:
+                        print(subject.lower()+'repair')
+                        unique_email_dir = os.path.join(store_dir, safe_subject)
+                    
+                    os.makedirs(unique_email_dir, exist_ok=True)
+
+                    filepath = os.path.join(unique_email_dir, filename)  # Use original filename
+                    # with open(filepath, 'wb') as f:
+                    #     f.write(file_data)
+
+                    # print(f"Attachment '{filename}' downloaded to: {filepath}")
+
+                    attachments_paths.append(filepath)
+            
+            # I think I need to take this out or alter it because I'm only going to want it for the timesheets
+            # save_info_as_pdf(subject, sender, received_date, text, unique_email_dir)
+            save_info_with_photos(subject, sender, received_date, text, unique_email_dir, attachments_streams)
             # details = f"Subject: {subject}\n\nFrom: {sender}\n\nReceived Date: {received_date}\n\nBody:{text}"
             # details_file = os.path.join(unique_email_dir, "00000000details.txt")
             # with open(details_file, 'w') as f:
@@ -369,8 +469,10 @@ def extract_first_page_and_overwrite(source_pdf):
 
     print(f"Overwritten {source_pdf} with just its first page.")
 
-def save_info_with_photos(subject, sender, received_date, body, directory, image_paths=[]):
-    filename = directory
+def save_info_with_photos(subject, sender, received_date, body, directory, image_streams=[]):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    filename = os.path.join(directory, "report.pdf")
     c = canvas.Canvas(filename, pagesize=letter)
     width, height = letter  # Get dimensions for portrait orientation
 
@@ -381,9 +483,9 @@ def save_info_with_photos(subject, sender, received_date, body, directory, image
         textobject.setTextOrigin(30, height - 50)  # Start near top-left corner
 
         lines = [
-            f"Subject: {subject}\n\n",
-            f"From: {sender}\n\n",
-            f"Received Date: {received_date}\n\n",
+            f"Subject: {subject}\n",
+            f"From: {sender}\n",
+            f"Received Date: {received_date}\n",
             f"Body: {body}"
         ]
 
@@ -392,142 +494,52 @@ def save_info_with_photos(subject, sender, received_date, body, directory, image
                 textobject.textLine(sub_line)
 
         c.drawText(textobject)
+        return textobject.getY() - 50 # Return the y-position after writing the text
+
     
     # Function to add images in a 2x2 grid
-    def add_images(start_index):
+    def add_images(start_index, y_start, images_per_row, img_scale_factor=1):
         # Define starting positions and image dimensions
-        img_width = width / 2 - 40  # 20 units margin on each side
-        img_height = (height - 50 - 4 * 24) / 2  # Minus space taken by text and a margin
+        max_img_width = (width / 2 - 40) * img_scale_factor  # 20 units margin on each side
+        max_img_height = (y_start - 40) / 2 * img_scale_factor  # Use the returned y-position to determine height, with a margin
         x_positions = [30, width/2 + 10]
-        y_positions = [height - 50 - 4 * 24 - img_height, height - 50 - 4 * 24 - 2*img_height]
+        y_positions = [y_start, y_start - max_img_height]
 
-        for i in range(4):
-            if start_index + i < len(image_paths):
-                img_path = image_paths[start_index + i]
-                c.drawImage(img_path, x_positions[i % 2], y_positions[i // 2], width=img_width, height=img_height, preserveAspectRatio=True)
-    
-    # Loop through the images and create pages
-    image_index = 0
-    while image_index < len(image_paths):
-        add_text_details()
-        add_images(image_index)
+        for i in range(min(images_per_row * 2, len(image_streams) - start_index)):
+            if start_index + i < len(image_streams):
+                image_stream = image_streams[start_index + i]
+                
         
+                # Use PIL to get the actual image dimensions and compute the scaling factor
+                img = Image.open(image_stream)
+
+                img_orig_width, img_orig_height = img.size
+                scale_factor_width = max_img_width / img_orig_width
+                scale_factor_height = max_img_height / img_orig_height
+                scale_factor = min(scale_factor_width, scale_factor_height)  # Take the smaller scale factor to ensure the image fits
+                img_width = img_orig_width * scale_factor
+                img_height = img_orig_height * scale_factor
+
+                c.drawImage(ImageReader(image_stream), x_positions[i % 2], y_positions[i // 2] - img_height, width=img_width, height=img_height, preserveAspectRatio=True)
+                if hasattr(image_stream, 'seek'):
+                    image_stream.seek(0)
+
+                if (i + 1) % 2 == 0:  # Every time two images have been added, adjust the y_position for the next row
+                    y_positions = [y_positions[1] - max_img_height, y_positions[1] - 2 * max_img_height]
+
+    y_pos = add_text_details()
+    add_images(0, y_pos, 2, img_scale_factor=1.2)  # Start with 2 larger images on the first page, with more spacing
+
+    image_index = 2
+    while image_index < len(image_streams):
+        print(f"Main loop - image_index: {image_index}")  # Debugging line
+        c.showPage()  # Start a new page
+        add_images(image_index, height, 4)  # Add 4 images per page from second page onward
         image_index += 4
-        if image_index < len(image_paths):
-            c.showPage()  # Start a new page if there are more images to add
 
     c.save()
 
-CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
-API_NAME = 'gmail'
-API_VERSION = 'v1'
-SCOPES = ['https://www.googleapis.com/auth/gmail.send', 'https://www.googleapis.com/auth/gmail.modify', 'https://www.googleapis.com/auth/gmail.readonly']
-
-if __name__ == "__main__":
-    
-    service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
-    user_email = "wbrroof@gmail.com"  # Replace with the email address you want to send the message from
-    store_directory = r"C:\Users\Michael\Desktop\python-work\repair_photos"
-    timesheets_directory = r"C:\Users\Michael\Desktop\python-work\time_sheets"
-    clear_directory(store_directory)
-    clear_directory(timesheets_directory)
-
-    print('repair photos')
-    # Tells how many days back to check
-    desired_date = simpledialog.askinteger("Desired Dates", "How many days into the past do you want to select emails?")
-    check_unread = messagebox.askyesno("Check Unread?", "Would you like to only check the unread emails after your search date?")
-
-
-    today = datetime.utcnow().date()
-    start_of_today = datetime.combine(today, time.min)
-    start_of_tomorrow = start_of_today + timedelta(days=1)
-
-    start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
-    start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
-
-
-
-    email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com"]  # List of email addresses
-
-
-    email_to_label_mapping = {
-        "oblivion969.dm@gmail.com": "Label_7", # PICS-JR - Dave Myers
-        "fespitia76@gmail.com": "Label_6",     # PICS-Frank Espitia
-        "mmblidy92@gmail.com": "Label_8",      # PICS-Mike Blidy
-        "tawormley@aol.com": "Label_9",        # PICS-Troy
-        "edinc99@gmail.com": "Label_11",       # Time Sheets - Expenses
-        # Add more mappings if needed
-    }
-
-
-    print_status = messagebox.askyesno("Confirmation", "Do you want to print matching repair photos and time sheets?")
-
-    for email_address in email_addresses:
-        query_date = datetime.now() - timedelta(days=desired_date)  # Using the desired_date variable instead of fixed 7
-        query_date_str = query_date.strftime('%Y-%m-%d')
-
-        if check_unread:
-            query = f"is:unread from:{email_address} after:{query_date_str}"
-        else:
-            query = f"from:{email_address} after:{query_date_str}"
-            
-
-        try:
-            response = service.users().messages().list(userId=user_email, q=query).execute()
-            
-            messages = response.get('messages', [])
-            all_attachments = []
-            for message in messages:
-                
-                msg_id = message['id']
-                msg = service.users().messages().get(userId=user_email, id=msg_id).execute()
-                subject = [header['value'] for header in msg['payload']['headers'] if header['name'] == 'Subject'][0]
-                attachments = download_attachments(service, user_email, msg_id, store_directory, email_address, desired_date)
-                
-                label_id_to_add = email_to_label_mapping[email_address]
-
-                if attachments:
-                    all_attachments.extend(attachments)
-                if email_address != "edinc99@gmail.com":
-                    subject_directory = os.path.join(store_directory, subject)
-                    image_files = [os.path.join(subject_directory, file) for file in os.listdir(subject_directory) if file.lower().endswith(('.png', '.jpg', '.jpeg'))]  # Adjust the extensions if needed
-                    pdf_filename = os.path.join(subject_directory, "combined.pdf")
-                    print('new func 4')
-                    save_info_with_photos(subject, email_address, query_date_str, "Body placeholder", pdf_filename, image_files)
-                    print('new func 5')
-
-                # Check if subject contains special terms
-                if any(term in subject.lower() for term in ['time', 'expense', 'fwd']):
-                    label_id_to_add = 'Label_11'  # Replace with appropriate label ID
-                
-                mark_as_read(service, user_email, msg_id)
-
-            # Modify labels for the message
-                # if 'special_word' in subject:
-                    # label_id_to_add = 'special_label_id'
-                # else:
-                    # label_id_to_add = 'regular_label_id_for_' + email_address  # You should define these label IDs
-
-                service.users().messages().modify(
-                    userId=user_email,
-                    id=msg_id,
-                    body={'addLabelIds': [label_id_to_add]}
-                ).execute()
-
-                if email_address ==  "edinc99@gmail.com":
-                    path_to_print = (os.path.join(timesheets_directory, subject))
-                    path_to_print = path_to_print.replace('\\\\', '\\')
-                    print_first_pdfs_from_folder(path_to_print)
-                    sleep(.5)
-                    # print_first_pdfs_from_folder(os.path.join(store_directory, subject))
-
-            sleep(1)
-            # if print_status:
-            #     for attachment in all_attachments:
-            #         print_file_with_ghostscript(attachment)
-        except Exception as e:
-            print('An error occurred: %s' % e)
-    # TODO: I'd like to add some printing properties here but it looks like I'm going to need to figure out how to do a right click
+def print_macro():
     print_status = messagebox.askyesno("Confirmation", "Do you want to print?")
     if print_status:
 
@@ -595,9 +607,129 @@ if __name__ == "__main__":
         subprocess.Popen(['explorer'])
         sleep(1)
 
+def sanitize_subject(subject):
+    subject = re.sub(r'\.', '', subject)  # Remove periods
+    subject = re.sub(r'\-', '', subject)  # Remove dashes
+    # Add any other sanitization steps as needed
+    return subject
 
+CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
+API_NAME = 'gmail'
+API_VERSION = 'v1'
+SCOPES = ['https://www.googleapis.com/auth/gmail.send', 'https://www.googleapis.com/auth/gmail.modify', 'https://www.googleapis.com/auth/gmail.readonly']
+
+if __name__ == "__main__":
+    
+    service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
+    user_email = "wbrroof@gmail.com"  # Replace with the email address you want to send the message from
+    store_directory = r"C:\Users\Michael\Desktop\python-work\repair_photos"
+    timesheets_directory = r"C:\Users\Michael\Desktop\python-work\time_sheets"
     clear_directory(store_directory)
     clear_directory(timesheets_directory)
+
+    print('repair photos')
+    # Tells how many days back to check
+    desired_date = simpledialog.askinteger("Desired Dates", "How many days into the past do you want to select emails?")
+    check_unread = messagebox.askyesno("Check Unread?", "Would you like to only check the unread emails after your search date?")
+
+
+    today = datetime.utcnow().date()
+    start_of_today = datetime.combine(today, time.min)
+    start_of_tomorrow = start_of_today + timedelta(days=1)
+
+    start_of_today_timestamp = int(start_of_today.timestamp()) * 1000
+    start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
+
+
+
+    email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com"]  # List of email addresses
+
+
+    email_to_label_mapping = {
+        "oblivion969.dm@gmail.com": "Label_7", # PICS-JR - Dave Myers
+        "fespitia76@gmail.com": "Label_6",     # PICS-Frank Espitia
+        "mmblidy92@gmail.com": "Label_8",      # PICS-Mike Blidy
+        "tawormley@aol.com": "Label_9",        # PICS-Troy
+        "edinc99@gmail.com": "Label_11",       # Time Sheets - Expenses
+        # Add more mappings if needed
+    }
+
+
+    print_status = messagebox.askyesno("Confirmation", "Do you want to print matching repair photos and time sheets?")
+
+    for email_address in email_addresses:
+        query_date = datetime.now() - timedelta(days=desired_date)  # Using the desired_date variable instead of fixed 7
+        query_date_str = query_date.strftime('%Y-%m-%d')
+
+        if check_unread:
+            query = f"is:unread from:{email_address} after:{query_date_str}"
+        else:
+            query = f"from:{email_address} after:{query_date_str}"
+            
+
+        try:
+            response = service.users().messages().list(userId=user_email, q=query).execute()
+            
+            messages = response.get('messages', [])
+            all_attachments = []
+            for message in messages:
+                
+                msg_id = message['id']
+                msg = service.users().messages().get(userId=user_email, id=msg_id).execute()
+                subject = [header['value'] for header in msg['payload']['headers'] if header['name'] == 'Subject'][0]
+                subject = sanitize_subject(subject)
+                attachments = download_repair_photos(service, user_email, msg_id, store_directory, email_address, desired_date)
+                
+                label_id_to_add = email_to_label_mapping[email_address]
+
+                if attachments:
+                    all_attachments.extend(attachments)
+                # if email_address != "edinc99@gmail.com":
+                #     subject_directory = os.path.join(store_directory, subject)
+                #     image_files = [os.path.join(subject_directory, file) for file in os.listdir(subject_directory) if file.lower().endswith(('.png', '.jpg', '.jpeg'))]  # Adjust the extensions if needed
+                #     pdf_filename = os.path.join(subject_directory, "combined.pdf")
+                #     print('new func 4')
+                #     save_info_with_photos(subject, email_address, query_date_str, "Body placeholder", pdf_filename, image_files)
+                #     print('new func 5')
+
+                # Check if subject contains special terms
+                if any(term in subject.lower() for term in ['time', 'expense', 'fwd']):
+                    label_id_to_add = 'Label_11'  # Replace with appropriate label ID
+                
+                mark_as_read(service, user_email, msg_id)
+
+            # Modify labels for the message
+                # if 'special_word' in subject:
+                    # label_id_to_add = 'special_label_id'
+                # else:
+                    # label_id_to_add = 'regular_label_id_for_' + email_address  # You should define these label IDs
+
+                service.users().messages().modify(
+                    userId=user_email,
+                    id=msg_id,
+                    body={'addLabelIds': [label_id_to_add]}
+                ).execute()
+
+                if email_address ==  "edinc99@gmail.com":
+                    path_to_print = (os.path.join(timesheets_directory, subject))
+                    path_to_print = path_to_print.replace('\\\\', '\\')
+                    print_first_pdfs_from_folder(path_to_print)
+                    sleep(.5)
+                    # print_first_pdfs_from_folder(os.path.join(store_directory, subject))
+
+            sleep(1)
+            # if print_status:
+            #     for attachment in all_attachments:
+            #         print_file_with_ghostscript(attachment)
+        except Exception as e:
+            print('An error occurred: %s' % e)
+    # TODO: I'd like to add some printing properties here but it looks like I'm going to need to figure out how to do a right click
+    
+
+
+
+    # clear_directory(store_directory)
+    # clear_directory(timesheets_directory)
     print("download_repair_photos.py is complete.")
 
 
