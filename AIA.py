@@ -3,6 +3,9 @@
 # Potentially I could just put everything on print later for the invoices so
 # i don't have to mess around with the printing interface
 
+# It would be nice to have the ability in the forms to accept blank
+# entries as 0s potentially
+
 import pyautogui, openpyxl, datetime, calendar, os, sys, re
 import subprocess, time, win32, win32com.client
 from openpyxl import Workbook, load_workbook
@@ -75,6 +78,10 @@ if __name__ =="__main__":
     noe_token = 0
     new_or_existing = OptionButtons(root, title="New or Existing", button_names=["New Billing Cycle", "Existing Billing Cycle", "Retention/Final Billing"])
     print("You clicked:", new_or_existing.result)
+
+    # This is a boolean that's used in progress billing to see if the retention
+    # needs to be billed in order to be reduced
+    retention_reduction = False
 
     # New means 1, existing means 0, but don't forget about Retention
     if new_or_existing.result == 'New Billing Cycle':
@@ -212,7 +219,10 @@ if __name__ =="__main__":
         # add old current payment E39 to previous payments E38
         sheet1["E38"].value += sheet1["E39"].value
         if noe_token == 0:
-            current_payment_due.value = int(completed_through) * (1-int(retention_percent)*.01)
+            if retention_reduction:
+                current_payment_due.value = int(completed_through) * (1-int(retention_percent)*.01) + (new_prev_retained / 2)
+            else:
+                current_payment_due.value = int(completed_through) * (1-int(retention_percent)*.01)
         elif noe_token == "Retention" and qtoken == 1:
             current_payment_due.value = int(new_prev_retained)
     if noe_token == 1:

@@ -130,7 +130,8 @@ class CustomDialog:
         self.dialog.wait_window(self.dialog)
 
     def get_values(self):
-        return {field_name: entry.get() for field_name, entry in self.field_entries.items()}
+        return {field_name: entry.get() if entry.get().strip() != '' else '0' for field_name, entry in self.field_entries.items()}
+
 
     
     def ok_clicked(self):

@@ -51,19 +51,25 @@ def find_invoice(invoice_number):
     sleep(1.5)
     hotkey('alt', 'g')
     sleep(1)
+
+def bill_reduction(retention_to_reduce):
+    sleep(.5)
+    press('tab')
+    write("New Ret Due")
+    press('tab')
+    sleep(.5)
+    press('tab')
+    sleep(.5)
+    retention_to_reduce /= 2
+    write(str(retention_to_reduce))
+
+def number_formatting(number):
+    number = number.replace(',', '')
+    number = number[0:-3]
+    number = int(number)
+    return number
     
-    APP_PATH = r"C:\Program Files (x86)\Intuit\QuickBooks 2019\QBW32.EXE"
-    MAIN_WINDOW_TITLE_REGEX = ".*QuickBooks Desktop Pro 2019.*"
-    CHILD_WINDOW_TITLE = "Create Invoices (Editing Transaction...) "
-    BUTTON_ID = "DuplicateBtn"
-    
-    click_duplicate_button(APP_PATH, MAIN_WINDOW_TITLE_REGEX, CHILD_WINDOW_TITLE, BUTTON_ID)
 
-    sleep(1)
-
-    press('space')
-
-    sleep(.3)
     
 def new_ok_clicked(self):
         values = self.get_values()
@@ -90,6 +96,12 @@ def new_ok_clicked(self):
 
 
 if __name__ == "__main__":
+    APP_PATH = r"C:\Program Files (x86)\Intuit\QuickBooks 2019\QBW32.EXE"
+    MAIN_WINDOW_TITLE_REGEX = ".*QuickBooks Desktop Pro 2019.*"
+    CHILD_WINDOW_TITLE = "Create Invoices (Editing Transaction...) "
+    BUTTON_ID = "DuplicateBtn"
+    
+    
     CustomDialog.ok_clicked = new_ok_clicked
 
     windows = gw.getAllWindows()
@@ -129,6 +141,8 @@ if __name__ == "__main__":
         retention_percent = 10
     else:
         retention_percent = 5
+        retention_reduction = messagebox.askyesno("Reduction status", "Bill to reduce retention from 10% to 5%")
+        sleep(1)
     print(retention_percent)
 
 
@@ -136,6 +150,16 @@ if __name__ == "__main__":
     qb_window.activate()
 
     find_invoice(target_invoice)
+    
+    sleep(1)
+
+    click_duplicate_button(APP_PATH, MAIN_WINDOW_TITLE_REGEX, CHILD_WINDOW_TITLE, BUTTON_ID)
+
+    sleep(1)
+
+    press('space')
+
+    sleep(.3)
 
     hotkey('alt', 'j')
     time.sleep(.5)
@@ -169,8 +193,11 @@ if __name__ == "__main__":
     prev_billed = prev_billed[0:-3]
 
     if not second_bill:
+        press('down')
+        new_prev_retained = copy_clipboard()
+        new_prev_retained = number_formatting(new_prev_retained)
         # Goes to the last invoice's completed through which will become the last perioud amount
-        press('down', presses=2)
+        press('down')
         last_period = copy_clipboard()
         sleep(.5)
 
@@ -178,14 +205,23 @@ if __name__ == "__main__":
         # Legibility
         last_period = last_period.replace(',', '')
         last_period = last_period[0:-3]
+        press('down')
+        press('tab')
+        new_prev_retained -= number_formatting(copy_clipboard())
+        # number_formatting(new_prev_retained)
     else:
+        press('down')
+        press('tab')
+        new_prev_retained = copy_clipboard()
         last_period = 0
+
+    hotkey('shift', 'tab')
+    press('up')
 
     # Combines the previously billed with the amount billed last perioud for the new previously billed
     new_prev_billed = int((prev_billed)) + int((last_period))
 
-    # Sets previously retained
-    new_prev_retained = new_prev_billed * .1
+    
 
     # Alright, at this point we now have all of the information and now we're just going to be writing it to
     # The quickbooks fields
@@ -208,6 +244,10 @@ if __name__ == "__main__":
         write(str(completed_through))
         press('down')
         write(f'-{retention_percent}%')
+        press('tab')
+        if retention_reduction:
+            bill_reduction(new_prev_retained)
+            # completed_through = str(int(completed_through) + int(new_prev_retained))
     else:
         press('tab')
         write('0')
@@ -246,9 +286,13 @@ if __name__ == "__main__":
         press('tab', presses=2)
         write(f'-{retention_percent}%')
         press('tab')
+        if retention_reduction:
+            bill_reduction(new_prev_retained)
+            # completed_through = str(int(completed_through) + int(new_prev_retained))
         
 
-
+    press('tab')
+    sleep(.5)
     print_bin = messagebox.askyesno("Confirmation", "Do you want to print this?")
 
     if print_bin:

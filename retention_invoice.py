@@ -136,6 +136,9 @@ write('New Ret Due')
 press('tab', presses=2)
 sleep(.5)
 write(str(new_prev_retained))
+sleep(.1)
+press('tab')
+sleep(.1)
 retention_percent = 0
 
 print_bin = messagebox.askyesno("Confirmation", "Do you want to print this?")
