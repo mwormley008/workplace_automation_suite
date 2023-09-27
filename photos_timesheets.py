@@ -476,7 +476,6 @@ def save_info_with_photos(subject, sender, received_date, body, directory, image
     c = canvas.Canvas(filename, pagesize=letter)
     width, height = letter  # Get dimensions for portrait orientation
 
-    # Function to add text details
     def add_text_details():
         textobject = c.beginText()
         textobject.setFont('Helvetica', 20)  # Set font and size
@@ -496,45 +495,44 @@ def save_info_with_photos(subject, sender, received_date, body, directory, image
         c.drawText(textobject)
         return textobject.getY() - 50 # Return the y-position after writing the text
 
-    
-    # Function to add images in a 2x2 grid
-    def add_images(start_index, y_start, images_per_row, img_scale_factor=1):
-        # Define starting positions and image dimensions
-        max_img_width = (width / 2 - 40) * img_scale_factor  # 20 units margin on each side
-        max_img_height = (y_start - 40) / 2 * img_scale_factor  # Use the returned y-position to determine height, with a margin
+    def add_images(start_index, y_start, images_per_row):
+        max_img_width = (width / 2 - 40) 
+        max_img_height = (y_start - 40) / 2  
         x_positions = [30, width/2 + 10]
         y_positions = [y_start, y_start - max_img_height]
 
         for i in range(min(images_per_row * 2, len(image_streams) - start_index)):
             if start_index + i < len(image_streams):
                 image_stream = image_streams[start_index + i]
-                
-        
-                # Use PIL to get the actual image dimensions and compute the scaling factor
                 img = Image.open(image_stream)
 
                 img_orig_width, img_orig_height = img.size
                 scale_factor_width = max_img_width / img_orig_width
                 scale_factor_height = max_img_height / img_orig_height
-                scale_factor = min(scale_factor_width, scale_factor_height)  # Take the smaller scale factor to ensure the image fits
+                scale_factor = min(scale_factor_width, scale_factor_height)
                 img_width = img_orig_width * scale_factor
                 img_height = img_orig_height * scale_factor
 
+                # Check if the image will fit on the current page
+                if y_positions[i // 2] - img_height < 30:  # Consider a 30 unit bottom margin
+                    c.showPage()
+                    y_positions = [height, height - max_img_height]
+
                 c.drawImage(ImageReader(image_stream), x_positions[i % 2], y_positions[i // 2] - img_height, width=img_width, height=img_height, preserveAspectRatio=True)
+                
                 if hasattr(image_stream, 'seek'):
                     image_stream.seek(0)
 
-                if (i + 1) % 2 == 0:  # Every time two images have been added, adjust the y_position for the next row
+                if (i + 1) % 2 == 0:
                     y_positions = [y_positions[1] - max_img_height, y_positions[1] - 2 * max_img_height]
 
     y_pos = add_text_details()
-    add_images(0, y_pos, 2, img_scale_factor=1.2)  # Start with 2 larger images on the first page, with more spacing
+    add_images(0, y_pos, 2) 
 
     image_index = 2
     while image_index < len(image_streams):
-        print(f"Main loop - image_index: {image_index}")  # Debugging line
         c.showPage()  # Start a new page
-        add_images(image_index, height, 4)  # Add 4 images per page from second page onward
+        add_images(image_index, height, 4) 
         image_index += 4
 
     c.save()

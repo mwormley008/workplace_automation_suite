@@ -3,6 +3,8 @@
 # Creating envelopes as necessary
 
 # Currently starts from the enter bill screen
+# Would be nice if I could verify the bill screen presence with a method like the other qb stuff
+# and that way I could just have it pop up if it wasn't there
 
 # Maybe what i should do is prompt to see if we want to use the default mail settings
 

@@ -12,3 +12,5 @@ These need to be added to the accountants recipients list
 '//WBR/data/shared/G702':'None'
 'GAJ':'jlipinski@gajohnson.com'
 'Niki':'TNGAdmin@thenikigroup.com'
+'//WBR/data/shared/G702':'None'
+'GAJ':'jlipinski@gajohnson.com'

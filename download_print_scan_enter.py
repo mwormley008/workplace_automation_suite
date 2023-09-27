@@ -13,7 +13,7 @@ if __name__ == "__main__":
     script2_path = r"C:\Users\Michael\Desktop\python-work\invoice_scan.py"
     script3_path = r"C:\Users\Michael\Desktop\python-work\invoice_input.py"
     
-    run_script(script1_path)
+    # run_script(script1_path)
     run_script(script2_path)
     run_script(script3_path)
 
