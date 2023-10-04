@@ -1,6 +1,6 @@
 import itertools
 
-numbers = [1180, 1120, 3739, 3330, 2698]
+numbers = [750, 1200, 750, 6000, 3040, 600, 900, -5745]
 
 combinations = []
 for r in range(1, len(numbers) + 1):
@@ -8,7 +8,8 @@ for r in range(1, len(numbers) + 1):
 
 for comb in combinations:
     comb_sum = sum(comb)
-    if comb_sum == 8660:
+    print(comb_sum)
+    if comb_sum == 3064:
         print(f"Combination: {comb}  Sum: {comb_sum}")
 else:
     print("No other matching combination(s) found.")
