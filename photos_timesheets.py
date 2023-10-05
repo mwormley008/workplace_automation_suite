@@ -151,6 +151,8 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_sender, da
 def download_repair_photos(service, user_id, msg_id, store_dir, desired_sender, days_ago):
     attachments_paths = []
     attachments_streams = []
+    unique_email_dir = None  # Initialize it here
+
 
     try:
         message = service.users().messages().get(userId=user_id, id=msg_id).execute()
@@ -219,10 +221,13 @@ def download_repair_photos(service, user_id, msg_id, store_dir, desired_sender, 
                         print(subject.lower()+'expense')
                         unique_email_dir = os.path.join(r"C:\Users\Michael\Desktop\python-work\time_sheets", safe_subject)
                     else:
-                        print(subject.lower()+'repair')
+                        print(subject.lower()+' repair')
                         unique_email_dir = os.path.join(store_dir, safe_subject)
                     
-                    os.makedirs(unique_email_dir, exist_ok=True)
+                    if unique_email_dir:
+                        os.makedirs(unique_email_dir, exist_ok=True)
+                        filepath = os.path.join(unique_email_dir, filename)
+                    
 
                     filepath = os.path.join(unique_email_dir, filename)  # Use original filename
                     # with open(filepath, 'wb') as f:

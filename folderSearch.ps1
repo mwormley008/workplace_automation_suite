@@ -3,8 +3,12 @@
 # Set the path to the folder you want to search
 $folderPath = '\\WBR\shared\Proposals'
 
-# Search for .doc files that match the user's input in the specified folder
-if ($docFile = Get-ChildItem -Path $folderPath -Filter "*$fileName*.doc" -File)
+# Search for both .doc and .docx files that match the user's input in the specified folder
+$docFile = Get-ChildItem -Path $folderPath -File | Where-Object { ($_.Name -like "*$fileName*.doc") -or ($_.Name -like "*$fileName*.docx") }
+
+
+# Check if any files were found
+if ($docFile.Count -gt 0)
 {
     & {
         for ($i = 0; $i -lt $docFile.Count; $i++)

@@ -1,3 +1,4 @@
+#! python3
 # to scan invoices
 # this was written by GPT so there's going to be some trouble shooting involved
 
