@@ -491,19 +491,23 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         textobject.setFont('Helvetica', 20)  # Set font and size
         textobject.setTextOrigin(30, height - 50)  # Start near top-left corner
 
+        max_text_width = width - 70  # assuming 30 unit left and right margins
+        
+
         lines = [
-            f"Subject: {subject}\n",
-            f"From: {sender}\n",
-            f"Received Date: {received_date}\n",
-            f"Body: {body}"
+            f"Subject: {subject}",
+            f"From: {sender}",
+            f"Received Date: {received_date}",
+            f"Body: {wrap_text(body, max_text_width, 'Helvetica', 20)}"
         ]
+        
 
         for line in lines:
             for sub_line in line.split('\n'):
                 textobject.textLine(sub_line)
 
         c.drawText(textobject)
-        return textobject.getY() - 50 # Return the y-position after writing the text
+        return textobject.getY() - 50  # Return the y-position after writing the text
 
     def add_images(start_index, y_start, images_per_row, first_page):
         if first_page == True:
@@ -642,8 +646,24 @@ def sanitize_subject(subject):
     # Add any other sanitization steps as needed
     return subject
 
+def wrap_text(text, max_width, font, size):
+    from reportlab.pdfbase.pdfmetrics import stringWidth
 
+    words = text.split()
+    wrapped_lines = []
+    current_line = words[0]
 
+    for word in words[1:]:
+        # Check width of string
+        width = stringWidth(current_line + " " + word, font, size)
+        if width <= max_width:
+            current_line += " " + word
+        else:
+            wrapped_lines.append(current_line)
+            current_line = word
+    wrapped_lines.append(current_line)
+    
+    return "\n".join(wrapped_lines)
 
 CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
 API_NAME = 'gmail'
@@ -675,7 +695,8 @@ if __name__ == "__main__":
 
 
     email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com"]  # List of email addresses
-
+    # this is just to use if I need to test only one person
+    # email_addresses = ["tawormley@aol.com"]
 
     email_to_label_mapping = {
         "oblivion969.dm@gmail.com": "Label_7", # PICS-JR - Dave Myers
