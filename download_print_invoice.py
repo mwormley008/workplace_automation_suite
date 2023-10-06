@@ -254,7 +254,7 @@ if __name__ =="__main__":
     start_of_tomorrow_timestamp = int(start_of_tomorrow.timestamp()) * 1000
 
     # Load access token from pickle file
-    pickle_file = f'token_{API_NAME}_{API_VERSION}.pickle'
+    pickle_file = f'C:\\Users\\Michael\\Desktop\\python-work\\token_{API_NAME}_{API_VERSION}.pickle'
     with open(pickle_file, 'rb') as token_file:
         access_token = pickle.load(token_file)
         print('pickle')
