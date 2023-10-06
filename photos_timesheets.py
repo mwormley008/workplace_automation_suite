@@ -148,7 +148,7 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_sender, da
     except Exception as error:
         print(f"An error occurred: {error}")
 
-def download_repair_photos(service, user_id, msg_id, store_dir, desired_sender, days_ago):
+def download_repair_photos(service, user_id, msg_id, store_dir, desired_sender, days_ago, print_status):
     attachments_paths = []
     attachments_streams = []
     unique_email_dir = None  # Initialize it here
@@ -222,14 +222,13 @@ def download_repair_photos(service, user_id, msg_id, store_dir, desired_sender, 
                         unique_email_dir = os.path.join(r"C:\Users\Michael\Desktop\python-work\time_sheets", safe_subject)
                     else:
                         print(subject.lower()+' repair')
-                        unique_email_dir = os.path.join(store_dir, safe_subject)
+                        # unique_email_dir = os.path.join(store_dir, safe_subject)
                     
                     if unique_email_dir:
                         os.makedirs(unique_email_dir, exist_ok=True)
                         filepath = os.path.join(unique_email_dir, filename)
-                    
-
-                    filepath = os.path.join(unique_email_dir, filename)  # Use original filename
+                    else:
+                        filepath = os.path.join(store_dir, filename)  # Use original filename
                     # with open(filepath, 'wb') as f:
                     #     f.write(file_data)
 
@@ -239,7 +238,7 @@ def download_repair_photos(service, user_id, msg_id, store_dir, desired_sender, 
             
             # I think I need to take this out or alter it because I'm only going to want it for the timesheets
             # save_info_as_pdf(subject, sender, received_date, text, unique_email_dir)
-            save_info_with_photos(subject, sender, received_date, text, unique_email_dir, attachments_streams)
+            save_info_with_photos(subject, sender, received_date, text, store_dir, print_status, attachments_streams)
             # details = f"Subject: {subject}\n\nFrom: {sender}\n\nReceived Date: {received_date}\n\nBody:{text}"
             # details_file = os.path.join(unique_email_dir, "00000000details.txt")
             # with open(details_file, 'w') as f:
@@ -474,11 +473,17 @@ def extract_first_page_and_overwrite(source_pdf):
 
     print(f"Overwritten {source_pdf} with just its first page.")
 
-def save_info_with_photos(subject, sender, received_date, body, directory, image_streams=[]):
+def save_info_with_photos(subject, sender, received_date, body, directory, print_status, image_streams=[]):
     if not os.path.exists(directory):
         os.makedirs(directory)
-    filename = os.path.join(directory, "report.pdf")
-    c = canvas.Canvas(filename, pagesize=letter)
+    sanitized_subject = "".join([c if c.isalnum() else "_" for c in subject])
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = f"{sanitized_subject}_{timestamp}.pdf"
+
+    filepath = os.path.join(directory, filename)
+    
+    c = canvas.Canvas(filepath, pagesize=letter)
+
     width, height = letter  # Get dimensions for portrait orientation
 
     def add_text_details():
@@ -559,6 +564,8 @@ def save_info_with_photos(subject, sender, received_date, body, directory, image
             c.showPage()
 
     c.save()
+    if print_status == True:
+        print_file_with_ghostscript(filepath)
 
 def print_macro():
     print_status = messagebox.askyesno("Confirmation", "Do you want to print?")
@@ -702,7 +709,7 @@ if __name__ == "__main__":
                 msg = service.users().messages().get(userId=user_email, id=msg_id).execute()
                 subject = [header['value'] for header in msg['payload']['headers'] if header['name'] == 'Subject'][0]
                 subject = sanitize_subject(subject)
-                attachments = download_repair_photos(service, user_email, msg_id, store_directory, email_address, desired_date)
+                attachments = download_repair_photos(service, user_email, msg_id, store_directory, email_address, desired_date, print_status)
                 
                 label_id_to_add = email_to_label_mapping[email_address]
 
