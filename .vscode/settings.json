@@ -1,2 +1,5 @@
 {
+    "vim.smartRelativeLine": true,
+    "vim.statusBarColorControl": false,
+    "vim.useSystemClipboard": true
 }

@@ -506,8 +506,14 @@ def save_info_with_photos(subject, sender, received_date, body, directory, image
         x_positions = [30, width/2 + 10]
         y_positions = [y_start, y_start - max_img_height]
 
-        for i in range(min(images_per_row * 2, len(image_streams) - start_index)):
+        for i in range(images_per_row * 2):
+ 
+            # print(f"start_index: {start_index}, i: {i}")
+            # print(f"Accessing image_stream at index {start_index + i}, total length: {len(image_streams)}")
+            
+
             if start_index + i < len(image_streams):
+                # print(f"Accessing image_stream at index {start_index + i}, total length: {len(image_streams)}")
                 image_stream = image_streams[start_index + i]
                 img = Image.open(image_stream)
 
@@ -528,17 +534,20 @@ def save_info_with_photos(subject, sender, received_date, body, directory, image
                 if hasattr(image_stream, 'seek'):
                     image_stream.seek(0)
 
-                if (i + 1) % 2 == 0:
+                if (i + 1) % 4 == 0:
                     y_positions = [y_positions[1] - max_img_height, y_positions[1] - 2 * max_img_height]
-
+    # ok so we've made it this far
     y_pos = add_text_details()
-    add_images(0, y_pos, 2) 
+    image_index = 0
+    add_images(image_index, y_pos, 2) 
+    c.showPage()  # Start a new page
+    image_index += 4
 
-    image_index = 2
     while image_index < len(image_streams):
-        c.showPage()  # Start a new page
-        add_images(image_index, height, 4) 
-        image_index += 4
+        add_images(image_index, height, 2) 
+        image_index += 2
+        if image_index < len(image_streams) and image_index % 4 == 0:
+            c.showPage()
 
     c.save()
 
