@@ -500,13 +500,18 @@ def save_info_with_photos(subject, sender, received_date, body, directory, image
         c.drawText(textobject)
         return textobject.getY() - 50 # Return the y-position after writing the text
 
-    def add_images(start_index, y_start, images_per_row):
-        max_img_width = (width / 2 - 40) 
-        max_img_height = (y_start - 40) / 2  
+    def add_images(start_index, y_start, images_per_row, first_page):
+        if first_page == True:
+            image_rows = 1
+            max_img_width = width - 50  # Use more width, leaving margins on both sides
+            max_img_height = (y_start - 40) / 1.33 # Use full height, leaving a margin only at the bottom
+        else:
+            image_rows = 2
+            max_img_width = (width / 2 - 40) 
+            max_img_height = (y_start - 40) / 2  
         x_positions = [30, width/2 + 10]
         y_positions = [y_start, y_start - max_img_height]
-
-        for i in range(images_per_row * 2):
+        for i in range(images_per_row * image_rows):
  
             # print(f"start_index: {start_index}, i: {i}")
             # print(f"Accessing image_stream at index {start_index + i}, total length: {len(image_streams)}")
@@ -541,14 +546,14 @@ def save_info_with_photos(subject, sender, received_date, body, directory, image
                 if (i + 1) % 4 == 0:
                     y_positions = [y_positions[1] - max_img_height, y_positions[1] - 2 * max_img_height]
     # ok so we've made it this far
-    y_pos = add_text_details()
     image_index = 0
-    add_images(image_index, y_pos, 2) 
+    y_pos = add_text_details()
+    add_images(image_index, y_pos, 2, True) 
+    image_index += 2
     c.showPage()  # Start a new page
-    image_index += 4
 
     while image_index < len(image_streams):
-        add_images(image_index, height, 2) 
+        add_images(image_index, height, 2, False) 
         image_index += 2
         if image_index < len(image_streams) and image_index % 4 == 0:
             c.showPage()
