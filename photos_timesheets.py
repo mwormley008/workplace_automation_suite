@@ -22,7 +22,7 @@ from reportlab.lib.utils import ImageReader
 from pyautogui import press, write, hotkey
 from io import BytesIO
 from pywinauto import Desktop, Application
-from PIL import Image
+from PIL import Image, ExifTags
 import shutil, PyPDF2
 
 
@@ -516,6 +516,10 @@ def save_info_with_photos(subject, sender, received_date, body, directory, image
                 # print(f"Accessing image_stream at index {start_index + i}, total length: {len(image_streams)}")
                 image_stream = image_streams[start_index + i]
                 img = Image.open(image_stream)
+                img = img.rotate(-90, expand=True)
+                byte_io = BytesIO()
+                img.save(byte_io, format='JPEG')  # Or 'JPEG' depending on your image format
+                byte_io.seek(0)
 
                 img_orig_width, img_orig_height = img.size
                 scale_factor_width = max_img_width / img_orig_width
@@ -529,7 +533,7 @@ def save_info_with_photos(subject, sender, received_date, body, directory, image
                     c.showPage()
                     y_positions = [height, height - max_img_height]
 
-                c.drawImage(ImageReader(image_stream), x_positions[i % 2], y_positions[i // 2] - img_height, width=img_width, height=img_height, preserveAspectRatio=True)
+                c.drawImage(ImageReader(byte_io), x_positions[i % 2], y_positions[i // 2] - img_height, width=img_width, height=img_height, preserveAspectRatio=True)
                 
                 if hasattr(image_stream, 'seek'):
                     image_stream.seek(0)
@@ -624,6 +628,9 @@ def sanitize_subject(subject):
     subject = re.sub(r'\-', '', subject)  # Remove dashes
     # Add any other sanitization steps as needed
     return subject
+
+
+
 
 CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
 API_NAME = 'gmail'
