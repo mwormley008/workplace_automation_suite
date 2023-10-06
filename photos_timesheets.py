@@ -526,7 +526,8 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
                 # print(f"Accessing image_stream at index {start_index + i}, total length: {len(image_streams)}")
                 image_stream = image_streams[start_index + i]
                 img = Image.open(image_stream)
-                img = img.rotate(-90, expand=True)
+                if sender == "fespitia76@gmail.com":
+                    img = img.rotate(-90, expand=True)
                 byte_io = BytesIO()
                 img.save(byte_io, format='JPEG')  # Or 'JPEG' depending on your image format
                 byte_io.seek(0)
@@ -693,9 +694,9 @@ if __name__ == "__main__":
         query_date_str = query_date.strftime('%Y-%m-%d')
 
         if check_unread:
-            query = f"is:unread from:{email_address} after:{query_date_str}"
+            query = f"is:unread from:{email_address} after:{query_date_str} NOT subject:'FWD:' NOT subject:'Fw:'"
         else:
-            query = f"from:{email_address} after:{query_date_str}"
+            query = f"from:{email_address} after:{query_date_str} NOT subject:'FWD:' NOT subject:'Fw:'"
             
 
         try:
@@ -724,7 +725,7 @@ if __name__ == "__main__":
                 #     print('new func 5')
 
                 # Check if subject contains special terms
-                if any(term in subject.lower() for term in ['time', 'expense', 'fwd']):
+                if any(term in subject.lower() for term in ['time', 'expense']):
                     label_id_to_add = 'Label_11'  # Replace with appropriate label ID
                 
                 mark_as_read(service, user_email, msg_id)
