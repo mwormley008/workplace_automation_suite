@@ -7,6 +7,7 @@
 # legible invoice info on Stevenson
 # Hinckley is scannable
 
+# PFS lacks a date pattern, line 239, will also need some help figuring out where to scan for it
 import cv2
 import pypdf
 import pytesseract
@@ -69,11 +70,11 @@ def is_file_in_folder(filename, folder_path):
 
 # working on turning this into oop because this is a little convoluted
 class Vendor:
-    def __init__(self, name, inv_patterns, where_to_look, 
+    def __init__(self, name, inv_patterns, inv_location, 
                  page_pattern, total_patterns, total_location, date_pattern, date_location):
         self.name = name
         self.inv_patterns = inv_patterns
-        self.where_to_look = where_to_look
+        self.inv_location = inv_location
         self.page_pattern = page_pattern
         self.total_patterns = total_patterns
         self.total_location = total_location
@@ -232,6 +233,14 @@ for filename in os.listdir(folder_path):
                 else:
                     print("No 'unique invoice number' found")
             elif vendor == "Pro Fastening Systems":
+                PFS = Vendor('Pro Fastening Systems', 
+                    [r'(\d{2}-\d{2}-\d{2})\s*\|?\s*(\d{7}-?\d{0,2})'],
+                    inv_text, 
+                    r"page\s(\d+)\sof\s([2-9])",
+                        [r'THIS AMOUNT \$(\d?\s?(?:[:,])?[\d,]+\s*\.{0,1}\s*\d{2})', r'PLERSE PAT \$([\d,]+\.\d{2})']
+                        amt_text,
+                        r'invoice date[:\s]*([01]?\d/[0123]?\d/\d{2})', 
+                        content)
                 ## Finds the invoice number and checks for uniqueness
                 inv_pattern = r'(\d{2}-\d{2}-\d{2})\s*\|?\s*(\d{7}-?\d{0,2})'
 
