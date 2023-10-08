@@ -67,6 +67,22 @@ def is_file_in_folder(filename, folder_path):
     file_path = os.path.join(folder_path, filename)
     return os.path.isfile(file_path)
 
+# working on turning this into oop because this is a little convoluted
+class Vendor:
+    def __init__(self, name, inv_patterns, where_to_look, 
+                 page_pattern, total_patterns, total_location, date_pattern, date_location):
+        self.name = name
+        self.inv_patterns = inv_patterns
+        self.where_to_look = where_to_look
+        self.page_pattern = page_pattern
+        self.total_patterns = total_patterns
+        self.total_location = total_location
+        self.date_pattern = date_pattern
+        self.date_location = date_location
+
+
+               
+
 
 
 file_name = f'{date.today()}_invoices.xlsx'
@@ -74,6 +90,7 @@ file_name = f'{date.today()}_invoices.xlsx'
 folder_path = r'C:\Users\Michael\Desktop\python-work\Invoices'
 
 if is_file_in_folder(file_name, folder_path):
+    print('success')
     wb = load_workbook(os.path.join(folder_path, file_name))
     ws = wb.active
 else:
@@ -111,8 +128,8 @@ for filename in os.listdir(folder_path):
             img = cv2.imread('out.jpg')
             # print(f"Content on {ocr_core(img)}")
             content, inv_text, amt_text = ocr_core(img)
-            # print(content)
-            print(amt_text)
+            print(f'content:{content}')
+            print(f'amt_text:{amt_text}')
             
 
             # Finds the vendor
@@ -133,8 +150,20 @@ for filename in os.listdir(folder_path):
             elif "BEACON" in content:
                 vendor = "Beacon"
                 print(f"Vendor: {vendor}")
-
+            elif "Lumber & Supply" in content:
+                vendor = "Totem"
+                print(f"Vendor: {vendor}")
+            
             if vendor == "Gemco":
+
+                Gemco = Vendor('Gemco', 
+                    [r'\n\n(\d{7,10}-\d{1,3})', r'(\d{7,10}-\d{1,3})'], 
+                    content, 
+                    r"page\s(\d+)\sof\s([2-9])",
+                    r'balance \$([\d,]*\.\d{2}|\d+)', 
+                        amt_text,
+                        r'invoice date[:\s]*([01]?\d/[0123]?\d/\d{2})', 
+                        content)
                 ## Finds the invoice number and checks for uniqueness
                 inv_pattern = r'\n\n(\d{7,10}-\d{1,3})'  # Matches 7 to 10 digits, a hyphen, then 1 to 3 digits
                 inv_pattern2 = r'(\d{7,10}-\d{1,3})'   # Same as above but with an optional hyphen

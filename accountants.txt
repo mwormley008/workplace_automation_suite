@@ -1,19 +1,10 @@
 These need to be added to the accountants recipients list
 
-
-
-'Rosewood':'rosewood6727@aol.com'
-'Loberg':'jtakeda@lobergconstruction.com'
-'Tim':'briana@timcoteinc.com'
-'Osman':'mike.wallis@osmanconstruction.com'
-'Incredible':'tcutrona@incrediblebuilders.com'
+Ones I think may be weird or not useful:
 'Midwest':'andy@midwestmasonryinc.com'
+'Incredible':'tcutrona@incrediblebuilders.com'
 'Stratus':'David.Rekstad@stratusunlimited.com'
-'//WBR/data/shared/G702':'None'
-'GAJ':'jlipinski@gajohnson.com'
-'Niki':'TNGAdmin@thenikigroup.com'
-'//WBR/data/shared/G702':'None'
-'GAJ':'jlipinski@gajohnson.com'
 'Stratus':'beverly.hitchcock@stratusunlimited.com'
-'MRG':'BMolk@matanky.com'
 'Portillo's':'MaGilbert@portillos.com'
+
+Ones I haven't checked yet:
