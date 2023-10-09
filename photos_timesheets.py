@@ -490,7 +490,9 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         textobject = c.beginText()
         textobject.setFont('Helvetica', 20)  # Set font and size
         textobject.setTextOrigin(30, height - 50)  # Start near top-left corner
-
+        # list index out of range
+        
+        print(width - 70)  # assuming 30 unit left and right margins
         max_text_width = width - 70  # assuming 30 unit left and right margins
         
 
@@ -558,6 +560,7 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
     # ok so we've made it this far
     image_index = 0
     y_pos = add_text_details()
+    # looks like the index error happens here
     add_images(image_index, y_pos, 2, True) 
     image_index += 2
     c.showPage()  # Start a new page
@@ -648,6 +651,8 @@ def sanitize_subject(subject):
 
 def wrap_text(text, max_width, font, size):
     from reportlab.pdfbase.pdfmetrics import stringWidth
+    if not text.split():
+        return ['']
 
     words = text.split()
     wrapped_lines = []
