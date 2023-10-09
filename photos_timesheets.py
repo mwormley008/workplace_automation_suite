@@ -554,7 +554,7 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         os.makedirs(directory)
 
     sanitized_subject = "".join([c if c.isalnum() else "_" for c in subject])
-    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    timestamp = datetime.now().strftime("%Y%m%d")
     filename = f"{sanitized_subject}_{timestamp}.pdf"
 
     filepath = os.path.join(directory, filename)
@@ -664,7 +664,7 @@ def sanitize_subject(subject):
 def wrap_text(text, max_width, font, size):
     from reportlab.pdfbase.pdfmetrics import stringWidth
     if not text.split():
-        return ['']
+        return ''
 
     words = text.split()
     wrapped_lines = []
