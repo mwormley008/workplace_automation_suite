@@ -217,7 +217,7 @@ def download_repair_photos(service, user_id, msg_id, store_dir, desired_sender, 
                     image_stream = BytesIO(file_data)
                     attachments_streams.append(image_stream)
 
-                    if 'time' in subject.lower() or 'expense' in subject.lower() or desired_sender == 'edinc99@gmail.com':  # Check if the word "time" is in the subject
+                    if 'time' in subject.lower() or 'expense' in subject.lower() or desired_sender == 'edinc99@gmail.com':  # Check if these words are in the subject, or if the sender is Edin. These are time sheets and expenses, rather than repair photos.
                         print(subject.lower()+'expense')
                         unique_email_dir = os.path.join(r"C:\Users\Michael\Desktop\python-work\time_sheets", safe_subject)
                     else:
