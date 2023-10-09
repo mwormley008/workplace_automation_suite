@@ -24,7 +24,7 @@ from io import BytesIO
 from pywinauto import Desktop, Application
 from PIL import Image, ExifTags
 import shutil, PyPDF2
-
+from PyPDF2 import PdfReader, PdfWriter
 
 def create_message(sender, to, subject, message_text):
 
@@ -545,6 +545,35 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
                 if (i + 1) % 4 == 0:
                     y_positions = [y_positions[1] - max_img_height, y_positions[1] - 2 * max_img_height]
     
+    def append_pdf_to_writer(pdf_stream, writer):
+        """Appends a PDF from a given stream to the provided PdfFileWriter."""
+        pdf_reader = PdfReader(pdf_stream)
+        for page_num in range(pdf_reader.getNumPages()):
+            page = pdf_reader.getPage(page_num)
+            writer.addPage(page)
+
+
+    def merge_with_stream(output_filename, canvas_filename, pdf_stream):
+        writer = PyPDF2.PdfWriter()
+
+        # Add canvas content to writer
+        with open(canvas_filename, "rb") as canvas_file:
+            reader = PyPDF2.PdfReader(canvas_file)
+            for page_num in range(len(reader.pages())):
+                page = reader.getPage(page_num)
+                writer.addPage(page)
+
+        # Add PDF stream content to writer
+        stream_reader = PyPDF2.PdfReader(pdf_stream)
+        for page_num in range(len(stream_reader.pages())):
+            page = stream_reader.getPage(page_num)
+
+            writer.addPage(page)
+
+        # Save combined content
+        with open(output_filename, "wb") as output_file:
+            writer.write(output_file)
+
     def add_timesheet_image(image_index):
         images_per_page = 1
         max_img_width = width
@@ -590,6 +619,7 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
 
 
     width, height = letter  # Get dimensions for portrait orientation
+    
 
     if repair_or_timesheet == 'repair':
         
@@ -611,18 +641,35 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         if print_status == True:
             print_file_with_ghostscript(filepath)
     elif repair_or_timesheet == 'timesheet':
-        
         image_index = 0
         y_pos = add_text_details()
-        c.showPage()  # Start a new page
+        # c.showPage()  # Start a new page
 
         while image_index < len(image_streams):
-            add_timesheet_image(image_index)
+            c.showPage()
+
+            stream = image_streams[image_index]
+            
+            # Check the first few bytes to determine if it's a PDF
+            first_bytes = stream.read(4)
+            
+            stream.seek(0)  # Reset the stream to the start
+            
+            if first_bytes == b"%PDF":
+                # This is a PDF
+                c.save()  # Save current canvas
+                merge_with_stream(filepath, filepath, stream)
+                # Reinitialize the canvas to continue with further drawings/images
+                c = canvas.Canvas(filepath, pagesize=letter)
+            else:
+                add_timesheet_image(image_index)
+                
+
             image_index += 1
-            if image_index < len(image_streams):
-                c.showPage()
 
         c.save()
+
+            
         if print_status == True:
             print_file_with_ghostscript(filepath) 
 
@@ -822,11 +869,11 @@ if __name__ == "__main__":
                     body={'addLabelIds': [label_id_to_add]}
                 ).execute()
 
-                if email_address ==  "edinc99@gmail.com":
-                    path_to_print = (os.path.join(timesheets_directory, subject))
-                    path_to_print = path_to_print.replace('\\\\', '\\')
-                    print_first_pdfs_from_folder(path_to_print)
-                    sleep(.5)
+                # if email_address ==  "edinc99@gmail.com":
+                #     path_to_print = (os.path.join(timesheets_directory, subject))
+                #     path_to_print = path_to_print.replace('\\\\', '\\')
+                #     print_first_pdfs_from_folder(path_to_print)
+                #     sleep(.5)
                     # print_first_pdfs_from_folder(os.path.join(store_directory, subject))
 
             sleep(1)
