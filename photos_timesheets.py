@@ -559,16 +559,16 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         # Add canvas content to writer
         with open(canvas_filename, "rb") as canvas_file:
             reader = PyPDF2.PdfReader(canvas_file)
-            for page_num in range(len(reader.pages())):
-                page = reader.getPage(page_num)
-                writer.addPage(page)
+            for page_num in range(len(reader.pages)):
+                page = reader.pages[page_num]
+                writer.add_Page(page)
 
         # Add PDF stream content to writer
         stream_reader = PyPDF2.PdfReader(pdf_stream)
-        for page_num in range(len(stream_reader.pages())):
-            page = stream_reader.getPage(page_num)
+        for page_num in range(len(stream_reader.pages)):
+            page = stream_reader.pages[page_num]
 
-            writer.addPage(page)
+            writer.add_Page(page)
 
         # Save combined content
         with open(output_filename, "wb") as output_file:
