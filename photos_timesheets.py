@@ -154,6 +154,7 @@ def download_repair_photos(service, user_id, msg_id, store_dir, desired_sender, 
     unique_email_dir = None  # Initialize it here
 
 
+
     try:
         message = service.users().messages().get(userId=user_id, id=msg_id).execute()
         payload = message['payload']
@@ -482,7 +483,6 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         textobject.setTextOrigin(30, height - 50)  # Start near top-left corner
         # list index out of range
         
-        print(width - 70)  # assuming 30 unit left and right margins
         max_text_width = width - 70  # assuming 30 unit left and right margins
         
 
@@ -501,7 +501,8 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         c.drawText(textobject)
         return textobject.getY() - 50  # Return the y-position after writing the text
 
-    def add_repair_images(start_index, y_start, images_per_row, first_page):
+    def add_repair_images(start_index, y_start, first_page):
+        images_per_row = 2
         if first_page == True:
             image_rows = 1
             max_img_width = width - 50  # Use more width, leaving margins on both sides
@@ -548,6 +549,7 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
                 if (i + 1) % 4 == 0:
                     y_positions = [y_positions[1] - max_img_height, y_positions[1] - 2 * max_img_height]
     
+
     if not os.path.exists(directory):
         os.makedirs(directory)
 
@@ -558,6 +560,8 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
     filepath = os.path.join(directory, filename)
     
     c = canvas.Canvas(filepath, pagesize=letter)
+    
+
 
     width, height = letter  # Get dimensions for portrait orientation
 
@@ -565,12 +569,14 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         
         image_index = 0
         y_pos = add_text_details()
-        add_repair_images(image_index, y_pos, 2, True) 
+
+        add_repair_images(image_index, y_pos, True)
+        # add_repair_images(image_index, y_pos, True) 
         image_index += 2
         c.showPage()  # Start a new page
 
         while image_index < len(image_streams):
-            add_repair_images(image_index, height, 2, False) 
+            add_repair_images(image_index, height, False) 
             image_index += 2
             if image_index < len(image_streams) and image_index % 4 == 0:
                 c.showPage()
@@ -676,49 +682,7 @@ def wrap_text(text, max_width, font, size):
     
     return "\n".join(wrapped_lines)
 
-class ImageAdder:
-    def __init__(self, canvas, width, height, image_streams, sender):
-        self.canvas = canvas
-        self.width = width
-        self.height = height
-        self.image_streams = image_streams
-        self.sender = sender
 
-    def draw_image(self, image_stream, x_position, y_position, img_width, img_height):
-        img = Image.open(image_stream)
-        byte_io = BytesIO()
-        img.save(byte_io, format='JPEG')  # Or 'JPEG' depending on your image format
-        byte_io.seek(0)
-        self.canvas.drawImage(ImageReader(byte_io), x_position, y_position, width=img_width, height=img_height, preserveAspectRatio=True)
-        if hasattr(image_stream, 'seek'):
-            image_stream.seek(0)
-
-    def add_images(self, start_index, y_start, images_per_row, first_page):
-        raise NotImplementedError
-
-class RepairImageAdder(ImageAdder):
-    def add_images(self, start_index, y_start, images_per_row, first_page):
-        if first_page:
-            # Your logic for first_page == True
-            pass  # remove this once you add your actual logic
-        else:
-            # Your logic for first_page == False
-            pass  # remove this once you add your actual logic
-
-        # The rest of your logic
-        pass  # remove this once you add your actual logic
-
-class ExpenseImageAdder(ImageAdder):
-    def add_images(self, start_index, y_start, images_per_row, first_page):
-        # Here, you can write a different logic for adding images in the context of expenses.
-        pass
-
-# Example usage:
-# repair_adder = RepairImageAdder(canvas_instance, width, height, image_streams, sender)
-# repair_adder.add_images(start_index, y_start, images_per_row, first_page)
-
-# expense_adder = ExpenseImageAdder(canvas_instance, width, height, image_streams, sender)
-# expense_adder.add_images(start_index, y_start, images_per_row, first_page)
 
 
 CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
