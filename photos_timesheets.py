@@ -505,7 +505,7 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         images_per_row = 2
         if first_page == True:
             image_rows = 1
-            max_img_width = width - 50  # Use more width, leaving margins on both sides
+            max_img_width = width/2 - 70  # Use more width, leaving margins on both sides
             max_img_height = (y_start - 40) / 1.33 # Use full height, leaving a margin only at the bottom
         else:
             image_rows = 2
