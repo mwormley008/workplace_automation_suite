@@ -151,6 +151,7 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_sender, da
 def download_repair_photos(service, user_id, msg_id, store_dir, desired_sender, days_ago, print_status):
     attachments_paths = []
     attachments_streams = []
+    timesheet_dir = r"C:\Users\Michael\Desktop\python-work\time_sheets"
     unique_email_dir = None  # Initialize it here
 
 
@@ -219,12 +220,13 @@ def download_repair_photos(service, user_id, msg_id, store_dir, desired_sender, 
                     attachments_streams.append(image_stream)
 
                     if 'time' in subject.lower() or 'expense' in subject.lower() or desired_sender == 'edinc99@gmail.com':  # Check if these words are in the subject, or if the sender is Edin. These are time sheets and expenses, rather than repair photos.
-                        print(subject.lower()+'expense')
-                        unique_email_dir = os.path.join(r"C:\Users\Michael\Desktop\python-work\time_sheets", safe_subject)
+                        print(subject.lower()+' expense')
                         repair_or_timesheet = 'timesheet'
+                        filepath = os.path.join(timesheet_dir, filename)
                     else:
                         print(subject.lower()+' repair')
                         repair_or_timesheet = 'repair'
+                        filepath = os.path.join(store_dir, filename)
                         # unique_email_dir = os.path.join(store_dir, safe_subject)
                     
                     if unique_email_dir:
@@ -232,21 +234,15 @@ def download_repair_photos(service, user_id, msg_id, store_dir, desired_sender, 
                         filepath = os.path.join(unique_email_dir, filename)
                     else:
                         filepath = os.path.join(store_dir, filename)  # Use original filename
-                    # with open(filepath, 'wb') as f:
-                    #     f.write(file_data)
 
                     # print(f"Attachment '{filename}' downloaded to: {filepath}")
 
                     attachments_paths.append(filepath)
-            
-            # I think I need to take this out or alter it because I'm only going to want it for the timesheets
-            # save_info_as_pdf(subject, sender, received_date, text, unique_email_dir)
-            save_info_with_photos(subject, sender, received_date, text, store_dir, print_status, repair_or_timesheet, attachments_streams)
-            # details = f"Subject: {subject}\n\nFrom: {sender}\n\nReceived Date: {received_date}\n\nBody:{text}"
-            # details_file = os.path.join(unique_email_dir, "00000000details.txt")
-            # with open(details_file, 'w') as f:
-            #     f.write(details)
 
+            if repair_or_timesheet == "repair":            
+                save_info_with_photos(subject, sender, received_date, text, store_dir, print_status, repair_or_timesheet, attachments_streams)
+            elif repair_or_timesheet == "timesheet":            
+                save_info_with_photos(subject, sender, received_date, text, timesheet_dir, print_status, repair_or_timesheet, attachments_streams)
         return attachments_paths
 
     except Exception as error:
@@ -549,6 +545,36 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
                 if (i + 1) % 4 == 0:
                     y_positions = [y_positions[1] - max_img_height, y_positions[1] - 2 * max_img_height]
     
+    def add_timesheet_image(image_index):
+        images_per_page = 1
+        max_img_width = width
+        max_img_height = height 
+        # x_positions = [30, width/2 + 10]
+        # y_positions = [y_start, y_start - max_img_height]
+        image_stream = image_streams[image_index]
+        img = Image.open(image_stream)
+        if sender == "fespitia76@gmail.com":
+            img = img.rotate(-90, expand=True)
+        byte_io = BytesIO()
+        img.save(byte_io, format='JPEG')  # Or 'JPEG' depending on your image format
+        byte_io.seek(0)
+
+        img_orig_width, img_orig_height = img.size
+        scale_factor_width = max_img_width / img_orig_width
+        scale_factor_height = max_img_height / img_orig_height
+        scale_factor = min(scale_factor_width, scale_factor_height)
+        img_width = img_orig_width * scale_factor
+        img_height = img_orig_height * scale_factor
+        x_offset = (width - img_width) / 2
+
+
+
+        c.drawImage(ImageReader(byte_io), x_offset, 0, width=img_width, height=img_height, preserveAspectRatio=True)
+        
+        if hasattr(image_stream, 'seek'):
+            image_stream.seek(0)
+
+
 
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -585,7 +611,20 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         if print_status == True:
             print_file_with_ghostscript(filepath)
     elif repair_or_timesheet == 'timesheet':
-        pass
+        
+        image_index = 0
+        y_pos = add_text_details()
+        c.showPage()  # Start a new page
+
+        while image_index < len(image_streams):
+            add_timesheet_image(image_index)
+            image_index += 1
+            if image_index < len(image_streams):
+                c.showPage()
+
+        c.save()
+        if print_status == True:
+            print_file_with_ghostscript(filepath) 
 
 def print_macro():
     print_status = messagebox.askyesno("Confirmation", "Do you want to print?")
