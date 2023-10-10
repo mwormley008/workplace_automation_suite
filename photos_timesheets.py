@@ -639,8 +639,9 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
             
             stream.seek(0)  # Reset the stream to the start
             # print(f"Processing stream {image_index}")
-
+            pdf_flag = False
             if first_bytes == b"%PDF":
+                pdf_flag = True
                 # print(f"Processing stream {image_index}")
                 c.save()
                 merger = PyPDF2.PdfWriter()
@@ -656,6 +657,9 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
 
                 # Close File Descriptors
                 merger.close()
+                input2.close()
+                output.close()
+                os.remove(f"stream_{sanitized_subject}.pdf")
                 break
             else:
                 add_timesheet_image(image_index)
@@ -664,8 +668,8 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
             image_index += 1
 
         
-
-        c.save()
+        if pdf_flag == False:
+            c.save()
 
             
         if print_status == True:
@@ -798,10 +802,10 @@ if __name__ == "__main__":
 
 
 
-    # email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com"]  # List of email addresses
+    email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com"]  # List of email addresses
     # this is just to use if I need to test only one person
     # email_addresses = ["tawormley@aol.com"]
-    email_addresses = ["edinc99@gmail.com"]  # List of email addresses
+    # email_addresses = ["edinc99@gmail.com"]  # List of email addresses
 
     email_to_label_mapping = {
         "oblivion969.dm@gmail.com": "Label_7", # PICS-JR - Dave Myers
