@@ -25,6 +25,7 @@ from pywinauto import Desktop, Application
 from PIL import Image, ExifTags
 import shutil, PyPDF2
 from PyPDF2 import PdfReader, PdfWriter
+import tempfile
 
 def create_message(sender, to, subject, message_text):
 
@@ -550,29 +551,10 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         pdf_reader = PdfReader(pdf_stream)
         for page_num in range(pdf_reader.getNumPages()):
             page = pdf_reader.getPage(page_num)
-            writer.addPage(page)
+            writer.add_page(page)
+            
 
 
-    def merge_with_stream(output_filename, canvas_filename, pdf_stream):
-        writer = PyPDF2.PdfWriter()
-
-        # Add canvas content to writer
-        with open(canvas_filename, "rb") as canvas_file:
-            reader = PyPDF2.PdfReader(canvas_file)
-            for page_num in range(len(reader.pages)):
-                page = reader.pages[page_num]
-                writer.add_Page(page)
-
-        # Add PDF stream content to writer
-        stream_reader = PyPDF2.PdfReader(pdf_stream)
-        for page_num in range(len(stream_reader.pages)):
-            page = stream_reader.pages[page_num]
-
-            writer.add_Page(page)
-
-        # Save combined content
-        with open(output_filename, "wb") as output_file:
-            writer.write(output_file)
 
     def add_timesheet_image(image_index):
         images_per_page = 1
@@ -603,7 +585,9 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         if hasattr(image_stream, 'seek'):
             image_stream.seek(0)
 
-
+    def save_stream_to_file(stream, filename):
+        with open(filename, 'wb') as f:
+            f.write(stream.getvalue())
 
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -654,18 +638,32 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
             first_bytes = stream.read(4)
             
             stream.seek(0)  # Reset the stream to the start
-            
+            # print(f"Processing stream {image_index}")
+
             if first_bytes == b"%PDF":
-                # This is a PDF
-                c.save()  # Save current canvas
-                merge_with_stream(filepath, filepath, stream)
-                # Reinitialize the canvas to continue with further drawings/images
-                c = canvas.Canvas(filepath, pagesize=letter)
+                # print(f"Processing stream {image_index}")
+                c.save()
+                merger = PyPDF2.PdfWriter()
+                input1 = open(filepath, "rb")
+                merger.append(input1)
+                input1.close()
+                save_stream_to_file(stream, f"stream_{sanitized_subject}.pdf")
+                input2 = open(f"stream_{sanitized_subject}.pdf", "rb")
+                reader = PyPDF2.PdfReader(input2)
+                merger.add_page(reader.pages[0])
+                output = open(filepath, "wb")
+                merger.write(output)
+
+                # Close File Descriptors
+                merger.close()
+                break
             else:
                 add_timesheet_image(image_index)
                 
 
             image_index += 1
+
+        
 
         c.save()
 
@@ -800,9 +798,10 @@ if __name__ == "__main__":
 
 
 
-    email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com"]  # List of email addresses
+    # email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com"]  # List of email addresses
     # this is just to use if I need to test only one person
     # email_addresses = ["tawormley@aol.com"]
+    email_addresses = ["edinc99@gmail.com"]  # List of email addresses
 
     email_to_label_mapping = {
         "oblivion969.dm@gmail.com": "Label_7", # PICS-JR - Dave Myers
