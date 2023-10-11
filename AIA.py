@@ -3,8 +3,10 @@
 # Potentially I could just put everything on print later for the invoices so
 # i don't have to mess around with the printing interface
 
-# It would be nice to have the ability in the forms to accept blank
-# entries as 0s potentially
+# The retention billing doesn't work if it's the final billing but only the second total billing. So if we bill for the total amount on invoice one, then charge for retention on invoice 2
+# this doesn't work. 
+
+# I'm not sure about this but it seems like for similar reasons this whole system doesn't work if we need to bill down to 5% retention but I might've already resolved that last cycle
 
 import pyautogui, openpyxl, datetime, calendar, os, sys, re
 import subprocess, time, win32, win32com.client
@@ -158,9 +160,12 @@ if __name__ =="__main__":
         workbook_path = r"\\WBR\data\shared\G702 & G703 Forms\Excel Waiver 1 page.xlsx"
 
 
-    if qtoken == 0:
+    if qtoken == 0 and noe_token == "Retention":
         new_inv = simpledialog.askinteger("Invoice Prompt", "Enter the new invoice number:")
-        completed_through= simpledialog.askinteger("Invoice Prompt", "Enter the amount billed without retention taken out:")
+        completed_through= simpledialog.askinteger("Amount Prompt", "Enter the retention amount billed.")
+    elif qtoken == 0: 
+        new_inv = simpledialog.askinteger("Invoice Prompt", "Enter the new invoice number:")
+        completed_through= simpledialog.askinteger("Amount Prompt", "Enter the amount billed without retention taken out:")
 
 
 
@@ -168,6 +173,7 @@ if __name__ =="__main__":
 
 
     # Page 1
+    # This is all the header / admin info
     workbook = load_workbook(filename=workbook_path)
     sheet1 = workbook["G702"]
 
@@ -203,6 +209,8 @@ if __name__ =="__main__":
     # J9
     invoice_number = sheet1["J9"]
 
+    # this is the actual accounting part of the page
+
     sheet1["B29"].value = retention_percent
 
     # add work from this period to completed and stored to date
@@ -210,6 +218,7 @@ if __name__ =="__main__":
     retention_percentage = sheet1['B29'].value
     current_payment_due = sheet1["E39"]
     if  noe_token == "Retention":
+        retention_completed_through = completed_through
         completed_through = 0
         sheet1["E40"].value = 0
     if noe_token == 0 or noe_token == "Retention":
@@ -225,6 +234,8 @@ if __name__ =="__main__":
                 current_payment_due.value = int(completed_through) * (1-int(retention_percent)*.01)
         elif noe_token == "Retention" and qtoken == 1:
             current_payment_due.value = int(new_prev_retained)
+        elif noe_token == "Retention" and qtoken == 0:
+            current_payment_due.value = int(retention_completed_through)
     if noe_token == 1:
         # Contract
         sheet1["E23"].value = int(contract_amount)

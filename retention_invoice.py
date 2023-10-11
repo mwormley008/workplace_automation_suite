@@ -1,4 +1,5 @@
 ## TODO:
+# This retention invoice set up doesn't work if the retention billing is the final billing but is only the second total billing
 
 import pyautogui, openpyxl, time, pyperclip, datetime, calendar
 import os, re, sys

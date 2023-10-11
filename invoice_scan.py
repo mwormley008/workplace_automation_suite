@@ -286,8 +286,9 @@ for filename in os.listdir(folder_path):
                     ws[f'C{invoice_counter}'] = f'{invoice_number}'
 
                     ## Finds the invoice amount due
-                    decimal_pattern = r'(?:\d*\.\d{2}\s*){5}'
-                                        
+                    # decimal_pattern = r'(?:\d*\.\d{2}\s*){5}'
+                    decimal_pattern = r'(?:(?:\d*\.(?:\d{2}|00)|00)\s*){5}'
+
                     total_match = re.search(decimal_pattern, content)
                     print(total_match)
                     # line_of_text = "1597.50 127.80 .00 230.78 1956.08"

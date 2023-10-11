@@ -1,4 +1,7 @@
-import pyautogui, openpyxl, datetime, calendar, os, sys, re
+# This loops through the newly created dictionary with the categories as keys
+# You start this in QB with the vendor, ref number, and amount due already put in
+# and your cursor should start in the account bubbleimport pyautogui, openpyxl, datetime, calendar, os, sys, re
+
 import subprocess
 import pygetwindow as gw
 from openpyxl import Workbook, load_workbook
@@ -48,7 +51,7 @@ bottom_row += 1
 
 print(bottom_row)
 print(bottom_row)
-first_row_skipped = False
+Amount = False
 
 row_cells = ws[bottom_row]
 bill_total = 0

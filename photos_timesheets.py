@@ -149,21 +149,22 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_sender, da
     except Exception as error:
         print(f"An error occurred: {error}")
 
-def download_repair_photos(service, user_id, msg_id, store_dir, desired_sender, days_ago, print_status):
+def download_repair_photos(service, user_id, msg_id, safe_subject, store_dir, desired_sender, days_ago, print_status, message):
     attachments_paths = []
     attachments_streams = []
     timesheet_dir = r"C:\Users\Michael\Desktop\python-work\time_sheets"
     unique_email_dir = None  # Initialize it here
-
+    subject = safe_subject 
+    
 
 
     try:
-        message = service.users().messages().get(userId=user_id, id=msg_id).execute()
+        # message = service.users().messages().get(userId=user_id, id=msg_id).execute()
         payload = message['payload']
         headers = payload['headers']
         sender = [h['value'] for h in headers if h['name'] == 'From'][0]  # Retrieve sender
-        subject = [h['value'] for h in headers if h['name'] == 'Subject'][0]  # Retrieve subject
-        safe_subject = "".join([c for c in subject if c.isalpha() or c.isdigit() or c==' ']).rstrip()  # Cleaned subject line for directory
+        # [h['value'] for h in headers if h['name'] == 'Subject'][0]  # Retrieve subject
+        # safe_subject = "".join([c for c in subject if c.isalpha() or c.isdigit() or c==' ']).rstrip()  # Cleaned subject line for directory
 
         
 
@@ -213,8 +214,8 @@ def download_repair_photos(service, user_id, msg_id, store_dir, desired_sender, 
                     attachment_id = part['body']['attachmentId']
                     attachment = service.users().messages().attachments().get(userId=user_id, messageId=msg_id, id=attachment_id).execute()
                     file_data = base64.urlsafe_b64decode(attachment['data'].encode('UTF-8'))
-                    subject = [h['value'] for h in headers if h['name'] == 'Subject'][0]  # Retrieve subject
-                    safe_subject = "".join([c for c in subject if c.isalpha() or c.isdigit() or c==' ']).rstrip()
+                    # subject = [h['value'] for h in headers if h['name'] == 'Subject'][0]  # Retrieve subject
+                    # safe_subject = "".join([c for c in subject if c.isalpha() or c.isdigit() or c==' ']).rstrip()
                     
                     # Instead of writing to a file, keep the data in a BytesIO stream
                     image_stream = BytesIO(file_data)
@@ -839,9 +840,12 @@ if __name__ == "__main__":
                 
                 msg_id = message['id']
                 msg = service.users().messages().get(userId=user_email, id=msg_id).execute()
-                subject = [header['value'] for header in msg['payload']['headers'] if header['name'] == 'Subject'][0]
+                # subject = [header['value'] for header in msg['payload']['headers'] if header['name'] == 'Subject'][0]
+                # subject = sanitize_subject(subject)
+                subject_header = next((header for header in msg['payload']['headers'] if header['name'] == 'Subject'), None)
+                subject = subject_header['value'] if subject_header else 'no subject'
                 subject = sanitize_subject(subject)
-                attachments = download_repair_photos(service, user_email, msg_id, store_directory, email_address, desired_date, print_status)
+                attachments = download_repair_photos(service, user_email, msg_id, subject, store_directory, email_address, desired_date, print_status, msg)
                 
                 label_id_to_add = email_to_label_mapping[email_address]
 

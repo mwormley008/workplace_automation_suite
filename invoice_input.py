@@ -62,7 +62,9 @@ if __name__ == "__main__":
         sleep(1.5)
         pyautogui.press('tab')
         sleep(1.5)
-        pyautogui.write(ws[f'B{i}'].value)
+        if ws[f'B{i}'].value is not None:
+            pyautogui.write(ws[f'B{i}'].value)
+            sleep(1)
         sleep(1.5)
         pyautogui.press('tab')
         sleep(1.5)
