@@ -88,6 +88,8 @@ def find_scan_and_email_windows():
 def trim_extension_format_slashes(path, initial_dir):
     file_name = path.replace(initial_dir.replace("\\", "/"), "")
     file_name = file_name[1:-4]
+    if file_name.endswith("."):
+        file_name = file_name[:-1]
     return file_name
 
 if __name__ == '__main__':

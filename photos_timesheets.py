@@ -299,29 +299,7 @@ def print_file(filepath):
     except Exception as e:
         print(f"An error occurred while printing: {e}")
 
-def print_file_with_ghostscript(filepath):
-    ghostscript_path = r"C:\Program Files\gs\gs10.01.2\bin\gswin64c.exe"  # Replace with the path to Ghostscript executable
-    printer_name = win32print.GetDefaultPrinter()
 
-    if not os.path.exists(filepath):
-        print(f"File '{filepath}' does not exist.")
-        return
-
-    command = [
-        ghostscript_path,
-        "-dNOPAUSE",
-        "-dBATCH",
-        "-dPrinted",
-        f"-sDEVICE=mswinpr2",  # Use the Windows printer device
-        f"-sOutputFile=%printer%{printer_name}",
-        filepath
-    ]
-
-    try:
-        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        print(f"File '{filepath}' printed successfully.")
-    except Exception as e:
-        print(f"An error occurred while printing: {e}")
 
 def mark_as_read(service, user_id, msg_id):
     try:
@@ -334,21 +312,25 @@ def mark_as_read(service, user_id, msg_id):
 
 def print_file_with_ghostscript(filepath):
     ghostscript_path = r"C:\Program Files\gs\gs10.01.2\bin\gswin64c.exe"  # Replace with the path to Ghostscript executable
+    sumatra_path = r"C:\Users\Michael\AppData\Local\SumatraPDF\SumatraPDF.exe"
     printer_name = win32print.GetDefaultPrinter()
 
     if not os.path.exists(filepath):
         print(f"File '{filepath}' does not exist.")
         return
 
-    command = [
-        ghostscript_path,
-        "-dNOPAUSE",
-        "-dBATCH",
-        "-dPrinted",
-        f"-sDEVICE=mswinpr2",  # Use the Windows printer device
-        f"-sOutputFile=%printer%{printer_name}",
-        filepath
-    ]
+    # command = [
+    #     ghostscript_path,
+    #     "-q"
+    #     "-dNOPAUSE",
+    #     "-dBATCH",
+    #     "-dPrinted",
+    #     f"-sDEVICE=mswinpr2",  # Use the Windows printer device
+    #     f"-sOutputFile=%printer%{printer_name}",
+    #     filepath
+    # ]
+    command = [sumatra_path, '-print-to-default', filepath]
+
 
     try:
         subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
