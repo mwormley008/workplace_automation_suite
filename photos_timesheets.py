@@ -607,7 +607,7 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         c.showPage()  # Start a new page
 
         while image_index < len(image_streams):
-            add_repair_images(image_index, height, False) 
+            add_repair_images(image_index, height, False, stream_size) 
             image_index += 2
             if image_index < len(image_streams) and image_index % 4 == 0:
                 c.showPage()

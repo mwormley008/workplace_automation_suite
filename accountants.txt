@@ -14,3 +14,4 @@ These need to be added to the accountants recipients list
 'Niki':'TNGAdmin@thenikigroup.com'
 '//WBR/data/shared/G702':'None'
 'GAJ':'jlipinski@gajohnson.com'
+'Stratus':'beverly.hitchcock@stratusunlimited.com'
