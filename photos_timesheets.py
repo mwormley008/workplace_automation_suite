@@ -499,12 +499,19 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         c.drawText(textobject)
         return textobject.getY() - 50  # Return the y-position after writing the text
 
-    def add_repair_images(start_index, y_start, first_page):
+    def add_repair_images(start_index, y_start, first_page, stream_size):
+        if stream_size <= 1:
+            single_image_modifier = 1
+            single_image_height_modifier = 1
+        else:
+            single_image_modifier = 2
+            single_image_height_modifier = 1.33
         images_per_row = 2
+
         if first_page == True:
             image_rows = 1
-            max_img_width = width/2 - 70  # Use more width, leaving margins on both sides
-            max_img_height = (y_start - 40) / 1.33 # Use full height, leaving a margin only at the bottom
+            max_img_width = width/single_image_modifier - 70  # Use more width, leaving margins on both sides
+            max_img_height = (y_start - 40) / (single_image_height_modifier) # Use full height, leaving a margin only at the bottom
         else:
             image_rows = 2
             max_img_width = (width / 2 - 40) 
@@ -606,13 +613,13 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
 
     width, height = letter  # Get dimensions for portrait orientation
     
-
+    stream_size = len(image_streams)
     if repair_or_timesheet == 'repair':
         
         image_index = 0
         y_pos = add_text_details()
 
-        add_repair_images(image_index, y_pos, True)
+        add_repair_images(image_index, y_pos, True, stream_size)
         # add_repair_images(image_index, y_pos, True) 
         image_index += 2
         c.showPage()  # Start a new page
