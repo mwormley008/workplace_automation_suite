@@ -15,3 +15,6 @@ These need to be added to the estimators recipients list
 'ACT':'nmorrison@actconstruction.com'
 '41':'jon.moczarny@41northcontractors.com'
 'Midwest':'cal@midwestmasonryinc.com'
+'Quincy':'twiersma@quincyconstruction.com'
+'Allstar':'allstar@allstardentalinc.com'
+'Gordon':'kelly@midwestearnosethroat.com'

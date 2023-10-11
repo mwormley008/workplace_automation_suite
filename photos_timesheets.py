@@ -480,11 +480,11 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         textobject.setTextOrigin(30, height - 50)  # Start near top-left corner
         # list index out of range
         
-        max_text_width = width - 70  # assuming 30 unit left and right margins
+        max_text_width = width - 180  # assuming 30 unit left and right margins
         
 
         lines = [
-            f"Subject: {subject}",
+            f"Subject: {wrap_text(subject, max_text_width, 'Helvetica', 20)}",
             f"From: {sender}",
             f"Received Date: {received_date}",
             f"Body: {wrap_text(body, max_text_width, 'Helvetica', 20)}"
@@ -560,11 +560,12 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         images_per_page = 1
         max_img_width = width
         max_img_height = height 
-        # x_positions = [30, width/2 + 10]
-        # y_positions = [y_start, y_start - max_img_height]
         image_stream = image_streams[image_index]
         img = Image.open(image_stream)
         if sender == "fespitia76@gmail.com":
+            img = img.rotate(-90, expand=True)
+        # Ensure the longer dimension is the height
+        if img.width > img.height:
             img = img.rotate(-90, expand=True)
         byte_io = BytesIO()
         img.save(byte_io, format='JPEG')  # Or 'JPEG' depending on your image format
