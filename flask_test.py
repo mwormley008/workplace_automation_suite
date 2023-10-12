@@ -9,6 +9,7 @@ from google_auth_oauthlib.flow import Flow, InstalledAppFlow
 from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
 from google.auth.transport.requests import Request
 import base64, json
+from photos_timesheets import download_repair_photos, download_attachments, save_info_as_pdf, print_file_with_ghostscript, save_info_with_photos, sanitize_subject, wrap_text, mark_as_read
 
 
 def Create_Service(client_secret_file, api_name, api_version, *scopes):
@@ -102,6 +103,8 @@ def gmail_notification():
     changes = response.get('history', [])
     print(f"Changes received: {changes}")
     
+    # there's nothing in these lists
+    
     for change in changes:
         # Get message IDs from the change
         for message in change.get('messages', []):
@@ -119,8 +122,9 @@ def gmail_notification():
             payload = msg['payload']
             headers = payload['headers']
             sender = [h['value'] for h in headers if h['name'] == 'From'][0]  # Retrieve sender
-
-            print(subject, sender)
+            if sender == "throwod@gmail.com":
+                print("we got him") 
+            # print(subject, sender)
 
     # ... perform your custom logic ...
 
