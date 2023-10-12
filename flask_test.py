@@ -4,12 +4,11 @@ import google.auth
 import google_auth_oauthlib
 import google.auth.transport.requests
 from google.oauth2 import service_account
-import pickle
-import os
-import datetime
+import pickle, os, datetime
 from google_auth_oauthlib.flow import Flow, InstalledAppFlow
 from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
 from google.auth.transport.requests import Request
+import base64, json
 
 
 def Create_Service(client_secret_file, api_name, api_version, *scopes):
@@ -75,6 +74,7 @@ watch_request = {
 }
 
 result = gmail_service.users().watch(userId='me', body=watch_request).execute()
+
 print(result)
 
 
@@ -86,6 +86,41 @@ def gmail_notification():
     # Extract information from the Pub/Sub message
     envelope = request.get_json()
     print(f"Received envelope: {envelope}")
+
+    # decode the incoming data
+    decoded_data = base64.b64decode(envelope['message']['data']).decode('utf-8')
+    # print(decoded_data)
+    # headers = request.headers
+    # print(headers)
+    decoded_data_json = json.loads(decoded_data)
+    history_id = decoded_data_json.get('historyId')
+    print(f"History ID: {history_id}")
+
+    # Get changes since the last known historyId
+    response = gmail_service.users().history().list(userId='me', startHistoryId=history_id).execute()
+    
+    changes = response.get('history', [])
+    print(f"Changes received: {changes}")
+    
+    for change in changes:
+        # Get message IDs from the change
+        for message in change.get('messages', []):
+            msg_id = message['id']
+
+            msg = gmail_service.users().messages().get(userId='me', id=msg_id).execute()
+            print(f"Message details: {msg}")
+
+            for header in msg['payload']['headers']:
+                print(header['name'], ":", header['value'])
+
+
+            subject_header = next((header for header in msg['payload']['headers'] if header['name'] == 'Subject'), None)
+            subject = subject_header['value'] if subject_header else 'no subject'
+            payload = msg['payload']
+            headers = payload['headers']
+            sender = [h['value'] for h in headers if h['name'] == 'From'][0]  # Retrieve sender
+
+            print(subject, sender)
 
     # ... perform your custom logic ...
 
