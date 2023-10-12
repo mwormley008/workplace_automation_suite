@@ -6,9 +6,14 @@ $folderPath = '\\WBR\shared\Proposals'
 # Search for both .doc and .docx files that match the user's input in the specified folder
 $docFile = Get-ChildItem -Path $folderPath -File | Where-Object { ($_.Name -like "*$fileName*.doc") -or ($_.Name -like "*$fileName*.docx") }
 
-
 # Check if any files were found
-if ($docFile.Count -gt 0)
+if ($docFile.Count -eq 1) 
+{
+    # If only one file is found, open it immediately
+    Start-Process -FilePath "WINWORD.EXE" -ArgumentList "`"$($docFile.FullName)`""
+    Write-Host "Opening $($docFile.Name)"
+}
+elseif ($docFile.Count -gt 1) 
 {
     & {
         for ($i = 0; $i -lt $docFile.Count; $i++)
@@ -37,7 +42,7 @@ if ($docFile.Count -gt 0)
         $doc = $docFile[([int]$selected) - 1]
         # Open the selected file with Microsoft Word
         Start-Process -FilePath "WINWORD.EXE" -ArgumentList "`"$($doc.FullName)`""
-        Write-Host $doc
+        Write-Host "Opening $($doc.Name)"
     }
 }
 else
