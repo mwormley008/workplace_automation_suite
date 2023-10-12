@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 from googleapiclient.discovery import build
-from oauth2client import OAuth2Credentials
 import google.auth
 import google_auth_oauthlib
 import google.auth.transport.requests
@@ -69,12 +68,13 @@ gmail_service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES
 
 
 # Set up a watch on the mailbox
-request = {
+
+watch_request = {
     'labelIds': ['INBOX'],  # You can specify filters, labels, etc.
     'topicName': 'projects/gmail-project-394016/topics/Base_Topic'
 }
 
-result = gmail_service.users().watch(userId='me', body=request).execute()
+result = gmail_service.users().watch(userId='me', body=watch_request).execute()
 print(result)
 
 
@@ -91,3 +91,6 @@ def gmail_notification():
 
     # Always return a 200 response to acknowledge receipt
     return jsonify(success=True), 200
+
+if __name__ == "__main__":
+    app.run(debug=True)
