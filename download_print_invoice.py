@@ -268,10 +268,24 @@ if __name__ =="__main__":
         "from:april@sheetmetalsupplyltd.com subject:'Invoices'",
         "amy@profastening.net subject:'Invoice'",
         "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
-        # "lia@stevensoncrane.com subject:'invoice'",
+        "lia@stevensoncrane.com subject:'invoice'",
         "customercareBT@becn.com subject: 'invoice'",
         "donotreply@waterinvoice.com subject: 'eInvoice'",
         ]
+
+    # Test email list
+    # email_list = [
+    #     #     "from:carolyn@profastening.net subject:'Invoice'", 
+    #     #     "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
+    #     #     "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
+    #     #     "from:april@sheetmetalsupplyltd.com subject:'Invoices'",
+    #     #     "amy@profastening.net subject:'Invoice'",
+    #     #     "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
+    #         "lia@stevensoncrane.com subject:'invoice'",
+    #     #     "customercareBT@becn.com subject: 'invoice'",
+    #     #     "donotreply@waterinvoice.com subject: 'eInvoice'",
+    #         ]
+
 
     # Asks how many days back to check
     desired_date = simpledialog.askinteger("Desired Dates", "How many days into the past do you want to select emails?")

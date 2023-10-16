@@ -106,6 +106,7 @@ def gmail_notification():
     # there's nothing in these lists
     
     for change in changes:
+        print(f"{change}")
         # Get message IDs from the change
         for message in change.get('messages', []):
             msg_id = message['id']

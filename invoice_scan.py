@@ -111,7 +111,8 @@ for filename in os.listdir(folder_path):
             img = cv2.imread('out.jpg')
             # print(f"Content on {ocr_core(img)}")
             content, inv_text, amt_text = ocr_core(img)
-            print(content, amt_text)
+            # print(content)
+            print(amt_text)
             
 
             # Finds the vendor
@@ -405,10 +406,19 @@ for filename in os.listdir(folder_path):
                         ws[f'C{invoice_counter}'] = f'{invoice_no}'
 
                         ## Finds the invoice amount due
-                        total_match = re.search(r'Total Invoice: \$([\d,]+\.\d{2})', amt_text, re.IGNORECASE)
+                        # total_match = re.search(r'Total Invoice:\s*\$([\d,]+\.\d{2})', amt_text, re.IGNORECASE)
+                        total_match = re.search(r'Total Invoice:\s*\$([\d,]*\s*(?:\.\d{2})?|\d+\s*)', amt_text, re.IGNORECASE)
+                        total_match2 = re.search(r'Total Invoice:\s*\$([\d,]*\s*(?:\.\d{2})?|\d+\s*)', content, re.IGNORECASE)
+
+
                         if total_match:
                             # If a match was found, 'group(1)' contains the first parenthesized subgroup - the balance amount.
-                            
+                            balance_amount = total_match.group(1)
+                            print(f"Found 'balance amount': ${balance_amount}")
+                            ws[f'D{invoice_counter}'].value = balance_amount
+                        elif total_match2:
+                            # If a match was found, 'group(1)' contains the first parenthesized subgroup - the balance amount.
+                            balance_amount = total_match2.group(1)
                             print(f"Found 'balance amount': ${balance_amount}")
                             ws[f'D{invoice_counter}'].value = balance_amount
                         else:
