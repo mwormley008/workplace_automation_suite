@@ -3,9 +3,9 @@
 
 
 
-# TODO: I think I'd like to make it so that if you don't have the WBR 
-# gmail open it'll open it for you although that might be solvable with the 
-# gmail api
+# TODO: 
+
+# For some reason it closes after scanning when run from the command line, but it closes faster than I can read the output, so I guess that might be problem number 1
 
 import pyautogui, openpyxl, datetime, calendar, os, sys, re
 import subprocess

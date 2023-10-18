@@ -217,8 +217,11 @@ if __name__ =="__main__":
     completed_through_cell = sheet1["E26"]
     retention_percentage = sheet1['B29'].value
     current_payment_due = sheet1["E39"]
-    if  noe_token == "Retention":
+    if  noe_token == "Retention" and qtoken == 0:
         retention_completed_through = completed_through
+        completed_through = 0
+        sheet1["E40"].value = 0
+    elif noe_token == "Retention":
         completed_through = 0
         sheet1["E40"].value = 0
     if noe_token == 0 or noe_token == "Retention":
