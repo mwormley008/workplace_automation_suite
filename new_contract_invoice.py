@@ -229,7 +229,7 @@ if __name__ == "__main__":
         hotkey('alt', 't')
         sleep(2)
 
-    bill_bin = messagebox.askyesno("Confirmation", "Are you ready to have this invoice information used?")
+    bill_bin = messagebox.askyesno("Confirmation", "Have you entered the customer job? Are you ready to have this invoice information used?")
     sleep(1)
     qb_window.activate()
     sleep(.5)

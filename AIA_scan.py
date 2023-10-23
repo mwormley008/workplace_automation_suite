@@ -92,105 +92,108 @@ def find_or_run_scan():
         run_scanning_executable()
 
 if __name__ == '__main__':
+    run_again = True
+    while run_again:
+        scan_window, wbr_window = find_scan_and_email_windows()
+        if scan_window is None:
+            run_scanning_executable()
 
-    scan_window, wbr_window = find_scan_and_email_windows()
-    if scan_window is None:
-        run_scanning_executable()
+        mail_contacts = {
+            'Novak':'DCaporale@novakconstruction.com', 
+            'Valenti':'billings@valentibuilders.com', 
+            'Hanna':'mrosales@hannadesigngroup.com',
+            'G&H':'theresa@nationalplazas.com',
+            'Builtech':'dwiniarz@builtechllc.com',
+            'Englewood':'VLara@eci.build',
+            'Ott':'kate@ottdevelopment.com',
+            'R.':'nickc@rcarlsonandsons.com',
+            '41':'amy.hillgamyer@41northcontractors.com',
+            'Niki':'TNGAdmin@thenikigroup.com',
+            'Rosewood':'rosewood6727@aol.com'}
 
-    mail_contacts = {
-        'Novak':'DCaporale@novakconstruction.com', 
-        'Valenti':'billings@valentibuilders.com', 
-        'Hanna':'mrosales@hannadesigngroup.com',
-        'G&H':'theresa@nationalplazas.com',
-        'Builtech':'dwiniarz@builtechllc.com',
-        'Englewood':'VLara@eci.build',
-        'Ott':'kate@ottdevelopment.com',
-        'R.':'nickc@rcarlsonandsons.com',
-        '41':'amy.hillgamyer@41northcontractors.com',
-        'Niki':'TNGAdmin@thenikigroup.com',
-        'Rosewood':'rosewood6727@aol.com'}
-
-    billing_message = 'Hello,\nPlease see attached billing.\nThank you,\nMichael Wormley\nWBR Roofing\n25084 W Old Rand Rd\nWauconda, IL 60084\n​O: 847-487-8787​\nwbrroof@aol.com'
-    # Create the Tkinter root window
-    root = Tk()
-    root.withdraw()  # Hide the root window
-
-
-    sleep(1)
+        billing_message = 'Hello,\nPlease see attached billing.\nThank you,\nMichael Wormley\nWBR Roofing\n25084 W Old Rand Rd\nWauconda, IL 60084\n​O: 847-487-8787​\nwbrroof@aol.com'
+        # Create the Tkinter root window
+        root = Tk()
+        root.withdraw()  # Hide the root window
 
 
-    invoice_number = simpledialog.askinteger("Invoice Prompt", "Enter the invoice number:")
-
-    scan_window, wbr_window = find_scan_and_email_windows()
-    initial_dir=r"\\WBR\data\shared\G702 & G703 Forms"
+        sleep(1)
 
 
-    file_path = find_file_by_number(initial_dir, invoice_number)
-    if file_path:
-        print(f"File found: {file_path}")
-        use_file = messagebox.askyesno("Confirmation", f"Do you want to use this file?/\n {file_path}")
-        if use_file:
-            workbook_path = file_path
+        invoice_number = simpledialog.askinteger("Invoice Prompt", "Enter the invoice number:")
+
+        scan_window, wbr_window = find_scan_and_email_windows()
+        initial_dir=r"\\WBR\data\shared\G702 & G703 Forms"
+
+
+        file_path = find_file_by_number(initial_dir, invoice_number)
+        if file_path:
+            print(f"File found: {file_path}")
+            use_file = messagebox.askyesno("Confirmation", f"Do you want to use this file?/\n {file_path}")
+            if use_file:
+                workbook_path = file_path
+            else:
+                workbook_path = askopenfilename(initialdir=initial_dir)
         else:
+            print("File not found.")
             workbook_path = askopenfilename(initialdir=initial_dir)
-    else:
-        print("File not found.")
-        workbook_path = askopenfilename(initialdir=initial_dir)
-    print(workbook_path)
+        print(workbook_path)
 
-    file_name = workbook_path
+        file_name = workbook_path
 
-    file_name = file_name.replace(initial_dir + "\\", "")
-    file_name = file_name[0:-5]
-    print(file_name)
+        file_name = file_name.replace(initial_dir + "\\", "")
+        file_name = file_name[0:-5]
+        print(file_name)
 
-    scan_window.activate()
+        scan_window.activate()
 
-    # Connect to the application (you might need to adjust this part based on your application details)
-    app = Application(backend="uia").connect(title="Epson ScanSmart")
+        # Connect to the application (you might need to adjust this part based on your application details)
+        app = Application(backend="uia").connect(title="Epson ScanSmart")
 
-    # Navigate to the button using its AutomationId
-    scan_button = app.window(title="Epson ScanSmart").child_window(auto_id="SingleSidedScanButton")
+        # Navigate to the button using its AutomationId
+        scan_button = app.window(title="Epson ScanSmart").child_window(auto_id="SingleSidedScanButton")
 
-    # Invoke the button
-    scan_button.click()
+        # Invoke the button
+        scan_button.click()
 
-    sleep(.5)
+        sleep(.5)
 
-    while True:
-        try:
-            # Check for the presence of the "Save" button using its AutomationId.
-            save_button = app.window(title="Epson ScanSmart").child_window(auto_id="ActButton")
-            
-            # If the button's name is "Save", then break out of the loop.
-            if "Save" in save_button.window_text():
-                print("Save button found!")
-                save_button.click()
-                break
-        except Exception as e:
-            # If an error occurs (like the button isn't found), wait for 2 seconds and try again.
-            sleep(2)
-    sleep(.5)
-    press('enter')
-    sleep(.5)
-    pyautogui.write(file_name)
-    sleep(2)
-    press('enter')
-    sleep(1)
+        while True:
+            try:
+                # Check for the presence of the "Save" button using its AutomationId.
+                save_button = app.window(title="Epson ScanSmart").child_window(auto_id="ActButton")
+                
+                # If the button's name is "Save", then break out of the loop.
+                if "Save" in save_button.window_text():
+                    print("Save button found!")
+                    save_button.click()
+                    break
+            except Exception as e:
+                # If an error occurs (like the button isn't found), wait for 2 seconds and try again.
+                sleep(2)
+        sleep(.5)
+        press('enter')
+        sleep(.5)
+        pyautogui.write(file_name)
+        sleep(2)
+        press('enter')
+        sleep(1)
 
-    company = file_name.split(' ')[0]
-    if company in mail_contacts:
-        recipient = mail_contacts[company]
-    else:
-        recipient = simpledialog.askstring("No default email found", f"Enter the email address for accounts receivable at {company}:")
-        with open('accountants.txt', 'a') as file:
-            file.write(f"\n'{company}':'{recipient}'")
+        company = file_name.split(' ')[0]
+        if company in mail_contacts:
+            recipient = mail_contacts[company]
+        else:
+            recipient = simpledialog.askstring("No default email found", f"Enter the email address for accounts receivable at {company}:")
+            with open('accountants.txt', 'a') as file:
+                file.write(f"\n'{company}':'{recipient}'")
 
 
-    print(recipient)
+        print(recipient)
 
-    service = initialize_service()
-    message = create_message_with_attachment(recipient, file_name, billing_message, rf'\\WBR\shared\My Scans\{file_name}.pdf')
+        service = initialize_service()
+        message = create_message_with_attachment(recipient, file_name, billing_message, rf'\\WBR\shared\My Scans\{file_name}.pdf')
 
-    send_message(service, 'me', message)
+        send_message(service, 'me', message)
 
+
+        run_again = messagebox.askyesno("Continue?", "Do you want to scan another AIA form?")
