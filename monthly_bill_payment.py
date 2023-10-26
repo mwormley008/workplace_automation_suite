@@ -84,14 +84,18 @@ open_pay_bill_menu()
 
 bills_counter = 0
 for j in rows_with_value:
+    print("starting main loop")
+    print(j)
     # move focus to due on or before
-    hotkey('shift', 'tab')
+    if j == min(rows_with_value):
+        hotkey('shift', 'tab')
     press('space')
     sleep(.5)
     # move focus to due date
     press('tab', presses=2)
-    sleep(.1)
-    write('h')
+    sleep(.1)   
+    if j == min(rows_with_value):
+        write('h')
     # Write end of this month
     sleep(.5)
     # move focus to filter by (selects vendor)
@@ -110,6 +114,9 @@ for j in rows_with_value:
     sleep(2)
     press('space')
     sleep(2)
+    final_confirmation = messagebox.askyesno("Final Confirmation", "Is this all correct for this vendor? Press yes when correct, or no if you want to stop this program.")
+    if not final_confirmation:
+        break
     press('p')
     # press('tab')
     # sleep(2)

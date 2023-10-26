@@ -6,7 +6,7 @@
 # The retention billing doesn't work if it's the final billing but only the second total billing. So if we bill for the total amount on invoice one, then charge for retention on invoice 2
 # this doesn't work. 
 
-# I'm not sure about this but it seems like for similar reasons this whole system doesn't work if we need to bill down to 5% retention but I might've already resolved that last cycle
+# Need to add change order functionality
 
 import pyautogui, openpyxl, datetime, calendar, os, sys, re
 import subprocess, time, win32, win32com.client
@@ -80,6 +80,9 @@ if __name__ =="__main__":
     noe_token = 0
     new_or_existing = OptionButtons(root, title="New or Existing", button_names=["New Billing Cycle", "Existing Billing Cycle", "Retention/Final Billing"])
     print("You clicked:", new_or_existing.result)
+    # change_orders =  messagebox.askyesno("Change Order", "Are there change orders?")
+    # if change_orders:
+
 
     # This is a boolean that's used in progress billing to see if the retention
     # needs to be billed in order to be reduced
