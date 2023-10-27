@@ -21,3 +21,8 @@ These need to be added to the estimators recipients list
 'Raby':'daveraby@rabyroofing.com'
 'Michael':'None'
 'Nick':'info@andysrecords.shop'
+'Favia':'mike@faviabuilders.com
+'
+'G.A.':'jgalbraith@gajohnson.com'
+'Mariottini':'jeffm@mariottini.com'
+'Cobalt':'ddupuie@c3built.com'

@@ -45,47 +45,43 @@ def find_date_paragraph_index(doc):
             return i  # Return the index instead of the paragraph object
     return None
 
-def mark_revision(doc, keyword="Revised"):
-    """
-    This function checks the paragraph following the date for the revision keyword 
-    and updates the text based on whether it is already revised.
-    """
-    date_para_index = find_date_paragraph_index(doc)
 
+def mark_revision(doc, tab_count, keyword="Revised"):
+    """
+    This function marks the revision in the paragraph following the date paragraph,
+    updating the text based on whether it is already revised.
+    """
     # Initialize to 1, assuming it's the first revision if no previous keyword is found
     revision_number = 1  
 
-    # If there's no date paragraph, we'll still proceed with the assumption that it's a valid document for revision.
-    if date_para_index is not None and date_para_index + 1 < len(doc.paragraphs):
-        target_para = doc.paragraphs[date_para_index + 1]
-        text = target_para.text.split()
+    # Find the index of the date paragraph
+    date_para_index = None
+    for i, para in enumerate(doc.paragraphs):
+        if "January" in para.text or "February" in para.text or \
+           "March" in para.text or "April" in para.text or \
+           "May" in para.text or "June" in para.text or \
+           "July" in para.text or "August" in para.text or \
+           "September" in para.text or "October" in para.text or \
+           "November" in para.text or "December" in para.text:
+            date_para_index = i
+            break
 
-        for i, word in enumerate(text):
-            if word == keyword and i + 1 < len(text) and text[i + 1].isdigit():
-                revision_number = int(text[i + 1]) + 1  # increment the revision number
-                text[i + 1] = str(revision_number)
-                break
-        else:
-            # If "Revised" keyword is present but without a number, add the number.
-            if keyword in target_para.text:
-                text.append(str(revision_number))
-            else:
-                # If the "Revised" keyword doesn't exist, add "Revised 1" at the end.
-                text.append(f"{keyword} 1")
+    target_para = doc.paragraphs[date_para_index + 1]
+    text = target_para.text.split()
 
-        # Update paragraph text with the tabs
-        tabs = '\t' * 6
-        new_text = ' '.join(text)
-        target_para.clear()
-        target_para.add_run(tabs + new_text)  # Adding the new text with tabs
-
+    # Check if revision number needs to be updated
+    for i, word in enumerate(text):
+        if word == keyword and i + 1 < len(text) and text[i + 1].isdigit():
+            revision_number = int(text[i + 1]) + 1  # increment the revision number
+            text[i + 1] = str(revision_number)
+            break
     else:
-        # If we don't find a paragraph following the date, we will create a new paragraph with the revision note.
-        tabs = '\t' * 6
-        new_para = doc.add_paragraph()
-        new_para.add_run(tabs + f"{keyword} {revision_number}")  # Adding the new text with tabs
+        target_para.paragraph_format.space_before = Inches(.1)
+        target_para.add_run(f"{keyword} {revision_number}")
 
-    return revision_number  # Return the revision number
+   
+
+    return revision_number
 
 def set_tabs_in_paragraph(paragraph, tab_positions):
     # Clear existing tab stops
@@ -94,30 +90,27 @@ def set_tabs_in_paragraph(paragraph, tab_positions):
     # Add new tab stops at specified positions
     for pos in tab_positions:
         paragraph.paragraph_format.tab_stops.add_tab_stop(Inches(pos))
-# # Usage in your code
-# tab_positions = [3, 6]  # positions in inches
-# set_tabs_in_paragraph(target_paragraph, tab_positions)
-# target_paragraph.add_run('\t').add_run("Your Text Here")
-def main(file_path):  # Now main accepts an argument, which is the file path of the document.
+
+def main(file_path):
     try:
         # Load the existing document
         doc = Document(file_path)
-        index = find_date_paragraph_index(doc) + 1 if find_date_paragraph_index(doc) is not None else None
 
-        # Mark the document as revised
-        revision_number = mark_revision(doc)
-        
-        if revision_number is not None:
-                # If a revision was made, save the document with the new revision number in the name
-                insert_text_in_table(doc, index, f"Revised {revision_number}")
-                revised_file_path = os.path.splitext(file_path)[0] + f" Rev {revision_number}" + os.path.splitext(file_path)[1]
-                doc.save(revised_file_path)
-                print(f"Document revised and saved as '{revised_file_path}'")
-                return revised_file_path
+        # Number of tab spaces you want before the revision note
+        tab_count = 6
+
+        # Mark the document as revised, specifying the tab count.
+        revision_number = mark_revision(doc, tab_count)
+
+        # Save the revised document with a new file name indicating the revision number
+        revised_file_path = os.path.splitext(file_path)[0] + f" Rev {revision_number}" + os.path.splitext(file_path)[1]
+        doc.save(revised_file_path)
+        print(f"Document revised and saved as '{revised_file_path}'")
+        return revised_file_path
 
     except Exception as e:
         print(f"An error occurred: {e}")
-        return None  # Return None or a suitable message indicating the failure.
+        return None
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
