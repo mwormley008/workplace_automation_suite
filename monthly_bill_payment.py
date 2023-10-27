@@ -17,6 +17,8 @@ from tkinter.filedialog import askopenfilename
 from pyautogui import press, write, hotkey
 from time import sleep
 import win32com.client
+import calendar
+from datetime import date
 
 def open_pay_bill_menu():
     press('alt')
@@ -25,6 +27,15 @@ def open_pay_bill_menu():
     # sleep(.5)
     press('p')
     sleep(1)
+def set_payment_date():
+    #Sets the date to be used in the format 10/31/2023
+    today = date.today()
+    print(today)
+    res = calendar.monthrange(today.year, today.month)[1]
+    payment_date = f"{today.month:02d}/{res:02d}/{today.year}"
+    return payment_date
+
+print("Beginning monthly_bill_payment.py")
 
 windows = gw.getAllWindows()
 
@@ -79,24 +90,34 @@ sleep(1)
 
 open_pay_bill_menu()
 
+payment_date = set_payment_date()
+
 
 # Pay the bills
 
 bills_counter = 0
 for j in rows_with_value:
     print("starting main loop")
-    print(j)
-    # move focus to due on or before
-    if j == min(rows_with_value):
-        hotkey('shift', 'tab')
-    press('space')
+    # print(j)
+    # print(rows_with_value[0])
     sleep(.5)
-    # move focus to due date
-    press('tab', presses=2)
-    sleep(.1)   
-    if j == min(rows_with_value):
-        write('h')
-    # Write end of this month
+    # move focus to due on or before
+    if j == rows_with_value[0]:
+        sleep(.5)
+        hotkey('shift', 'tab')
+        sleep(.5)
+        press('space')
+        sleep(.5)
+        # move focus to due date
+        press('tab', presses=2)
+        sleep(.1)   
+        # Write end of this month
+        sleep(1)
+        write(payment_date)
+        sleep(1)
+    else:
+        press('space')
+        press('tab', presses=2)
     sleep(.5)
     # move focus to filter by (selects vendor)
     press('tab')
