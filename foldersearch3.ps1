@@ -3,8 +3,6 @@ $revisionScriptPath = "C:\Users\Michael\Desktop\python-work\word_revision.py"
 
 $fileName = Read-Host -Prompt 'Enter a File Name'
 
-# Ask if the user wants to run the revision script
-$runRevision = Read-Host -Prompt 'Do you want to run the revision script? (y/n)'
 
 # Set the path to the folder you want to search
 $folderPath = '\\WBR\shared\Proposals'
@@ -46,36 +44,57 @@ if ($docFile.Count -eq 1)
 {
     $doc = $docFile  # There's only one document, so we take that.
 
+    # Path variable for the file to be opened
+    Write-Host "One file found: $($doc.Name)"  # Display the file name
+    
+    $pathToOpen = $doc.FullName
+
+    # Ask if the user wants to run the revision script
+    $runRevision = Read-Host -Prompt 'Do you want to run the revision script? (y/n)'
     if ($doc.Extension -eq '.doc') {
         # If the file is a .doc, convert it to .docx
         Write-Host "Converting $($doc.Name) to .docx"
         $newDocPath = ConvertTo-Docx -docPath $doc.FullName
-
-        # Open the converted .docx file
-        Start-Process -FilePath "WINWORD.EXE" -ArgumentList "`"$newDocPath`""
-        Write-Host "Opening $($doc.Name) as .docx"
-    } else {
-        # If the file is already a .docx, open it as usual
-        Start-Process -FilePath "WINWORD.EXE" -ArgumentList "`"$($doc.FullName)`""
-        Write-Host "Opening $($doc.Name)"
+        $pathToOpen = $newDocPath  # We update the path to be opened with the new .docx file path
     }
 
-    # After opening the document, check if the user agreed to run the revision script
+
+    # Check if the user agreed to run the revision script
     if ($runRevision -eq 'y') {
         if (Test-Path $revisionScriptPath) {
             Write-Host "Running revision script..."
-            python $revisionScriptPath $newDocPath  # or $doc.FullName if it's not converted
+            # Run the Python script and capture the output, which should be the path to the revised file
+            $revisionOutput = python $revisionScriptPath $pathToOpen | Out-String
+            $revisedFilePath = $revisionOutput -match "'.*?'" | Out-Null
+            $revisedFilePath = $matches[0] -replace "'", ""  # Remove the surrounding single quotes
+
+            # Trim any whitespace and remove any hidden special characters that might be included
+            $revisedFilePath = $revisedFilePath.Trim()
+
+            # Add this line for debugging:
+            Write-Host "Debug: Revised file path is '$revisedFilePath'"
+
+            if (Test-Path $revisedFilePath) {
+                $pathToOpen = $revisedFilePath  # We update the path to be opened with the revised file path
+                Write-Host "Document revised and saved as '$revisedFilePath'"
+
+            } else {
+                Write-Host "Revised file not found at path: $revisedFilePath. Opening original document."
+                # If the revised file is not found, it continues to open the original document.
+            }
         } else {
             Write-Host "Revision script path not found. Please check the path: $revisionScriptPath"
+            # The script proceeds to open the original document if the revision script is not found.
         }
     }
-}
-elseif ($docFile.Count -gt 1) 
-{
-    # ... (your existing logic for when there's more than one file. Don't forget to implement the revision script check here as well.)
 
-    # Example for multiple files:
-    # Prompt the user to select which file they want to open
+    # Open the document (original or revised)
+    Start-Process -FilePath "WINWORD.EXE" -ArgumentList "`"$pathToOpen`""
+    Write-Host "Opening $($pathToOpen.Name)"
+
+} elseif ($docFile.Count -gt 1) 
+{
+    # If multiple files match, prompt the user to choose one.
     Write-Host "Multiple files found:"
     $index = 1
     foreach ($file in $docFile) {
@@ -83,37 +102,47 @@ elseif ($docFile.Count -gt 1)
         $index++
     }
 
-    $selectedFiles = Read-Host -Prompt 'Enter the number of the file you want to open (separate multiple numbers with commas)'
-    $selectedFiles = $selectedFiles.Split(',')
+    $selectedFileIndex = Read-Host -Prompt 'Enter the number of the file you want to open'
+    $selectedFile = $docFile[[int]$selectedFileIndex - 1]
 
-    foreach ($selected in $selectedFiles)
-    {
-        $doc = $docFile[([int]$selected) - 1]
+    # Path variable for the file to be opened
+    $pathToOpen = $selectedFile.FullName
 
-        if ($doc.Extension -eq '.doc') {
-            # If the file is a .doc, convert it to .docx
-            Write-Host "Converting $($doc.Name) to .docx"
-            $newDocPath = ConvertTo-Docx -docPath $doc.FullName
+    # Ask if the user wants to run the revision script
+    $runRevision = Read-Host -Prompt 'Do you want to run the revision script? (y/n)'
+    if ($selectedFile.Extension -eq '.doc') {
+        # If the file is a .doc, convert it to .docx
+        Write-Host "Converting $($selectedFile.Name) to .docx"
+        $newDocPath = ConvertTo-Docx -docPath $selectedFile.FullName
+        $pathToOpen = $newDocPath  # Update the path to the new .docx file
+    }
 
-            # Open the converted .docx file
-            Start-Process -FilePath "WINWORD.EXE" -ArgumentList "`"$newDocPath`""
-            Write-Host "Opening $($doc.Name) as .docx"
-        } else {
-            # If the file is already a .docx, open it as usual
-            Start-Process -FilePath "WINWORD.EXE" -ArgumentList "`"$($doc.FullName)`""
-            Write-Host "Opening $($doc.Name)"
-        }
+    # Check if the user agreed to run the revision script
+    if ($runRevision -eq 'y') {
+        if (Test-Path $revisionScriptPath) {
+            Write-Host "Running revision script..."
+            # Run the Python script and capture the output, which should be the path to the revised file
+            $revisionOutput = python $revisionScriptPath $pathToOpen | Out-String
+            $revisedFilePath = $revisionOutput -match "'.*?'" | Out-Null
+            $revisedFilePath = $matches[0] -replace "'", ""  # Remove the surrounding single quotes
 
-        # After opening the document, check if the user agreed to run the revision script for each file.
-        if ($runRevision -eq 'y') {
-            if (Test-Path $revisionScriptPath) {
-                Write-Host "Running revision script..."
-                python $revisionScriptPath $newDocPath  # or $doc.FullName if it's not converted
+            # Trim any whitespace and remove any hidden special characters that might be included
+            $revisedFilePath = $revisedFilePath.Trim()
+
+            if (Test-Path $revisedFilePath) {
+                $pathToOpen = $revisedFilePath  # Update the path to be opened with the revised file path
+                Write-Host "Document revised and saved as '$revisedFilePath'"
             } else {
-                Write-Host "Revision script path not found. Please check the path: $revisionScriptPath"
+                Write-Host "Revised file not found at path: $revisedFilePath. Opening original document."
             }
+        } else {
+            Write-Host "Revision script path not found. Please check the path: $revisionScriptPath"
         }
     }
+
+    # Open the document (original or revised)
+    Start-Process -FilePath "WINWORD.EXE" -ArgumentList "`"$pathToOpen`""
+    Write-Host "Opening $($pathToOpen.Name)"
 }
 else
 {
