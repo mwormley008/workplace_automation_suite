@@ -70,12 +70,14 @@ def mark_revision(doc, tab_count, keyword="Revised"):
     text = target_para.text.split()
 
     # Check if revision number needs to be updated
+    keyword_found = False
     for i, word in enumerate(text):
         if word == keyword and i + 1 < len(text) and text[i + 1].isdigit():
             revision_number = int(text[i + 1]) + 1  # increment the revision number
             text[i + 1] = str(revision_number)
+            keyword_found = True
             break
-    else:
+    if not keyword_found:
         target_para.paragraph_format.space_before = Inches(.1)
         target_para.add_run(f"{keyword} {revision_number}")
 
