@@ -200,4 +200,4 @@ if __name__ == '__main__':
         send_message(service, 'me', message)
 
 
-        run_again = messagebox.askyesno("Continue?", "Do you want to scan another AIA form?")
+        run_again = messagebox.askyesno("Continue?", "Do you want to scan another proposal?")

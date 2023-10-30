@@ -2,6 +2,22 @@
 # Also that problem with downloading invoices only occurs from April from SMS, which I don't have time to fix right now but 
 # maybe was already solved 
 
+"""
+The totem invoices are structured kind of weirdly, so I need special logic for it.
+jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice
+2023-10-26
+2023-10-24
+Number of parts in the email: 2
+Parts: [{'partId': '0', 'mimeType': 'multipart/alternative', 'filename': '', 'headers': [{'name': 'Content-Type', 'value': 'multipart/alternative; boundary=--boundary_105_8a0c0c4f-eae8-4679-873f-7b917e116be6'}], 'body': {'size': 0}, 'parts': [{'partId': '0.0', 
+'mimeType': 'text/plain', 'filename': '', 'headers': [{'name': 'Content-Type', 'value': 'text/plain; charset=utf-8'}, {'name': 'Content-Transfer-Encoding', 'value': 'base64'}], 'body': {'size': 231, 'data': 'UGxlYXNlIGZpbmQgeW91ciBkb2N1bWVudCBhdHRhY2hlZC4gVGhhbmsgeW91Lg0KwqANCllvdXIgZG9jdW1lbnQgaXMgaW4gQWRvYmUgQWNyb2JhdCBQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQgKFBERikuIElmIHlvdSBkb24ndCBoYXZlIEFkb2JlIFJlYWRlciwgeW91IGNhbiBkb3dubG9hZCBpdCBmcmVlIG9mIGNoYXJnZSBieSBjbGlja2luZyBoZXJlOg0KaHR0cDovL2dldC5hZG9iZS5jb20vcmVhZGVy'}}, {'partId': '0.1', 'mimeType': 'text/html', 'filename': '', 'headers': [{'name': 'Content-Type', 'value': 'text/html; charset=us-ascii'}, {'name': 'Content-Transfer-Encoding', 
+'value': 'quoted-printable'}], 'body': {'size': 821, 'data': 'PCFET0NUWVBFIGh0bWwgUFVCTElDICItLy9XM0MvL0RURCBYSFRNTCAxLjAgVHJhbnNpdGlvbmFsLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL1RSL3hodG1sMS9EVEQveGh0bWwxLXRyYW5zaXRpb25hbC5kdGQiPjxodG1sIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hodG1sIj48aGVhZD48c3R5bGUgdHlwZT0idGV4dC9jc3MiPi5UZWxlcmlrTm9ybWFsIHtmb250LWZhbWlseTogQ2FsaWJyaTtmb250LXNpemU6IDE0LjY2NjY2NjY2NjY2NjdweDttYXJnaW4tdG9wOiAwcHg7bWFyZ2luLWJvdHRvbTogMTJweDtsaW5lLWhlaWdodDogMTE1JTt9dGFibGUuVGVsZXJpa1RhYmxlTm9ybWFsIHtib3JkZXItY29sbGFwc2U6IGNvbGxhcHNlO3RhYmxlLWxheW91dDogYXV0bzt9PC9zdHlsZT48dGl0bGU-PC90aXRsZT48L2hlYWQ-PGJvZHk-PHAgY2xhc3M9IlRlbGVyaWtOb3JtYWwiPjxzcGFuPlBsZWFzZSBmaW5kIHlvdXIgZG9jdW1lbnQgYXR0YWNoZWQuIFRoYW5rIHlvdS48L3NwYW4-PC9wPjxwIGNsYXNzPSJUZWxlcmlrTm9ybWFsIj4mbmJzcDs8L3A-PHAgY2xhc3M9IlRlbGVyaWtOb3JtYWwiPjxzcGFuPllvdXIgZG9jdW1lbnQgaXMgaW4gQWRvYmUgQWNyb2JhdCBQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQgKFBERikuIElmIHlvdSBkb24ndCBoYXZlIEFkb2JlIFJlYWRlciwgeW91IGNhbiBkb3dubG9hZCBpdCBmcmVlIG9mIGNoYXJnZSBieSBjbGlja2luZyBoZXJlOjwvc3Bhbj48L3A-PHAgY2xhc3M9IlRlbGVyaWtOb3JtYWwiPjxzcGFuPmh0dHA6Ly9nZXQuYWRvYmUuY29tL3JlYWRlcjwvc3Bhbj48L3A-PC9ib2R5PjwvaHRtbD4='}}]}, {'partId': '1', 'mimeType': 'multipart/mixed', 'filename': '', 'headers': [{'name': 'Content-Type', 'value': 'multipart/mixed; boundary=--boundary_107_ab57cd0a-6c7e-4950-bb37-ae534c703a2b'}], 'body': {'size': 0}, 'parts': [{'partId': '1.0', 'mimeType': 'application/octet-stream', 'filename': 'Invoice 314863.pdf', 'headers': [{'name': 'Content-Type', 'value': 'application/octet-stream; name="Invoice 314863.pdf"'}, {'name': 'Content-Transfer-Encoding', 'value': 'base64'}, {'name': 'Content-Disposition', 'value': 'attachment; filename="Invoice 314863.pdf"'}], 'body': {'attachmentId': 'ANGjdJ948jpb6Txqjga9dlj38veWLPS6qjQ2MjQjsAiI-3y39XD6KmKG23jkgTjhGOBMOHNQ6eENYU8WxgwQJpMSa0r1yF_0gfg8F5TnsLwjqskBql_vNh1TUyfCIUJpTA5YV-BLiZt_Eom6_Ftd9XtR7IiTZ2Bv-vn20O5mE-zpwnp1tK0GpQzI-4zykMEhTt9T993v_JdGk0lHB4C-dPOG6wfzLnlUIpeWyLEpvCpqSVIPf5XJyY37wDHB1xs1oxeXAilD0ygOFY6b4AW0G9tVUFFnWqZAiRTdmuesBSGB1V4LIvKup78jRMLSQAv5XAKveULif_yutTRzG6_8iZD2Kzn3jsvfiFJoY2LQbiaxuCiQgeZ9b-HGBmeO8v2uE7B858MI6i7-DoptFgOr', 'size': 67183}}]}]
+hello
+hello
+No valid attachments found in the email.
+[]
+read list: []
+smaller list: []"""
+
 from Google import Create_Service
 import base64, os, datetime, pickle, time, tkinter, shutil
 from time import sleep
@@ -271,6 +287,7 @@ if __name__ =="__main__":
         "lia@stevensoncrane.com subject:'invoice'",
         "customercareBT@becn.com subject: 'invoice'",
         "donotreply@waterinvoice.com subject: 'eInvoice'",
+        "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice",
         ]
 
     # Test email list

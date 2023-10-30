@@ -26,3 +26,6 @@ These need to be added to the estimators recipients list
 'G.A.':'jgalbraith@gajohnson.com'
 'Mariottini':'jeffm@mariottini.com'
 'Cobalt':'ddupuie@c3built.com'
+'Mosaic':'dd@mosaic-pd.com'
+'Modell':'modelfh@hotmail.com'
+'Sarah':'sarahjeanbertrand@gmail.com'
