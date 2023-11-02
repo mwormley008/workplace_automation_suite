@@ -45,91 +45,6 @@ def search_term(term):
     pyautogui.press('esc')
     sleep(1)
 
-## Add a focus function for .doc files
-
-
-# Start the flow
-time.sleep(2)  # WAIT 2
-
-# Ctrl + F
-pyautogui.hotkey('ctrl', 'f')
-write('dollars')
-send_keys_with_delay('return', 'esc')
-
-
-# Move cursor and select text
-repeat_hotkey(6, 0.1, 'ctrl', 'right')
-
-# def highlight_line():
-#     press('numlock')
-#     keyDown('shiftleft')
-#     press('end')
-#     keyUp('shiftleft')
-#     sleep(1)
-#     press('numlock')
-#     sleep(1)
-
-for i in range(3):
-    press('numlock')
-    hotkey('shift', 'ctrl', 'right')  # Select next 3 words
-    press('numlock')
-    sleep(.1)
-
-time.sleep(.1)
-pyautogui.hotkey('shift', 'ctrl', 'f5')
-time.sleep(.5)
-write('amnt')
-sleep(.5)
-pyautogui.hotkey('alt', 'a')
-time.sleep(.1)
-# press('end')
-# write('refamnt ')  # Added space at the end as in original
-
-# for i in range(6):
-#     press('numlock')
-#     hotkey('shift', 'ctrl', 'left')  # Select next 3 words
-#     press('numlock')
-#     sleep(.1)
-
-
-# # Cut and search for 'dollars'
-# pyautogui.hotkey('ctrl', 'x')
-pyautogui.hotkey('ctrl', 'f')
-sleep(.1)
-write('dollars')
-sleep(.1)
-pyautogui.press('return')
-sleep(.1)
-pyautogui.press('esc')
-sleep(.1)
-pyautogui.press('left')
-sleep(.1)
-# Some more text manipulations
-press('numlock')
-pyautogui.hotkey('shift', 'home')
-press('numlock')
-# send_keys_with_delay('backspace', 'left', 0.14)  # 14ms delay
-press('backspace')
-
-# press('left')
-# Final actions
-pyautogui.hotkey('ctrl', 'f9')
-write('REF amnt \*cardtext \*caps    ')
-pyautogui.press('f9')
-sleep(.1)
-pyautogui.hotkey('ctrl', 'f')
-sleep(.1)
-write('dollars')
-sleep(.1)
-pyautogui.press('return')
-sleep(.1)
-pyautogui.press('esc')
-sleep(.1)
-pyautogui.press('left')
-sleep(.1)
-press('space')
-print("Script completed.")
-
 def NameSave():
     # Search for "proposal submitted to:"
     search_term('proposal submitted to:')
@@ -165,5 +80,91 @@ def NameSave():
     time.sleep(2)
     pyautogui.write(contractor+ ' ' + job_name + ' ' + job_loc)
     time.sleep(1)
+## Add a focus function for .doc files
 
-NameSave()
+if __name__ == "__main__":
+    # Start the flow
+    time.sleep(2)  # WAIT 2
+
+    # Ctrl + F
+    pyautogui.hotkey('ctrl', 'f')
+    write('dollars')
+    send_keys_with_delay('return', 'esc')
+
+
+    # Move cursor and select text
+    repeat_hotkey(6, 0.1, 'ctrl', 'right')
+
+    # def highlight_line():
+    #     press('numlock')
+    #     keyDown('shiftleft')
+    #     press('end')
+    #     keyUp('shiftleft')
+    #     sleep(1)
+    #     press('numlock')
+    #     sleep(1)
+
+    for i in range(3):
+        press('numlock')
+        hotkey('shift', 'ctrl', 'right')  # Select next 3 words
+        press('numlock')
+        sleep(.1)
+
+    time.sleep(.1)
+    pyautogui.hotkey('shift', 'ctrl', 'f5')
+    time.sleep(.5)
+    write('amnt')
+    sleep(.5)
+    pyautogui.hotkey('alt', 'a')
+    time.sleep(.1)
+    # press('end')
+    # write('refamnt ')  # Added space at the end as in original
+
+    # for i in range(6):
+    #     press('numlock')
+    #     hotkey('shift', 'ctrl', 'left')  # Select next 3 words
+    #     press('numlock')
+    #     sleep(.1)
+
+
+    # # Cut and search for 'dollars'
+    # pyautogui.hotkey('ctrl', 'x')
+    pyautogui.hotkey('ctrl', 'f')
+    sleep(.1)
+    write('dollars')
+    sleep(.1)
+    pyautogui.press('return')
+    sleep(.1)
+    pyautogui.press('esc')
+    sleep(.1)
+    pyautogui.press('left')
+    sleep(.1)
+    # Some more text manipulations
+    press('numlock')
+    pyautogui.hotkey('shift', 'home')
+    press('numlock')
+    # send_keys_with_delay('backspace', 'left', 0.14)  # 14ms delay
+    press('backspace')
+
+    # press('left')
+    # Final actions
+    pyautogui.hotkey('ctrl', 'f9')
+    write('REF amnt \*cardtext \*caps    ')
+    pyautogui.press('f9')
+    sleep(.1)
+    pyautogui.hotkey('ctrl', 'f')
+    sleep(.1)
+    write('dollars')
+    sleep(.1)
+    pyautogui.press('return')
+    sleep(.1)
+    pyautogui.press('esc')
+    sleep(.1)
+    pyautogui.press('left')
+    sleep(.1)
+    press('space')
+    print("Script completed.")
+
+
+
+    NameSave()

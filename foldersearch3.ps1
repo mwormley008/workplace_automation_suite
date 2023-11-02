@@ -150,4 +150,4 @@ else
 }
 
 # At the end of your script
-Read-Host -Prompt "Press Enter to exit"
+# Read-Host -Prompt "Press Enter to exit"

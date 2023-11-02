@@ -29,3 +29,7 @@ These need to be added to the estimators recipients list
 'Mosaic':'dd@mosaic-pd.com'
 'Modell':'modelfh@hotmail.com'
 'Sarah':'sarahjeanbertrand@gmail.com'
+'International':'ffernandez@icibuilds.com'
+'41':'mark.rigby@41northcontractors.com'
+'Tessler':'kurt@tesslerinc.com'
+'Crossroads':'christine@xr-partners.com'
