@@ -29,23 +29,24 @@ def add_hotstring():
         file.write(f"\n:*:{trigger_text}/::{replacement_text}")
     print("Added hotstring.")
 
-root = tk.Tk()
-root.withdraw()  # Hide the root window
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.withdraw()  # Hide the root window
 
 
-ahk_script = r"C:\Users\Michael\Desktop\Text Replacement.ahk"
-ahk_executable = r"C:\Program Files\AutoHotkey\AutoHotkey.exe"  # Typical path, adjust if different
-bat_file_path = r"C:\Users\Michael\Desktop\python-work\run_ahk.bat"
+    ahk_script = r"C:\Users\Michael\Desktop\Text Replacement.ahk"
+    ahk_executable = r"C:\Program Files\AutoHotkey\AutoHotkey.exe"  # Typical path, adjust if different
+    bat_file_path = r"C:\Users\Michael\Desktop\python-work\run_ahk.bat"
 
 
-add_hotstring()
-task_name = "StartMyAHKScript"
-subprocess.run(["schtasks", "/run", "/tn", task_name])
-# subprocess.Popen([ahk_executable, ahk_script], creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)
+    add_hotstring()
+    task_name = "StartMyAHKScript"
+    subprocess.run(["schtasks", "/run", "/tn", task_name])
+    # subprocess.Popen([ahk_executable, ahk_script], creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)
 
-# subprocess.Popen([bat_file_path], creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)
+    # subprocess.Popen([bat_file_path], creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)
 
-time.sleep(1)
+    time.sleep(1)
 
 
 

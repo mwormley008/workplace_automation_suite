@@ -9,7 +9,7 @@ from pyautogui import press, write, hold
 import pygetwindow as gw
 windows = gw.getAllWindows()
 
-sleep(.1)
+# sleep(.1)
 qb_window = None
 
 for window in windows:
@@ -19,11 +19,11 @@ for window in windows:
 
 qb_window.activate()
 
-time.sleep(3)
+# time.sleep(3)
 
 def copy_clipboard():
     pya.hotkey('ctrl', 'c')
-    time.sleep(.01)
+    # time.sleep(.01)
     return pyperclip.paste()
 
 def highlight_line():
@@ -35,28 +35,30 @@ def highlight_line():
 
 contents = []
 
-pya.write('hours')
 
 highlight_line()
-sleep(.5)
+# sleep(.5)
+
+copy_clipboard()
 
 full_string = copy_clipboard()
 
-full_string = full_string.split(', ')
-print(full_string)
+full_string = full_string.split('m')
+# print(full_string)
+pya.write(f'{full_string[0]} men, {full_string[1]} hours')
 
-for i in full_string:
-    contents.extend(i.split())
+# for i in full_string:
+#     contents.extend(i.split())
 
-print(contents)
+# print(contents)
 
-total = int(contents[0]) * float(contents[2])
-print(total)
+total = int(full_string[0]) * float(full_string[1])
+# print(total)
 
 pya.press('tab', presses=2)
-sleep(.5)
+# sleep(.5)
 pya.write(str(total))
-sleep(.5)
+# sleep(.5)
 
 pya.hotkey('shift', 'tab')
 pya.press('down')
