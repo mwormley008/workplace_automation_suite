@@ -164,12 +164,7 @@ SetTitleMatchMode, 2
 	Run, "C:\Users\Michael\Desktop\CEnvelopes"
 Return
 
-^!v::
-SetTitleMatchMode, 2 
-	IfWinExist, Visual Studio
-	WinActivate, Visual Studio
-	WinWaitActive, Visual Studio
-Return
+
 
 ;bb billing autofill from hours sheets (BB side)
 ;you run this macro once you've input the billing name "WBR Roofing Company Inc.:Belle Tire W Chicago" and press tab
@@ -961,4 +956,57 @@ return
 
 ^!1:: ; ctrl alt 1
 Run, /k "photos_timesheets.py", , Hide
+return
+
+; This script will bring VS Code to focus when you press Ctrl+Alt+V
+^!v:: ; Ctrl+Alt+V hotkey
+IfWinExist, ahk_exe Code.exe ; Checks if VS Code is running
+{
+    WinActivate ; Activates the window
+}
+else
+{
+    Run, Code ; If VS Code isn't running, this command will start it
+}
+return
+
+^2::
+IfWinExist, ahk_exe QBW32.EXE ;Adjust the executable name if needed
+{
+    WinActivate ; Activates the QuickBooks window
+}
+else
+{
+    Run, C:\Program Files (x86)\Intuit\QuickBooks 2019\QBW32Pro.exe
+}
+return
+
+^!3:: ; Ctrl+Alt+3 hotkey
+IfWinExist, ahk_class Chrome_WidgetWin_1, *Person 1*
+{
+    WinActivate
+}
+else IfWinExist, ahk_class Chrome_WidgetWin_1, *throwod*
+{
+    WinActivate
+}
+else
+{
+    Run, "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --profile-directory="Default"
+}
+return
+
+^!4:: ; Ctrl+Alt+4 hotkey
+IfWinExist, ahk_class Chrome_WidgetWin_1, *Person 2*
+{
+    WinActivate
+}
+else IfWinExist,  *wbrroof*
+{
+    WinActivate
+}
+else
+{
+    Run, "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --profile-directory="Profile 1"
+}
 return
