@@ -74,6 +74,8 @@ def print_excel(workbook_path):
     excel.Application.Quit()
 
 if __name__ =="__main__":
+
+    file_loc = r"C:\Users\Michael\Desktop\python-work\\" 
     # Create the Tkinter root window
     root = Tk() 
     root.withdraw()  # Hide the root window
@@ -114,14 +116,14 @@ if __name__ =="__main__":
     # New contract invoice will start using the memorized new contract invoice document
     if qb_response and noe_token == 0:
         qtoken = 1
-        exec(open('progress_invoice.py').read())
+        exec(open(f'{file_loc}progress_invoice.py').read())
     # start in QuickBooks in a new billing cycle
     elif qb_response and noe_token == 1:
     # I think this starts with you having entered the customer and job info, or you can wait to answer the "are you ready to "
     # use this billing info
         qtoken = 1
         contract_date = simpledialog.askstring("Contract Prompt", "What is the contract date MM/DD/YY:")
-        exec(open('new_contract_invoice.py').read())
+        exec(open(f'{file_loc}new_contract_invoice.py').read())
         owner_info = bill_to.split('\r\n')
         project_info = ship_to.split('\r\n')
     elif qb_response == 0 and noe_token == 1:
@@ -131,7 +133,7 @@ if __name__ =="__main__":
         ship_to = simpledialog.askstring("Project", "What is the project name?")
     elif new_or_existing.result == "Retention/Final Billing" and qb_response:
         qtoken = 1
-        exec(open('retention_invoice.py').read())
+        exec(open(f'{file_loc}retention_invoice.py').read())
     else:
         qtoken = 0
         target_invoice = simpledialog.askinteger("Invoice number", "What is the number of the last invoice?")
