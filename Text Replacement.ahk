@@ -904,10 +904,18 @@ Return
 :*:a./::git add .
 :*:c./::git commit -m "
 :*:p./::git push origin main
-
 :*:narl/::It is not a roof leak
 :*:loc/::locations
 :*:si/::stripped in
+:*:port/::Portillo's
+:*:nrl/::not a roof leak
+:*:iigc/::is in good condition
+:*:iibc/::is in bad condition
+:*:iiec/::is in excellent condition
+:*:cc/::coping cap
+:*:d/::drain
+:*:ori/::Our roof inspection
+:*:yboa/::your building of approx. sq. ft.
 
 
 ; This hotkey (Windows+J) triggers a PowerShell script that prompts the user for a search term
@@ -927,10 +935,30 @@ return
 ^!+a::
 Run, "AIA_scan.py"
 return
-:*:port/::Portillo's
-:*:nrl/::not a roof leak
-:*:iigc/::is in good condition
-:*:iibc/::is in bad condition
-:*:iiec/::is in excellent condition
-:*:cc/::coping cap
-:*:d/::drain
+
+
+^!h:: ; ctrl alt h
+Run, /k "ahk_hotstring_creator.py", , Hide
+return
+
+^!m:: ; ctrl alt m
+Run, /k "menandhours.pyw", , Hide
+return
+
+^!+m:: ; ctrl alt shift m
+Run, /k "man_hours_materials.pyw", , Hide
+return
+
+; This script will open your AHK script in the default text editor when you press Ctrl+Alt+E
+^!e:: ; Ctrl+Alt+E hotkey
+Run, notepad.exe "C:\Users\Michael\Desktop\Text Replacement.ahk"
+return
+
+; This script will run your AHK script when you press Ctrl+Alt+R
+^!n:: ; Ctrl+Alt+n hotkey
+Run, "C:\Users\Michael\Desktop\Text Replacement.ahk" 
+return
+
+^!1:: ; ctrl alt 1
+Run, /k "photos_timesheets.py", , Hide
+return
