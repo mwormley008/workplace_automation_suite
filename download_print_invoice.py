@@ -38,8 +38,7 @@ from photos_timesheets import extract_first_page_and_overwrite
 
 # TODO: Add logic to only check things with the UNREAD tag 
 
-
-CLIENT_SECRET_FILE = 'wbrcredentials.json'  # Replace with the path to your credentials.json file
+CLIENT_SECRET_FILE = r"C:\Users\Michael\Desktop\python-work\wbrcredentials.json"  # Replace with the path to your credentials.json file
 API_NAME = 'gmail'
 API_VERSION = 'v1'
 SCOPES = ['https://www.googleapis.com/auth/gmail.send', 'https://www.googleapis.com/auth/gmail.modify', 'https://www.googleapis.com/auth/gmail.readonly']
