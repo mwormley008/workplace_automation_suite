@@ -104,8 +104,9 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_subject, d
                 if part.get('filename'):
                     print("something here")
                     filename = part['filename']  # Fix the filename extraction here
+                    if filename.endswith('.zip'):
+                        continue
                     print(f"Extracted filename: {filename}")  # Add this line to print the extracted filename
-
                     attachment_id = part['body']['attachmentId']
                     attachment = service.users().messages().attachments().get(userId=user_id, messageId=msg_id, id=attachment_id).execute()
                     file_data = base64.urlsafe_b64decode(attachment['data'].encode('UTF-8'))
@@ -137,7 +138,7 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_subject, d
             print(f"Skipping email with subject: {subject}")
     except Exception as e:
         print('An error occurred: %s' % e)
-
+    print(f'attachment_paths: {attachments_paths}')
     return attachments_paths
 
 def print_file(filepath):
@@ -168,22 +169,25 @@ def print_file(filepath):
 
 def print_file_with_ghostscript(filepath):
     ghostscript_path = r"C:\Program Files\gs\gs10.01.2\bin\gswin64c.exe"  # Replace with the path to Ghostscript executable
+    sumatra_path = r"C:\Users\Michael\AppData\Local\SumatraPDF\SumatraPDF.exe"
     printer_name = win32print.GetDefaultPrinter()
 
     if not os.path.exists(filepath):
         print(f"File '{filepath}' does not exist.")
         return
 
-    command = [
-        ghostscript_path,
-        "-dNOPAUSE",
-        "-dBATCH",
-        "-dPrinted",
-        f"-sDEVICE=mswinpr2",  # Use the Windows printer device
-        f"-sOutputFile=%printer%{printer_name}",
-        filepath
-    ]
-
+    # command = [
+    #     ghostscript_path,
+    #     "-q"
+    #     "-dNOPAUSE",
+    #     "-dBATCH",
+    #     "-dPrinted",
+    #     f"-sDEVICE=mswinpr2",  # Use the Windows printer device
+    #     f"-sOutputFile=%printer%{printer_name}",
+    #     filepath
+    # ]
+    command = [sumatra_path, '-print-to-default', filepath]
+    
     try:
         subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         print(f"File '{filepath}' printed successfully.")
@@ -288,7 +292,8 @@ if __name__ =="__main__":
         "kris@stevensoncrane.com subject:'Invoice",
         "customercareBT@becn.com subject: 'invoice'",
         "donotreply@waterinvoice.com subject: 'eInvoice'",
-        "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice",
+        "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice'",
+        "kathy@dandpconstruction.com subject: 'invoice'",
         ]
 
     # Test email list
@@ -403,9 +408,14 @@ if __name__ =="__main__":
             for message in messages:
                 msg_id = message['id']
                 if email_query == "from:april@sheetmetalsupplyltd.com subject:'Invoice'" or email_query == "from:april@sheetmetalsupplyltd.com subject:'Invoices'":
-                    attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, "yes")
+                    nested = "yes"
+                    attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, nested)
+                elif email_query == "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice'":
+                    nested = "yes"
+                    attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, nested)
                 else:    
-                    attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, "no")
+                    nested = "no"
+                    attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, nested)
 
                 subject = get_subject_from_message(service, user_email, msg_id)  # Get the subject of the message
 
@@ -413,8 +423,9 @@ if __name__ =="__main__":
                     all_attachments.extend(attachments)
                     smaller_list.append({'id': subject})  # Append subject instead of ID
                     mark_as_read(service, user_email, msg_id)
-                print(attachments)
 
+                print(f"List of attachments: {attachments}")
+                print(f"List of attachments: {all_attachments}")
                 
 
 
@@ -424,6 +435,7 @@ if __name__ =="__main__":
                     extract_first_page_and_overwrite(attachment)
                     print_file_with_ghostscript(attachment)
             elif print_status:
+                # print('print status')
                 for attachment in all_attachments:
                     print_file_with_ghostscript(attachment)
 

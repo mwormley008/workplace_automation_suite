@@ -112,6 +112,19 @@ if __name__ == '__main__':
             'LBX':'danielle@lbxinvestments.com',
             'Raby':'daveraby@rabyroofing.com',
             'Crossroads':'christine@xr-partners.com',
+            'Stratus':'David.Rekstad@stratusunlimited.com',
+            'Raffin':'albertr@raffinconstruction.com',
+            'ACT':'nmorrison@actconstruction.com',
+            'Quincy':'twiersma@quincyconstruction.com',
+            'Allstar':'allstar@allstardentalinc.com',
+            'Gordon':'kelly@midwestearnosethroat.com',
+            'Favia':'mike@faviabuilders.com',
+            'G.A.':'jgalbraith@gajohnson.com; igalbraith@gajohnson.com',
+            'Mariottini':'jeffm@mariottini.com',
+            'Mosaic':'dd@mosaic-pd.com',
+            'Modell':'modelfh@hotmail.com',
+            'Tessler':'kurt@tesslerinc.com',
+            'test':'wbrroof@gmail.com; throwod@gmail.com'
             }
 
         proposal_message = 'Hello,\nPlease see attached proposal.\n\nThank you,\nMichael Wormley\nWBR Roofing\n25084 W Old Rand Rd\nWauconda, IL 60084\n​O: 847-487-8787​\nwbrroof@aol.com'
@@ -186,7 +199,7 @@ if __name__ == '__main__':
         else:
             recipient = simpledialog.askstring("No default email found", f"Enter the email address for estimator at {company}:")
             with open('estimators.txt', 'a') as file:
-                file.write(f"\n'{company}':'{recipient}'")
+                file.write(f"\n'{company}':'{recipient}',")
 
 
         print(recipient)

@@ -165,30 +165,35 @@ def print_file(filepath):
     except Exception as e:
         print(f"An error occurred while printing: {e}")
 
+
+
 def print_file_with_ghostscript(filepath):
     ghostscript_path = r"C:\Program Files\gs\gs10.01.2\bin\gswin64c.exe"  # Replace with the path to Ghostscript executable
+    sumatra_path = r"C:\Users\Michael\AppData\Local\SumatraPDF\SumatraPDF.exe"
     printer_name = win32print.GetDefaultPrinter()
 
     if not os.path.exists(filepath):
         print(f"File '{filepath}' does not exist.")
         return
 
-    command = [
-        ghostscript_path,
-        "-dNOPAUSE",
-        "-dBATCH",
-        "-dPrinted",
-        f"-sDEVICE=mswinpr2",  # Use the Windows printer device
-        f"-sOutputFile=%printer%{printer_name}",
-        filepath
-    ]
-
+    # command = [
+    #     ghostscript_path,
+    #     "-q"
+    #     "-dNOPAUSE",
+    #     "-dBATCH",
+    #     "-dPrinted",
+    #     f"-sDEVICE=mswinpr2",  # Use the Windows printer device
+    #     f"-sOutputFile=%printer%{printer_name}",
+    #     filepath
+    # ]
+    command = [sumatra_path, '-print-to-default', filepath]
+    
     try:
         subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         print(f"File '{filepath}' printed successfully.")
     except Exception as e:
         print(f"An error occurred while printing: {e}")
-
+    
 def get_subject_from_message(service, user_email, msg_id):
     """Get the subject of an email based on its id"""
     message = service.users().messages().get(userId=user_email, id=msg_id).execute()
@@ -287,7 +292,8 @@ if __name__ =="__main__":
         "kris@stevensoncrane.com subject:'Invoice",
         "customercareBT@becn.com subject: 'invoice'",
         "donotreply@waterinvoice.com subject: 'eInvoice'",
-        "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice",
+        "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice'",
+        "kathy@dandpconstruction.com subject: 'invoice'",
         ]
 
     # Test email list
@@ -402,9 +408,14 @@ if __name__ =="__main__":
             for message in messages:
                 msg_id = message['id']
                 if email_query == "from:april@sheetmetalsupplyltd.com subject:'Invoice'" or email_query == "from:april@sheetmetalsupplyltd.com subject:'Invoices'":
-                    attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, "yes")
+                    nested = "yes"
+                    attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, nested)
+                elif email_query == "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice'":
+                    nested = "yes"
+                    attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, nested)
                 else:    
-                    attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, "no")
+                    nested = "no"
+                    attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, nested)
 
                 subject = get_subject_from_message(service, user_email, msg_id)  # Get the subject of the message
 

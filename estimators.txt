@@ -1,35 +1,15 @@
 These need to be added to the estimators recipients list
 
-
-
-'Midwest':'andy@midwestmasonryinc.com'
-'Midwest':'andy@midwestmasonryinc.com'
-'Midwest':'andy@midwestmasonryinc.com'
-'Midwest':'andy@midwestmasonryinc.com'
-'Midwest':'andy@midwestmasonryinc.com'
-'Midwest':'andy@midwestmasonryinc.com'
+These ones are kind of questionable to me
 'The':'joe@dubsco.com'
-'Stasica':'todd@stasicaconstruction.com'
-'Stratus':'David.Rekstad@stratusunlimited.com'
-'Raffin':'albertr@raffinconstruction.com'
-'ACT':'nmorrison@actconstruction.com'
-'41':'jon.moczarny@41northcontractors.com'
+'Midwest':'andy@midwestmasonryinc.com'
 'Midwest':'cal@midwestmasonryinc.com'
-'Quincy':'twiersma@quincyconstruction.com'
-'Allstar':'allstar@allstardentalinc.com'
-'Gordon':'kelly@midwestearnosethroat.com'
-'Raby':'daveraby@rabyroofing.com'
-'Michael':'None'
-'Nick':'info@andysrecords.shop'
-'Favia':'mike@faviabuilders.com
-'
-'G.A.':'jgalbraith@gajohnson.com'
-'Mariottini':'jeffm@mariottini.com'
 'Cobalt':'ddupuie@c3built.com'
-'Mosaic':'dd@mosaic-pd.com'
-'Modell':'modelfh@hotmail.com'
 'Sarah':'sarahjeanbertrand@gmail.com'
 'International':'ffernandez@icibuilds.com'
+'41':'jon.moczarny@41northcontractors.com'
 '41':'mark.rigby@41northcontractors.com'
-'Tessler':'kurt@tesslerinc.com'
-'Crossroads':'christine@xr-partners.com'
+
+These ones aren't checked/entered yet. (If I've checked them and they look usable, they go into the proposal_scan.py file):
+
+
