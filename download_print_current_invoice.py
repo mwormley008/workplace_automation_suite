@@ -294,6 +294,7 @@ if __name__ =="__main__":
         "donotreply@waterinvoice.com subject: 'eInvoice'",
         "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice'",
         "kathy@dandpconstruction.com subject: 'invoice'",
+        "sales@duro-last.com subject: 'Order'",
         ]
 
     # Test email list

@@ -98,6 +98,9 @@ if bill_status:
         hotkey('alt', 's')
         sleep(2)
 
+sleep(1)
+qb_window.activate()
+sleep(1)
 press('alt')
 sleep(.5)
 press('o')

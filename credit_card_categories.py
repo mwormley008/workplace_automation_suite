@@ -70,7 +70,11 @@ for cell in row_cells:
     # print(cell.value)
     # print(categories_to_pay)
 
-categories = {'A': '871', 'B': '887', 'C': '872', 'D': '702', 'E': '908', 'F': '917', 'G': '889', 'H': '914', 'I': '860', 'J': '878', 'K': '893', 'L': '268', 'M': '886', 'N': '880', 'O': '883', 'P': '854', 'Q': '869', 'R': '255', 'S': '905'}
+categories = {'A': '872', 'B': '871', 'C': '887', 'D': '702',
+               'E': '908', 'F': '917', 'G': '889', 'H': '914', 
+               'I': '860', 'J': '878', 'K': '893', 'L': '268', 
+               'M': '886', 'N': '880', 'O': '883', 'P': '854', 
+               'Q': '869', 'R': '255', 'S': '905'}
 
 values_with_categories_as_keys = {categories[key]: value for key, value in categories_to_pay.items()}
 print(values_with_categories_as_keys)

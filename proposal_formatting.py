@@ -59,20 +59,23 @@ def NameSave():
     highlight_line()
     job_name = copy_clipboard()
     sleep(1)
-    
+    if job_name == 'Same':
+        job_loc = ''
 
-    # Search for "Work to be performed at:" again
-    
-    send_keys_with_delay('down', 'down', 'end', delay=0.14)
-    
-    # alright here I think I'd like to take the whole line instead af then take the part before the comma
+    else: 
 
-    highlight_home_line()
+        # Search for "Work to be performed at:" again
         
-    job_loc = copy_clipboard()
+        send_keys_with_delay('down', 'down', 'end', delay=0.14)
+        
+        # alright here I think I'd like to take the whole line instead af then take the part before the comma
 
-    job_loc = job_loc.split(',')[0]
-    print(job_loc)
+        highlight_home_line()
+            
+        job_loc = copy_clipboard()
+
+        job_loc = job_loc.split(',')[0]
+        print(job_loc)
 
     
     time.sleep(1)
