@@ -312,7 +312,7 @@ if __name__ =="__main__":
 
 
     # Asks how many days back to check
-    desired_date = 1
+    desired_date = 4
     print_status = True
     query_date = datetime.now() - timedelta(days=desired_date)  # Using the desired_date variable instead of fixed 7
     query_date_str = query_date.strftime('%Y-%m-%d')
