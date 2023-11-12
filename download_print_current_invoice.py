@@ -282,19 +282,19 @@ if __name__ =="__main__":
     print(pickle_file)
 
     email_list = [
-        "from:carolyn@profastening.net subject:'Invoice'", 
+        "customercareBT@becn.com subject: 'invoice'",
+        "sales@duro-last.com subject:'Order'",
         "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
+        "from:carolyn@profastening.net subject:'Invoice'", 
+        "amy@profastening.net subject:'Invoice'",
         "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
         "from:april@sheetmetalsupplyltd.com subject:'Invoices'",
-        "amy@profastening.net subject:'Invoice'",
         "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
         "lia@stevensoncrane.com subject:'invoice'",
         "kris@stevensoncrane.com subject:'Invoice",
-        "customercareBT@becn.com subject: 'invoice'",
+        "kathy@dandpconstruction.com subject: 'invoice'",
         "donotreply@waterinvoice.com subject: 'eInvoice'",
         "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice'",
-        "kathy@dandpconstruction.com subject: 'invoice'",
-        "sales@duro-last.com subject: 'Order'",
         ]
 
     # Test email list
@@ -414,6 +414,9 @@ if __name__ =="__main__":
                 elif email_query == "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice'":
                     nested = "yes"
                     attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, nested)
+                elif email_query == "sales@duro-last.com subject:'Order'":
+                    nested = "no"
+                    attachments = download_attachments(service, user_email, msg_id, store_directory, "Order", desired_date, nested)
                 else:    
                     nested = "no"
                     attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, nested)
