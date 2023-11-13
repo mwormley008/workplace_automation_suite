@@ -1,6 +1,6 @@
-# trying to get this gmail thing going we'll see 
-# Also that problem with downloading invoices only occurs from April from SMS, which I don't have time to fix right now but 
-# maybe was already solved 
+# It would be nice to add a document to have all the queries in so I don't have to update 2 files every time
+# It would be nice if I had the flask server already running come on dude what're you afraid of
+# 
 
 """
 The totem invoices are structured kind of weirdly, so I need special logic for it.
@@ -284,6 +284,7 @@ if __name__ =="__main__":
     email_list = [
         "customercareBT@becn.com subject: 'invoice'",
         "sales@duro-last.com subject:'Order'",
+        "dlaccountsreceivable@duro-last.com subject:'Invoice'",
         "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
         "from:carolyn@profastening.net subject:'Invoice'", 
         "amy@profastening.net subject:'Invoice'",
