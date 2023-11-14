@@ -114,8 +114,10 @@ if ($docFile.Count -eq 1)
     $fileList | Format-Table -AutoSize | Out-String -Stream
 
 
+    # $selectedFileIndex = Read-Host -Prompt 'Enter the number of the file you want to open'
+    # $selectedFile = $docFile[[int]$selectedFileIndex - 1]
     $selectedFileIndex = Read-Host -Prompt 'Enter the number of the file you want to open'
-    $selectedFile = $docFile[[int]$selectedFileIndex - 1]
+    $selectedFile = $sortedFiles[[int]$selectedFileIndex - 1]
 
     # Path variable for the file to be opened
     $pathToOpen = $selectedFile.FullName
