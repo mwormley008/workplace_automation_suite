@@ -237,7 +237,7 @@ for filename in os.listdir(folder_path):
                     [r'(\d{2}-\d{2}-\d{2})\s*\|?\s*(\d{7}-?\d{0,2})'],
                     inv_text, 
                     r"page\s(\d+)\sof\s([2-9])",
-                        [r'THIS AMOUNT \$(\d?\s?(?:[:,])?[\d,]+\s*\.{0,1}\s*\d{2})', r'PLERSE PAT \$([\d,]+\.\d{2})']
+                        [r'THIS AMOUNT \$(\d?\s?(?:[:,])?[\d,]+\s*\.{0,1}\s*\d{2})', r'PLERSE PAT \$([\d,]+\.\d{2})'],
                         amt_text,
                         r'invoice date[:\s]*([01]?\d/[0123]?\d/\d{2})', 
                         content)

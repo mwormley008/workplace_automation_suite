@@ -127,28 +127,32 @@ if __name__ == '__main__':
         sleep(1)
 
 
-        invoice_number = simpledialog.askinteger("Invoice Prompt", "Enter the invoice number:")
+        # invoice_number = simpledialog.askinteger("Invoice Prompt", "Enter the invoice number:")
 
         scan_window, wbr_window = find_scan_and_email_windows()
         initial_dir=r"\\WBR\data\shared\G702 & G703 Forms"
 
 
-        file_path = find_file_by_number(initial_dir, invoice_number)
-        if file_path:
-            print(f"File found: {file_path}")
-            use_file = messagebox.askyesno("Confirmation", f"Do you want to use this file?/\n {file_path}")
-            if use_file:
-                workbook_path = file_path
-            else:
-                workbook_path = askopenfilename(initialdir=initial_dir)
-        else:
-            print("File not found.")
-            workbook_path = askopenfilename(initialdir=initial_dir)
+        # file_path = find_file_by_number(initial_dir, invoice_number)
+        # if file_path:
+        #     print(f"File found: {file_path}")
+        #     use_file = messagebox.askyesno("Confirmation", f"Do you want to use this file?/\n {file_path}")
+        #     if use_file:
+        #         workbook_path = file_path
+        #     else:
+        #         workbook_path = askopenfilename(initialdir=initial_dir)
+        # else:
+        #     print("File not found.")
+        workbook_path = askopenfilename(initialdir=initial_dir)
         print(workbook_path)
 
         file_name = workbook_path
 
-        file_name = file_name.replace(initial_dir + "\\", "")
+        print(f"pre-replace file name: {file_name}")
+        initial_dir = initial_dir.replace("\\", "/")
+        print(f"Initial derictory file name: {initial_dir}")
+        file_name = file_name.replace(initial_dir + "/", "")
+        print(f"post-replace file name: {file_name}")
         file_name = file_name[0:-5]
         print(file_name)
 

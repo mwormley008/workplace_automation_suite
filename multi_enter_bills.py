@@ -15,6 +15,6 @@ if __name__ == "__main__":
     
     run_script(script1_path)
     run_script(script2_path)
-    # run_script(script3_path)
+    run_script(script3_path)
 
     print("All scripts have been executed.")

@@ -281,34 +281,34 @@ if __name__ =="__main__":
         print(access_token.token)
     print(pickle_file)
 
-    email_list = [
-        "from:carolyn@profastening.net subject:'Invoice'", 
-        "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
-        "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
-        "from:april@sheetmetalsupplyltd.com subject:'Invoices'",
-        "amy@profastening.net subject:'Invoice'",
-        "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
-        "lia@stevensoncrane.com subject:'invoice'",
-        "kris@stevensoncrane.com subject:'Invoice",
-        "customercareBT@becn.com subject: 'invoice'",
-        "donotreply@waterinvoice.com subject: 'eInvoice'",
-        "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice'",
-        "kathy@dandpconstruction.com subject: 'invoice'",
-        "sales@duro-last.com subject: 'Order'",
-        ]
+    # email_list = [
+    #     "from:carolyn@profastening.net subject:'Invoice'", 
+    #     "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
+    #     "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
+    #     "from:april@sheetmetalsupplyltd.com subject:'Invoices'",
+    #     "amy@profastening.net subject:'Invoice'",
+    #     "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
+    #     "lia@stevensoncrane.com subject:'invoice'",
+    #     "kris@stevensoncrane.com subject:'Invoice",
+    #     "customercareBT@becn.com subject: 'invoice'",
+    #     "donotreply@waterinvoice.com subject: 'eInvoice'",
+    #     "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice'",
+    #     "kathy@dandpconstruction.com subject: 'invoice'",
+    #     "sales@duro-last.com subject: 'Order'",
+    #     ]
 
     # Test email list
-    # email_list = [
-    #     #     "from:carolyn@profastening.net subject:'Invoice'", 
-    #     #     "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
-    #     #     "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
-    #     #     "from:april@sheetmetalsupplyltd.com subject:'Invoices'",
-    #     #     "amy@profastening.net subject:'Invoice'",
-    #     #     "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
-    #         "lia@stevensoncrane.com subject:'invoice'",
-    #     #     "customercareBT@becn.com subject: 'invoice'",
-    #     #     "donotreply@waterinvoice.com subject: 'eInvoice'",
-    #         ]
+    email_list = [
+            "from:carolyn@profastening.net subject:'Invoice'", 
+        #     "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
+            "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
+            "from:april@sheetmetalsupplyltd.com subject:'Invoices'",
+            "amy@profastening.net subject:'Invoice'",
+            "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
+            # "lia@stevensoncrane.com subject:'invoice'",
+        #     "customercareBT@becn.com subject: 'invoice'",
+        #     "donotreply@waterinvoice.com subject: 'eInvoice'",
+            ]
 
 
     # Asks how many days back to check
