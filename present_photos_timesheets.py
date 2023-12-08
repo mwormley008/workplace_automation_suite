@@ -796,7 +796,7 @@ if __name__ == "__main__":
 
 
 
-    email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com"]  # List of email addresses
+    email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com", "bbsheetmetal2@aol.com"]  # List of email addresses
     # this is just to use if I need to test only one person
     # email_addresses = ["tawormley@aol.com"]
     # email_addresses = ["edinc99@gmail.com"]  # List of email addresses
