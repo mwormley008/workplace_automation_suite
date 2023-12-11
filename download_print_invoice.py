@@ -284,6 +284,7 @@ if __name__ =="__main__":
     email_list = [
         "from:carolyn@profastening.net subject:'Invoice'", 
         "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
+        "from:lisa@sheetmetalsupplyltd.com subject:'Invoice'", 
         "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
         "from:april@sheetmetalsupplyltd.com subject:'Invoices'",
         "amy@profastening.net subject:'Invoice'",
@@ -412,6 +413,9 @@ if __name__ =="__main__":
                     nested = "yes"
                     attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, nested)
                 elif email_query == "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice'":
+                    nested = "yes"
+                    attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, nested)
+                elif email_query == "from:lisa@sheetmetalsupplyltd.com subject:'Invoice'":
                     nested = "yes"
                     attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, nested)
                 else:    
