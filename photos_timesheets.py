@@ -552,7 +552,7 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         max_img_height = height 
         image_stream = image_streams[image_index]
         img = Image.open(image_stream)
-        if sender == "fespitia76@gmail.com":
+        if sender == "fespitia76@gmail.com" or sender == "oblivion969.dm@gmail.com":
             img = img.rotate(-90, expand=True)
         # Ensure the longer dimension is the height
         if img.width > img.height:
