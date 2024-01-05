@@ -257,7 +257,24 @@ def process_nested_attachment(sub_part, store_dir, service, user_id, msg_id):
         return None
 
 
-
+email_list = [
+        "from:jobadmin@carlisleccm.com subject:'Invoice'", 
+        "from:carolyn@profastening.net subject:'Invoice'", 
+        "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
+        "from:lisa@sheetmetalsupplyltd.com subject:'Invoice'", 
+        "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
+        "from:april@sheetmetalsupplyltd.com subject:'Invoices'",
+        "amy@profastening.net subject:'Invoice'",
+        "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
+        "lia@stevensoncrane.com subject:'invoice'",
+        "kris@stevensoncrane.com subject:'Invoice",
+        "customercareBT@becn.com subject: 'invoice'",
+        "donotreply@waterinvoice.com subject: 'eInvoice'",
+        "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice'",
+        "kathy@dandpconstruction.com subject: 'invoice'",
+        "sales@duro-last.com subject: 'Order'",
+        "dlaccountsreceivable@duro-last.com subject:'Invoice'",
+        ]
 
 if __name__ =="__main__":
     service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
@@ -282,6 +299,7 @@ if __name__ =="__main__":
     print(pickle_file)
 
     email_list = [
+        "from:jobadmin@carlisleccm.com subject:'Invoice'", 
         "from:carolyn@profastening.net subject:'Invoice'", 
         "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
         "from:lisa@sheetmetalsupplyltd.com subject:'Invoice'", 
@@ -296,6 +314,7 @@ if __name__ =="__main__":
         "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice'",
         "kathy@dandpconstruction.com subject: 'invoice'",
         "sales@duro-last.com subject: 'Order'",
+        "dlaccountsreceivable@duro-last.com subject:'Invoice'",
         ]
 
     # Test email list

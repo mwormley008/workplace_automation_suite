@@ -25,7 +25,7 @@ import win32print, subprocess
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime, timedelta, time
-import pickle 
+import pickle, re
 from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename, Frame, Button
 
@@ -33,6 +33,7 @@ from tkinter.filedialog import askopenfilename, Frame, Button
 from flask import Flask, request
 import requests
 from photos_timesheets import extract_first_page_and_overwrite
+from download_print_invoice import email_list
 
 # from download_repair_photos import mark_as_read
 
@@ -87,44 +88,60 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_subject, d
         today = datetime.utcnow().date()
         threshold_date = today - timedelta(days_ago)
         
-        print(received_date)
+        print("Received date: " + str(received_date))
         print(threshold_date)
 
         if received_date < threshold_date:
             return []  # Skip processing if the email was not received today
 
         if desired_subject.lower() in subject.lower():
+            # print("payload")
+            # print(payload)
             parts = payload.get('parts', [])
             print(f"Number of parts in the email: {len(parts)}")
-            print(f"Parts: {parts}")
+            if len(parts) == 0:
+                parts = payload
+            # print(f"Parts: {parts}")
 
             found_valid_attachment = False
-            for part in parts:
-                print('hello')
-                if part.get('filename'):
-                    print("something here")
-                    filename = part['filename']  # Fix the filename extraction here
-                    if filename.endswith('.zip'):
-                        continue
+            if parts.get('filename'):
+                print("something here")
+                filename = parts['filename']  # Fix the filename extraction here
+                if not filename.endswith('.zip'):
                     print(f"Extracted filename: {filename}")  # Add this line to print the extracted filename
-                    attachment_id = part['body']['attachmentId']
+                    attachment_id = parts['body']['attachmentId']
                     attachment = service.users().messages().attachments().get(userId=user_id, messageId=msg_id, id=attachment_id).execute()
                     file_data = base64.urlsafe_b64decode(attachment['data'].encode('UTF-8'))
                     os.makedirs(store_dir, exist_ok=True)
-                    filepath = os.path.join(store_dir, filename)
+
+                    extension = os.path.splitext(filename)[1]
+
+                    # Clean the filename
+                    # Keep only numbers and file extension
+                    cleaned_filename = re.sub(r"[^0-9.]", "", filename)
+                    # Ensure there is only one dot for the file extension
+                    cleaned_parts = cleaned_filename.split('.')
+                    print(cleaned_parts)
+                    cleaned_filename = cleaned_parts[0] + extension
+                    print(cleaned_filename)
+
+                    # Combine with the store directory
+                    filepath = os.path.join(store_dir, cleaned_filename)
+                    # filepath = os.path.join(store_dir, filename)
                     with open(filepath, 'wb') as f:
                         f.write(file_data)
 
-                    print(f"Attachment '{filename}' downloaded to: {filepath}")
+                    print(f"Attachment '{cleaned_filename}' downloaded to: {filepath}")
 
                     attachments_paths.append(filepath)
-                    print(f"Size of 'file_data': {len(file_data)}")  # Add this line to print the size of 'file_data'
+                    found_valid_attachment = True
+                    # print(f"Size of 'file_data': {len(file_data)}")  # Add this line to print the size of 'file_data'
 
                     # Additional debugging: Check the first few bytes of the 'file_data'
-                    print(f"First few bytes of 'file_data': {file_data[:100]}")
-                elif nested == "yes":
-                    print('hallelujah')
-                    for sub_part in part.get('parts', []):  # Safely get 'parts'
+                    # print(f"First few bytes of 'file_data': {file_data[:100]}")
+            elif nested == "yes":
+                print('hallelujah')
+                for sub_part in parts.get('parts', []):  # Safely get 'parts'
                         if sub_part.get('filename'):
                             filepath = process_nested_attachment(sub_part, store_dir, service, user_id, msg_id)
                             if filepath:  # Only append if the file was actually saved
@@ -265,7 +282,7 @@ if __name__ =="__main__":
     store_directory = r"C:\Users\Michael\Desktop\python-work\Invoices"
     clear_directory(store_directory)
 
-    print("print invoice")
+    print("print present invoice")
     today = datetime.utcnow().date()
     start_of_today = datetime.combine(today, time.min)
     start_of_tomorrow = start_of_today + timedelta(days=1)
@@ -277,26 +294,10 @@ if __name__ =="__main__":
     pickle_file = f'C:\\Users\\Michael\\Desktop\\python-work\\token_{API_NAME}_{API_VERSION}.pickle'
     with open(pickle_file, 'rb') as token_file:
         access_token = pickle.load(token_file)
-        print('pickle')
-        print(access_token.token)
-    print(pickle_file)
+        # print('pickle')
+        # print(access_token.token)
+    # print(pickle_file)
 
-    email_list = [
-        "customercareBT@becn.com subject: 'invoice'",
-        "sales@duro-last.com subject:'Order'",
-        "dlaccountsreceivable@duro-last.com subject:'Invoice'",
-        "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
-        "from:carolyn@profastening.net subject:'Invoice'", 
-        "amy@profastening.net subject:'Invoice'",
-        "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
-        "from:april@sheetmetalsupplyltd.com subject:'Invoices'",
-        "dawn@sheetmetalsupplyltd.com subject:'Invoice'",
-        "lia@stevensoncrane.com subject:'invoice'",
-        "kris@stevensoncrane.com subject:'Invoice",
-        "kathy@dandpconstruction.com subject: 'invoice'",
-        "donotreply@waterinvoice.com subject: 'eInvoice'",
-        "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice'",
-        ]
 
     # Test email list
     # email_list = [
@@ -412,6 +413,9 @@ if __name__ =="__main__":
                 if email_query == "from:april@sheetmetalsupplyltd.com subject:'Invoice'" or email_query == "from:april@sheetmetalsupplyltd.com subject:'Invoices'":
                     nested = "yes"
                     attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, nested)
+                # elif email_query == "from:jobadmin@carlisleccm.com subject:'Invoice'":
+                #     nested = "no"
+                #     attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, nested)
                 elif email_query == "jillian.schoedel@industrialandwholesalelumber.com subject: 'Invoice'":
                     nested = "yes"
                     attachments = download_attachments(service, user_email, msg_id, store_directory, "Invoice", desired_date, nested)
@@ -448,6 +452,8 @@ if __name__ =="__main__":
             print('An error occurred: %s' % e)
         print(f"read list: {read_list}")
         print(f"smaller list: {smaller_list}")
+        read_list.clear()
+        smaller_list.clear()
 
 
     # def main():
