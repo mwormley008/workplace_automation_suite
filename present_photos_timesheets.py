@@ -147,7 +147,7 @@ def download_attachments(service, user_id, msg_id, store_dir, desired_sender, da
         return attachments_paths
 
     except Exception as error:
-        print(f"An error occurred: {error}")
+        print(f"An error occurred in D_A: {error}")
 
 def download_repair_photos(service, user_id, msg_id, safe_subject, store_dir, desired_sender, days_ago, print_status, message):
     attachments_paths = []
@@ -248,7 +248,7 @@ def download_repair_photos(service, user_id, msg_id, safe_subject, store_dir, de
         return attachments_paths
 
     except Exception as error:
-        print(f"An error occurred: {error}")
+        print(f"An error occurred in DRP: {error}")
 
 def save_info_as_pdf(subject, sender, received_date, body, directory):
     filename = os.path.join(directory, "0000000details.pdf")
@@ -307,7 +307,7 @@ def mark_as_read(service, user_id, msg_id):
         service.users().messages().modify(userId=user_id, id=msg_id, body={'removeLabelIds': ['UNREAD', 'INBOX']}).execute()
         print(f'Message {msg_id} marked as read.')
     except Exception as e:
-        print(f'An error occurred: {e}')
+        print(f'An error occurred in MAR: {e}')
         return None
 
 def print_file_with_ghostscript(filepath):
@@ -584,7 +584,7 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         os.makedirs(directory)
 
     sanitized_subject = "".join([c if c.isalnum() else "_" for c in subject])
-    timestamp = datetime.now().strftime("%Y%m%d")
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     filename = f"{sanitized_subject}_{timestamp}.pdf"
 
     filepath = os.path.join(directory, filename)
@@ -805,6 +805,7 @@ if __name__ == "__main__":
         "oblivion969.dm@gmail.com": "Label_7", # PICS-JR - Dave Myers
         "fespitia76@gmail.com": "Label_6",     # PICS-Frank Espitia
         "mmblidy92@gmail.com": "Label_8",      # PICS-Mike Blidy
+        "bbsheetmetal2@aol.com": "Label_5",
         "tawormley@aol.com": "Label_9",        # PICS-Troy
         "edinc99@gmail.com": "Label_11",       # Time Sheets - Expenses
         # Add more mappings if needed
@@ -882,9 +883,9 @@ if __name__ == "__main__":
             #     for attachment in all_attachments:
             #         print_file_with_ghostscript(attachment)
         except Exception as e:
-            print('An error occurred: %s' % e)
+            print('An error occurred in init: %s' % e)
     # TODO: I'd like to add some printing properties here but it looks like I'm going to need to figure out how to do a right click
-    
+    u
 
 
 
