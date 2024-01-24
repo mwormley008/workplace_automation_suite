@@ -165,34 +165,36 @@ press('enter')
 print_ready = messagebox.askyesno("Ready?", "Have your checks printed?")
 # pyautogui.write(ws['A'+'2'].value)
 # Print any checks needed
-if default_mail_status == True:
-    mail_col = 'G'
-else:
-    mail_col = 'F'
 
-for row in rows_with_value:
-    if ws[mail_col+row].value is not None:
-        a_value = ws['A' + str(row)].value
-        # Path to your Word document
-        print(a_value)
-    
-        file_path = f"C:\\Users\\Michael\\Desktop\\CEnvelopes\\{a_value}.docx"
-
-        # Start an instance of Word
-        word = win32com.client.Dispatch('Word.Application')
-
-        # Open the document
-
-        doc = word.Documents.Open(file_path)
-
-        # Print the document to the default printer
-        doc.PrintOut()
-
-        # Close the documentC
-        doc.Close()
-
-        # Quit Word
-        word.Quit()
-        sleep(2)
+if print_ready:
+    if default_mail_status == True:
+        mail_col = 'G'
     else:
-        print("skipped envelope")
+        mail_col = 'F'
+
+    for row in rows_with_value:
+        if ws[mail_col+row].value is not None:
+            a_value = ws['A' + str(row)].value
+            # Path to your Word document
+            print(a_value)
+        
+            file_path = f"C:\\Users\\Michael\\Desktop\\CEnvelopes\\{a_value}.docx"
+
+            # Start an instance of Word
+            word = win32com.client.Dispatch('Word.Application')
+
+            # Open the document
+
+            doc = word.Documents.Open(file_path)
+
+            # Print the document to the default printer
+            doc.PrintOut()
+
+            # Close the documentC
+            doc.Close()
+
+            # Quit Word
+            word.Quit()
+            sleep(2)
+        else:
+            print("skipped envelope")
