@@ -315,6 +315,6 @@ if __name__ =="__main__":
 
         print("AIA creation complete!")
 
-        run_again = messagebox.askyesno("Continue?", "Do you want to scan another AIA form?")
+        run_again = messagebox.askyesno("Continue?", "Do you want to create another AIA form?")
 
 

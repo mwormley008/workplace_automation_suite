@@ -66,4 +66,5 @@ pya.press('down')
 pya.write(f'{full_string[2]}') 
 
 pya.hotkey('alt', 'a')
+sleep(2)
 pya.hotkey('alt', 't')

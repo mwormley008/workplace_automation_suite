@@ -238,7 +238,9 @@ def forward_combined_email(service, user_email, original_to_email, original_subj
     return response
 
 def fetch_repairman_emails(service, user_email, label_id, keyword):
-    query = f"label:{label_id} {keyword}"  # Adjust as needed
+    one_month_ago = (datetime.now() - timedelta(weeks=4)).strftime('%Y/%m/%d')
+    query = f"label:{label_id} {keyword} after:{one_month_ago}"  # Adjust as needed
+    
     print(query)
     response = service.users().messages().list(userId=user_email, q=query).execute()
     return response.get('messages', [])

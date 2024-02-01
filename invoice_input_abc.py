@@ -13,10 +13,23 @@ from tkinter.filedialog import askopenfilename, Frame, Button
 from time import sleep
 from pyautogui import press, write, hotkey
 
+def find_abc_in_folder(folder_path):
+    for file in os.listdir(folder_path):
+        filename = os.fsdecode(file)
+        if filename.startswith("ABC"): 
+            print(filename)
+            file_name = filename
+    return file_name
 
-
-file_name = f'ABC.csv'
+# file_name = f'ABC.csv'
 folder_path = r'C:\Users\Michael\Desktop\python-work\Invoices'
+
+file_name = find_abc_in_folder(folder_path)
+
+directory = os.fsencode(folder_path)
+
+
+
 
 # invoices_for_input = load_workbook(os.path.join(folder_path, file_name))
 
