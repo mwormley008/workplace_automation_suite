@@ -125,7 +125,8 @@ if __name__ == '__main__':
             'Mosaic':'dd@mosaic-pd.com',
             'Montemayor':'joe@montemayorconstruction.com',
             'Tessler':'kurt@tesslerinc.com',
-            'test':'wbrroof@gmail.com; throwod@gmail.com'
+            'test':'wbrroof@gmail.com; throwod@gmail.com',
+            'Tim':'briana@timcoteinc.com',
             }
 
         proposal_message = 'Hello,\nPlease see attached proposal.\n\nThank you,\nMichael Wormley\nWBR Roofing\n25084 W Old Rand Rd\nWauconda, IL 60084\n​O: 847-487-8787​\nwbrroof@aol.com'
