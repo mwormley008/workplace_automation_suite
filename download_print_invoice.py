@@ -260,6 +260,7 @@ def process_nested_attachment(sub_part, store_dir, service, user_id, msg_id):
 email_list = [
         "from:jobadmin@carlisleccm.com subject:'Invoice'", 
         "from:carolyn@profastening.net subject:'Invoice'", 
+        "from:lainie@profastening.net subject:'Invoice'", 
         "from:Sales@gemcoroofingsupply.com subject:'Invoice'", 
         "from:lisa@sheetmetalsupplyltd.com subject:'Invoice'", 
         "from:april@sheetmetalsupplyltd.com subject:'Invoice'",
