@@ -84,8 +84,7 @@ def new_ok_clicked(self):
             
             # Checking if the values match
             if not (abs(total_billed_period - billed_sum) < 1e-9):
-                messagebox.showerror("Error", "The categories don't add up to the totals.")
-                return
+                messagebox.askyesno("Error", "The categories don't add up to the totals, do you want to proceed anyway?")
         except ValueError:  # Handle the case where user inputs non-numeric values
             messagebox.showerror("Error", "Please enter valid numeric values.")
             return

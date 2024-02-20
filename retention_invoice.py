@@ -11,7 +11,7 @@ from datetime import datetime, timedelta, date
 
 from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename
-
+from AIA import OptionButtons
 from click_qb_copy_button import click_duplicate_button
 
 def copy_clipboard():
@@ -53,6 +53,14 @@ root.withdraw()  # Hide the root window
 
 target_invoice = simpledialog.askinteger("Search invoice #", "What's the invoice number of the template invoice?")
 
+retention_amount_dialog = OptionButtons(root, title="Retention Level", button_names=["10%", "5%"])
+
+if retention_amount_dialog.result == '10%':
+    retention_percent = 10
+else:
+    retention_percent = 5
+    sleep(1)
+print(retention_percent)
 
 # Focuses the Quickbooks window and goes to the customer:job pane
 qb_window.activate()
@@ -108,7 +116,7 @@ press('down', presses=2)
 last_period = copy_clipboard()
 sleep(.5)
 
-# This could become a method or something since I'm doing it multiple times and it would improve 
+# This could become a method or something since I'm doing it multiple times and it would improve
 # Legibility
 last_period = last_period.replace(',', '')
 last_period = last_period[0:-3]
@@ -117,7 +125,7 @@ last_period = last_period[0:-3]
 new_prev_billed = int((prev_billed)) + int((last_period))
 
 # Sets previously retained
-new_prev_retained = new_prev_billed * .1
+new_prev_retained = new_prev_billed * retention_percent * .01
 
 # Alright, at this point we now have all of the information and now we're just going to be writing it to
 # The quickbooks fields
@@ -129,7 +137,7 @@ press('down')
 press('backspace')
 write(str(new_prev_retained))
 press('tab', presses=4)
-# Deletes the completed through line, because this is the retention billing program and 
+# Deletes the completed through line, because this is the retention billing program and
 # We won't have done any additional work this perioud
 hotkey('ctrl', 'delete')
 sleep(1.5)
@@ -145,9 +153,9 @@ retention_percent = 0
 print_bin = messagebox.askyesno("Confirmation", "Do you want to print this?")
 # Does this still find the number of previous invoice
 field_names = [
-            "Billed Roofing Labor:", 
-            "Billed Roofing Material:", 
-            "Billed Sheet Metal Labor:", 
+            "Billed Roofing Labor:",
+            "Billed Roofing Material:",
+            "Billed Sheet Metal Labor:",
             "Billed Sheet Metal Material:",
         ]
 category_values = {field_name: 0 for field_name in field_names}
@@ -156,7 +164,7 @@ if print_bin:
     qb_window.activate()
     hotkey('ctrl', 'p')
     sleep(5)
-    press('space') 
+    press('space')
 else:
     sys.exit()
 

@@ -231,6 +231,7 @@ if __name__ =="__main__":
             completed_through = 0
             sheet1["E40"].value = 0
         if noe_token == 0 or noe_token == "Retention":
+            completed_through = int(float(completed_through))
             completed_through_cell.value += int(completed_through)
             old_invoice_number = invoice_number.value
             invoice_number.value = new_inv
