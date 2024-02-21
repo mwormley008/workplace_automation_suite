@@ -124,7 +124,7 @@ if __name__ == '__main__':
             'Modell':'modelfh@hotmail.com',
             'Mosaic':'dd@mosaic-pd.com',
             'Montemayor':'joe@montemayorconstruction.com',
-            'Tessler':'kurt@tesslerinc.com',
+            'Tessler':'kurt@tesslerinc.com; ron@tesslerinc.com',
             'test':'wbrroof@gmail.com; throwod@gmail.com',
             'Tim':'briana@timcoteinc.com',
             'J.':'j jdivita.associates@yahoo.com',
