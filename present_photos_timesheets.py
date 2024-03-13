@@ -552,7 +552,7 @@ def save_info_with_photos(subject, sender, received_date, body, directory, print
         max_img_height = height 
         image_stream = image_streams[image_index]
         img = Image.open(image_stream)
-        if sender == "fespitia76@gmail.com":
+        if sender == "fespitia76@gmail.com" or sender == "oblivion969.dm@gmail.com":
             img = img.rotate(-90, expand=True)
         # Ensure the longer dimension is the height
         if img.width > img.height:
@@ -885,7 +885,7 @@ if __name__ == "__main__":
         except Exception as e:
             print('An error occurred in init: %s' % e)
     # TODO: I'd like to add some printing properties here but it looks like I'm going to need to figure out how to do a right click
-    u
+    
 
 
 

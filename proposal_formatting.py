@@ -166,6 +166,9 @@ if __name__ == "__main__":
     pyautogui.press('left')
     sleep(.1)
     press('space')
+    pyautogui.hotkey('ctrl', 'del')
+    pyautogui.hotkey('ctrl', 'del')
+    write('Dollars and ')
     print("Script completed.")
 
 
