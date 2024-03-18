@@ -153,7 +153,7 @@ if __name__ == '__main__':
         # file_name = file_name.replace('/' + initial_dir, "")
         # file_name = file_name[1:-4]
         print(file_name)
-        if len(file_name) > 74:
+        if len(file_name) > 63:
             long_file_name = True
         else:
             long_file_name = False

@@ -13,3 +13,6 @@ These ones are kind of questionable to me
 These ones aren't checked/entered yet. (If I've checked them and they look usable, they go into the proposal_scan.py file):
 
 
+
+'G&H':'theresa@nationalplazas.com',
+'G&H':'theresa@nationalplazas.com',
