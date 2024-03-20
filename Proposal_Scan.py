@@ -211,8 +211,9 @@ if __name__ == '__main__':
         if long_file_name:
             scan_path = askopenfilename(initialdir=initial_scan_dir)
             file_name = trim_extension_format_slashes(scan_path, initial_scan_dir)
-
-        message = create_message_with_attachment(recipient, file_name, proposal_message, rf'\\WBR\shared\My Scans\{file_name}.pdf')
+        
+        
+        message = create_message_with_attachment(recipient, file_name, proposal_message, rf'\\WBR\data\shared\My Scans\{file_name}.pdf')
 
         send_message(service, 'me', message)
 
