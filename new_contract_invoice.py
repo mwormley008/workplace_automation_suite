@@ -17,6 +17,7 @@ from tkinter import Tk, simpledialog, messagebox, Label, Toplevel, Button, Entry
 from tkinter.filedialog import askopenfilename
 from AIA import OptionButtons
 
+
 def copy_clipboard():
     hotkey('ctrl', 'c')
     time.sleep(.5)
@@ -43,6 +44,10 @@ def highlight_3_line():
     sleep(1)
     press('numlock')
     sleep(1)
+
+def change_orders():
+    cho_amt = simpledialog.askinteger("Change orders", "How many change orders does this invoice have?")
+    return cho_amt
 
 # # def center_window(window, width, height):
 #     screen_width = window.winfo_screenwidth()
@@ -163,6 +168,51 @@ class CustomDialog:
         self.values = values
         self.dialog.destroy()
 
+class CustomDialogCho:
+    def __init__(self, root, cho_num):
+        self.root = root
+        self.dialog = Toplevel(root)
+        self.dialog.title("Change Orders")
+        self.field_entries = {}
+        self.values = {}  # Add this line to initialize an empty dictionary for the values
+
+
+        self.create_dialog(cho_num)
+
+    def center_window(self, width, height):
+        self.dialog.geometry(f"{width}x{height}+200+200")
+
+
+    def create_dialog(self, cho_num):
+        width = 300
+        height = cho_num * 50 + 150
+        self.center_window(width, height)
+
+        for x in range(cho_num):
+            Label(self.dialog, text=str(x)).pack()
+            entry = Entry(self.dialog)
+            entry.pack()
+            self.field_entries[x] = entry
+
+        # OK button now both fetches values and destroys the dialog
+        ok_button = Button(self.dialog, text="OK", command=self.ok_clicked)
+        ok_button.pack()
+        
+        self.dialog.bind("<Return>", lambda event=None: self.ok_clicked())
+
+        self.dialog.wait_window(self.dialog)
+
+    def get_values(self):
+        return {x: entry.get() if entry.get().strip() != '' else '0' for x, entry in self.field_entries.items()}
+
+
+    
+    def ok_clicked(self):
+        values = self.get_values()
+
+        self.values = values
+        self.dialog.destroy()
+
 def show_custom_dialog(field_names):
     root = Tk()
     root.withdraw()  # Hide the root window
@@ -173,6 +223,20 @@ def show_custom_dialog(field_names):
 
     return dialog.values
 
+def show_cho_dialog():
+    cho_num = change_orders()
+    if cho_num == 0:
+        nca = 0
+    else:
+        nca = 1
+    root = Tk()
+    root.withdraw()  # Hide the root window
+
+    dialog = CustomDialogCho(root, cho_num)
+    change_order_values = dialog.values
+    print(change_order_values)
+
+    return dialog.values, nca
 
 if __name__ == "__main__":
     field_names = [
@@ -190,12 +254,17 @@ if __name__ == "__main__":
 
 
     category_values = show_custom_dialog(field_names)
+    cho_values, nca = show_cho_dialog()
+    print(cho_values)
+    print(nca)   
 
     contract_amount = category_values["Total Contract Amount:"]
     completed_through = category_values["Total Billed this period (without retention taken out):"]
     root = Tk() 
     root.withdraw()  # Hide the root window
     retention_amount_dialog = OptionButtons(root, title="Retention Level", button_names=["10%", "5%"])
+    
+    
     if retention_amount_dialog.result == '10%':
         retention_percent = 10
     else:
@@ -269,6 +338,41 @@ if __name__ == "__main__":
     write(str(contract_amount))
     press('down', presses=1)
     sleep(.5)
+    if nca:
+        hotkey('ctrl', 'del')
+        hotkey('ctrl', 'del')
+        press('down', presses=1)
+        cho_total = 0
+        for i, j in cho_values.items():
+            sleep(.5)  
+            write("Change Order")
+            press('tab')
+            press('end')
+            write(str(i+1))
+            press('tab')
+            write(str(j))
+            press('tab')
+            write("0")
+            press('tab', presses=2)
+            cho_total += int(j)
+        write("L&M")
+        press('tab')
+        highlight_3_line()
+        press('del')
+        sleep(.5)
+        write("New contract amount")
+        press('tab')
+        write(str(cho_total+int(contract_amount)))
+        press('tab')
+        write("0")
+        press('tab', presses=2)
+        write("L&M")
+        press('tab')
+        highlight_3_line()
+        press('del')
+        sleep(.5)
+        write("Completed through")
+        press('tab')
     write(str(completed_through))
     sleep(.5)
     hotkey('shift', 'tab')
@@ -281,6 +385,11 @@ if __name__ == "__main__":
     press('tab')
 
     press('down')
+    if nca:
+        hotkey('shift', 'tab')
+        hotkey('shift', 'tab')
+        write("Retention")
+        press('tab', presses=2)
     write(f'-{retention_percent}%')
     press('tab')
 

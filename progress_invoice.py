@@ -93,6 +93,9 @@ def new_ok_clicked(self):
         self.values = values
         self.dialog.destroy()
 
+def change_orders():
+    cho_amt = simpledialog.askinteger("Change orders", "How many change orders does this invoice have?")
+    return cho_amt
 
 if __name__ == "__main__":
     APP_PATH = r"C:\Program Files (x86)\Intuit\QuickBooks 2019\QBW32.EXE"
@@ -102,7 +105,9 @@ if __name__ == "__main__":
     
     
     CustomDialog.ok_clicked = new_ok_clicked
-
+    
+    
+    
     windows = gw.getAllWindows()
 
     qb_window = None
@@ -144,6 +149,7 @@ if __name__ == "__main__":
         sleep(1)
     print(retention_percent)
 
+    cho_num = change_orders()
 
     # Focuses the Quickbooks window and goes to the customer:job pane
     qb_window.activate()
@@ -180,17 +186,30 @@ if __name__ == "__main__":
     press('tab', presses=3)
     new_inv = copy_clipboard()
 
-
-    # Goes to the contract amount / the first cell of the price column
-    press('tab', presses=7)
-    # This is previously billed
-    press('down', presses=1)
-    sleep(.5)
-    prev_billed = copy_clipboard()
-    sleep(.5)
-    prev_billed = prev_billed.replace(',', '')
-    prev_billed = prev_billed[0:-3]
-
+    # gets the previously billed
+    if cho_num == 0:
+        nca = 0
+        # Goes to the contract amount / the first cell of the price column
+        press('tab', presses=7)
+        # This is previously billed
+        press('down', presses=1)
+        sleep(.5)
+        prev_billed = copy_clipboard()
+        sleep(.5)
+        prev_billed = prev_billed.replace(',', '')
+        prev_billed = prev_billed[0:-3]
+    else:
+        nca = 1
+        # Goes to the contract amount / the first cell of the price column
+        press('tab', presses=7)
+        # This is previously billed
+        press('down', presses=2+cho_num)
+        sleep(.5)
+        prev_billed = copy_clipboard()
+        sleep(.5)
+        prev_billed = prev_billed.replace(',', '')
+        prev_billed = prev_billed[0:-3]
+    # gets total retention and billed last period and last period's retention
     if not second_bill:
         press('down')
         new_prev_retained = copy_clipboard()

@@ -13,6 +13,7 @@ from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename
 from AIA import OptionButtons
 from click_qb_copy_button import click_duplicate_button
+from progress_invoice import change_orders
 
 def copy_clipboard():
     hotkey('ctrl', 'c')
@@ -27,6 +28,13 @@ def highlight_line():
     sleep(1)
     press('numlock')
     sleep(1)
+
+cho_num = change_orders()
+# this is to add a row for new contract amount, which is only present if Change Orders are present
+if cho_num == 0:
+    nca = 0
+else:
+    nca = 1
 
 windows = gw.getAllWindows()
 
@@ -104,7 +112,7 @@ new_inv = copy_clipboard()
 # Goes to the contract amount / the first cell of the price column
 press('tab', presses=7)
 # This is previously billed
-press('down', presses=1)
+press('down', presses=1+cho_num+nca)
 sleep(.5)
 prev_billed = copy_clipboard()
 sleep(.5)
