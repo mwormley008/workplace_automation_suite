@@ -50,7 +50,7 @@ if ($docFile.Count -eq 1)
     $pathToOpen = $doc.FullName
 
     # Ask if the user wants to run the revision script
-    $runRevision = Read-Host -Prompt 'Do you want to run the revision script? (y/n)'
+    
     if ($doc.Extension -eq '.doc') {
         # If the file is a .doc, convert it to .docx
         Write-Host "Converting $($doc.Name) to .docx"
@@ -59,34 +59,7 @@ if ($docFile.Count -eq 1)
     }
 
 
-    # Check if the user agreed to run the revision script
-    if ($runRevision -eq 'y') {
-        if (Test-Path $revisionScriptPath) {
-            Write-Host "Running revision script..."
-            # Run the Python script and capture the output, which should be the path to the revised file
-            $revisionOutput = python $revisionScriptPath $pathToOpen | Out-String
-            $revisedFilePath = $revisionOutput -match "'.*?'" | Out-Null
-            $revisedFilePath = $matches[0] -replace "'", ""  # Remove the surrounding single quotes
-
-            # Trim any whitespace and remove any hidden special characters that might be included
-            $revisedFilePath = $revisedFilePath.Trim()
-
-            # Add this line for debugging:
-            Write-Host "Debug: Revised file path is '$revisedFilePath'"
-
-            if (Test-Path $revisedFilePath) {
-                $pathToOpen = $revisedFilePath  # We update the path to be opened with the revised file path
-                Write-Host "Document revised and saved as '$revisedFilePath'"
-
-            } else {
-                Write-Host "Revised file not found at path: $revisedFilePath. Opening original document."
-                # If the revised file is not found, it continues to open the original document.
-            }
-        } else {
-            Write-Host "Revision script path not found. Please check the path: $revisionScriptPath"
-            # The script proceeds to open the original document if the revision script is not found.
-        }
-    }
+    
 
     # Open the document (original or revised)
     Start-Process -FilePath "WINWORD.EXE" -ArgumentList "`"$pathToOpen`""
@@ -123,7 +96,7 @@ if ($docFile.Count -eq 1)
     $pathToOpen = $selectedFile.FullName
 
     # Ask if the user wants to run the revision script
-    $runRevision = Read-Host -Prompt 'Do you want to run the revision script? (y/n)'
+    
     if ($selectedFile.Extension -eq '.doc') {
         # If the file is a .doc, convert it to .docx
         Write-Host "Converting $($selectedFile.Name) to .docx"
@@ -131,28 +104,7 @@ if ($docFile.Count -eq 1)
         $pathToOpen = $newDocPath  # Update the path to the new .docx file
     }
 
-    # Check if the user agreed to run the revision script
-    if ($runRevision -eq 'y') {
-        if (Test-Path $revisionScriptPath) {
-            Write-Host "Running revision script..."
-            # Run the Python script and capture the output, which should be the path to the revised file
-            $revisionOutput = python $revisionScriptPath $pathToOpen | Out-String
-            $revisedFilePath = $revisionOutput -match "'.*?'" | Out-Null
-            $revisedFilePath = $matches[0] -replace "'", ""  # Remove the surrounding single quotes
-
-            # Trim any whitespace and remove any hidden special characters that might be included
-            $revisedFilePath = $revisedFilePath.Trim()
-
-            if (Test-Path $revisedFilePath) {
-                $pathToOpen = $revisedFilePath  # Update the path to be opened with the revised file path
-                Write-Host "Document revised and saved as '$revisedFilePath'"
-            } else {
-                Write-Host "Revised file not found at path: $revisedFilePath. Opening original document."
-            }
-        } else {
-            Write-Host "Revision script path not found. Please check the path: $revisionScriptPath"
-        }
-    }
+   
 
     # Open the document (original or revised)
     Start-Process -FilePath "WINWORD.EXE" -ArgumentList "`"$pathToOpen`""
