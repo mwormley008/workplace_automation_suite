@@ -159,17 +159,18 @@ if __name__ == '__main__':
             long_file_name = False
 
         scan_window.activate()
-
+        #TODO THIS IS Really really slow now for some reason
         # Connect to the application (you might need to adjust this part based on your application details)
-        app = Application(backend="uia").connect(title="Epson ScanSmart")
+        # app = Application(backend="uia").connect(title="Epson ScanSmart")
 
         # Navigate to the button using its AutomationId
-        scan_button = app.window(title="Epson ScanSmart").child_window(auto_id="SingleSidedScanButton")
-
-        # Invoke the button
-        scan_button.click()
-
-        sleep(.5)
+        # scan_button = app.window(title="Epson ScanSmart").child_window(auto_id="SingleSidedScanButton")
+        # print(scan_button)
+        # sleep(1)
+        # # Invoke the button
+        # scan_button.click()
+        continue_button = messagebox.askyesno("Did you click the scan button?")
+        # sleep(.5)
 
         while True:
             try:

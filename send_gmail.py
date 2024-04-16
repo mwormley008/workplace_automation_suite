@@ -43,7 +43,7 @@ def create_message_with_attachment(to, subject, message_text, file_path):
     
     # Add the plain text to the email
     message.attach(MIMEText(message_text, 'plain'))
-    
+
     # Process the attachment and add it to the email
     with open(file_path, 'rb') as attachment_file:
         part = MIMEBase('application', 'octet-stream')
