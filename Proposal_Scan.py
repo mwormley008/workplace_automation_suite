@@ -24,7 +24,7 @@ from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename
 from pyautogui import press, write, hotkey
 from time import sleep
-from pywinauto import Application
+from pywinauto import Application, timings
 
 from photos_timesheets import send_message
 from AIA_scan import find_or_run_scan
@@ -94,6 +94,8 @@ def trim_extension_format_slashes(path, initial_dir):
 
 if __name__ == '__main__':
     run_again = True
+    timings.Timings.fast()
+    app = Application(backend="uia").start(r"C:\Program Files (x86)\Epson Software\Epson ScanSmart\ScanSmart.exe")
     while run_again == True:
             
         find_or_run_scan()
@@ -143,13 +145,15 @@ if __name__ == '__main__':
         initial_scan_dir=r"\\WBR\data\shared\My Scans"
 
         proposal_path = askopenfilename(initialdir=initial_dir)
-        scan_window, wbr_window = find_scan_and_email_windows()
+        
+        
+        # scan_window, wbr_window = find_scan_and_email_windows()
         print(proposal_path)
-
+        
         # file_name = proposal_path
         # file_name = proposal_path.replace(initial_dir.replace("\\", "/"), "")
         file_name = trim_extension_format_slashes(proposal_path, initial_dir)
-
+        
         # file_name = file_name.replace('/' + initial_dir, "")
         # file_name = file_name[1:-4]
         print(file_name)
@@ -157,19 +161,27 @@ if __name__ == '__main__':
             long_file_name = True
         else:
             long_file_name = False
-
-        scan_window.activate()
+        
+        # scan_window.activate()
+        
         #TODO THIS IS Really really slow now for some reason
         # Connect to the application (you might need to adjust this part based on your application details)
         # app = Application(backend="uia").connect(title="Epson ScanSmart")
-
+        print(datetime.now())
         # Navigate to the button using its AutomationId
         # scan_button = app.window(title="Epson ScanSmart").child_window(auto_id="SingleSidedScanButton")
-        # print(scan_button)
-        # sleep(1)
+        scan_button = app.window(title="Epson ScanSmart").child_window(auto_id="SingleSidedScanButton", control_type="Button")
+
+        
+
+        print(datetime.now())
+        # scan_button = app.child_window(auto_id="SingleSidedScanButton")
+        scan_button.invoke()
+        print(datetime.now())
+        
+        sleep(1)
         # # Invoke the button
-        # scan_button.click()
-        continue_button = messagebox.askyesno("Did you click the scan button?")
+        # continue_button = messagebox.askyesno("Did you click the scan button?")
         # sleep(.5)
 
         while True:
