@@ -80,10 +80,8 @@ def find_scan_and_email_windows():
     for window in windows:
         if "ScanSmart" in window.title:
             scan_window = window
-        if "wbrroof@gmail.com" in window.title:
-            wbr_window = window
-
-    return scan_window, wbr_window
+        
+    return scan_window
 
 def trim_extension_format_slashes(path, initial_dir):
     file_name = path.replace(initial_dir.replace("\\", "/"), "")
@@ -91,6 +89,24 @@ def trim_extension_format_slashes(path, initial_dir):
     if file_name.endswith("."):
         file_name = file_name[:-1]
     return file_name
+
+def click_scan_button():
+    # This uses pyautogui to locate the scan button using a png because pywinauto was taking over a minute and
+    # and a half to click the button once it had found it
+    start = pyautogui.locateCenterOnScreen('scansingle.png')#If the file is not a png file it will not work
+    print(start)
+    pyautogui.moveTo(start)#Moves the mouse to the coordinates of the image
+    pyautogui.click()
+
+def click_save_button():
+    # This uses pyautogui to locate the scan save button using a png because pywinauto was taking over a minute and
+    # and a half to click the button once it had found it
+    start = pyautogui.locateCenterOnScreen('savescan.png')#If the file is not a png file it will not work
+    print(start)
+    pyautogui.moveTo(start)#Moves the mouse to the coordinates of the image
+    pyautogui.click()
+
+
 
 if __name__ == '__main__':
     run_again = True
@@ -147,7 +163,7 @@ if __name__ == '__main__':
         proposal_path = askopenfilename(initialdir=initial_dir)
         
         
-        # scan_window, wbr_window = find_scan_and_email_windows()
+        scan_window = find_scan_and_email_windows()
         print(proposal_path)
         
         # file_name = proposal_path
@@ -161,22 +177,24 @@ if __name__ == '__main__':
             long_file_name = True
         else:
             long_file_name = False
+        print(long_file_name)
         
-        # scan_window.activate()
+        
+        scan_window.activate()
         
         #TODO THIS IS Really really slow now for some reason
         # Connect to the application (you might need to adjust this part based on your application details)
         # app = Application(backend="uia").connect(title="Epson ScanSmart")
         print(datetime.now())
         # Navigate to the button using its AutomationId
-        # scan_button = app.window(title="Epson ScanSmart").child_window(auto_id="SingleSidedScanButton")
-        scan_button = app.window(title="Epson ScanSmart").child_window(auto_id="SingleSidedScanButton", control_type="Button")
-
+        scan_button = app.window(title="Epson ScanSmart").child_window(auto_id="SingleSidedScanButton")
+        print(scan_button)
         
 
         print(datetime.now())
         # scan_button = app.child_window(auto_id="SingleSidedScanButton")
-        scan_button.invoke()
+        click_scan_button()
+
         print(datetime.now())
         
         sleep(1)
@@ -186,14 +204,13 @@ if __name__ == '__main__':
 
         while True:
             try:
-                # Check for the presence of the "Save" button using its AutomationId.
-                save_button = app.window(title="Epson ScanSmart").child_window(auto_id="ActButton")
-                
-                # If the button's name is "Save", then break out of the loop.
-                if "Save" in save_button.window_text():
+                if (pyautogui.locateOnScreen('savescan.png') is not None):
                     print("Save button found!")
-                    save_button.click()
+                    click_save_button()
                     break
+                else:
+                    print("Not yet lol")
+
             except Exception as e:
                 # If an error occurs (like the button isn't found), wait for 2 seconds and try again.
                 sleep(2)

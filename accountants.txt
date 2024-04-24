@@ -8,3 +8,5 @@ Ones I think may be weird or not useful:
 'Portillo's':'MaGilbert@portillos.com'
 
 Ones I haven't checked yet:
+'G.A.':'jlipinski@gajohnson.com',
+'DRN':'daniel.degen@gmail.com',

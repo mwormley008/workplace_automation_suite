@@ -17,11 +17,12 @@ from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askopenfilename
 from pyautogui import press, write, hotkey
 from time import sleep
-from pywinauto import Application
+from pywinauto import Application, timings
 
 from photos_timesheets import send_message
 
 from send_gmail import initialize_service, create_message, create_message_with_attachment, send_message, CLIENT_SECRET_FILE, SCOPES, API_NAME, API_VERSION
+from proposal_scan import click_save_button, click_scan_button
 
 def find_file_by_number(folder_path, target_number):
     pattern = re.compile(r'.*{}.*\.xlsx$'.format(target_number))
@@ -93,6 +94,8 @@ def find_or_run_scan():
 
 if __name__ == '__main__':
     run_again = True
+    timings.Timings.fast()
+    app = Application(backend="uia").start(r"C:\Program Files (x86)\Epson Software\Epson ScanSmart\ScanSmart.exe")
     while run_again:
         scan_window, wbr_window = find_scan_and_email_windows()
         if scan_window is None:
@@ -159,26 +162,25 @@ if __name__ == '__main__':
         scan_window.activate()
 
         # Connect to the application (you might need to adjust this part based on your application details)
-        app = Application(backend="uia").connect(title="Epson ScanSmart")
+        # app = Application(backend="uia").connect(title="Epson ScanSmart")
 
         # Navigate to the button using its AutomationId
         scan_button = app.window(title="Epson ScanSmart").child_window(auto_id="SingleSidedScanButton")
 
         # Invoke the button
-        scan_button.click()
+        click_scan_button()
 
         sleep(.5)
 
         while True:
             try:
-                # Check for the presence of the "Save" button using its AutomationId.
-                save_button = app.window(title="Epson ScanSmart").child_window(auto_id="ActButton")
-                
-                # If the button's name is "Save", then break out of the loop.
-                if "Save" in save_button.window_text():
+                if (pyautogui.locateOnScreen('savescan.png') is not None):
                     print("Save button found!")
-                    save_button.click()
+                    click_save_button()
                     break
+                else:
+                    print("Not yet lol")
+
             except Exception as e:
                 # If an error occurs (like the button isn't found), wait for 2 seconds and try again.
                 sleep(2)
