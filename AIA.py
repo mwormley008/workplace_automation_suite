@@ -318,4 +318,8 @@ if __name__ =="__main__":
 
         run_again = messagebox.askyesno("Continue?", "Do you want to create another AIA form?")
 
+    scan_ready = messagebox.askyesno("Scan?", "Are you ready/do you want to start the scanning program?")
+    if scan_ready:
+        exec(open(f'{file_loc}AIA_scan.py').read())
+
 

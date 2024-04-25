@@ -27,7 +27,7 @@ from time import sleep
 from pywinauto import Application, timings
 
 from photos_timesheets import send_message
-from AIA_scan import find_or_run_scan
+from AIA_scan import find_or_run_scan, click_save_button, click_scan_button
 from send_gmail import initialize_service, create_message, create_message_with_attachment, send_message, CLIENT_SECRET_FILE, SCOPES, API_NAME, API_VERSION
 
 def find_file_by_number(folder_path, target_number):
@@ -90,21 +90,7 @@ def trim_extension_format_slashes(path, initial_dir):
         file_name = file_name[:-1]
     return file_name
 
-def click_scan_button():
-    # This uses pyautogui to locate the scan button using a png because pywinauto was taking over a minute and
-    # and a half to click the button once it had found it
-    start = pyautogui.locateCenterOnScreen('scansingle.png')#If the file is not a png file it will not work
-    print(start)
-    pyautogui.moveTo(start)#Moves the mouse to the coordinates of the image
-    pyautogui.click()
 
-def click_save_button():
-    # This uses pyautogui to locate the scan save button using a png because pywinauto was taking over a minute and
-    # and a half to click the button once it had found it
-    start = pyautogui.locateCenterOnScreen('savescan.png')#If the file is not a png file it will not work
-    print(start)
-    pyautogui.moveTo(start)#Moves the mouse to the coordinates of the image
-    pyautogui.click()
 
 
 
@@ -242,7 +228,7 @@ if __name__ == '__main__':
             scan_path = askopenfilename(initialdir=initial_scan_dir)
             file_name = trim_extension_format_slashes(scan_path, initial_scan_dir)
         
-        
+        sleep(5)
         message = create_message_with_attachment(recipient, file_name, proposal_message, rf'\\WBR\data\shared\My Scans\{file_name}.pdf')
 
         send_message(service, 'me', message)
