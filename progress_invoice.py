@@ -61,6 +61,7 @@ def bill_reduction(retention_to_reduce):
     press('tab')
     sleep(.5)
     retention_to_reduce /= 2
+    retention_to_reduce *= -1
     write(str(retention_to_reduce))
 
 def number_formatting(number):
@@ -230,7 +231,7 @@ if __name__ == "__main__":
     else:
         press('down')
         press('tab')
-        new_prev_retained = copy_clipboard()
+        new_prev_retained = number_formatting(copy_clipboard())
         last_period = 0
 
     hotkey('shift', 'tab')
@@ -265,6 +266,7 @@ if __name__ == "__main__":
         press('tab')
         if retention_reduction:
             bill_reduction(new_prev_retained)
+
             # completed_through = str(int(completed_through) + int(new_prev_retained))
     else:
         press('tab')

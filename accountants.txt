@@ -10,3 +10,5 @@ Ones I think may be weird or not useful:
 Ones I haven't checked yet:
 'G.A.':'jlipinski@gajohnson.com',
 'DRN':'daniel.degen@gmail.com',
+'Gallant':'sbeverley@egallant.com',
+'Gallant':'sbeverley@egallant.com',

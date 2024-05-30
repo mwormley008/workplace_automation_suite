@@ -1,3 +1,0 @@
-Cancel button found!
-Enter Bills window found!
-Clear button found!
