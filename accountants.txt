@@ -12,3 +12,10 @@ Ones I haven't checked yet:
 'DRN':'daniel.degen@gmail.com',
 'Gallant':'sbeverley@egallant.com',
 'Gallant':'sbeverley@egallant.com',
+'Mattcon':'angelab@mattcongc.com',
+'G.A.':'jlipinski@gajohnson.com',
+'DRN':'daniel.degen@gmail.com
+',
+'G.A.':'jlipinski@gajohnson.com',
+'DRN':'jcorrado@northernbuilders.com',
+'D-R':'daniel.degen@gmail.com',

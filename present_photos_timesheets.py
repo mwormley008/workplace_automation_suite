@@ -796,7 +796,7 @@ if __name__ == "__main__":
 
 
 
-    email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com", "bbsheetmetal2@aol.com"]  # List of email addresses
+    email_addresses = ["oblivion969.dm@gmail.com", "fespitia76@gmail.com", "mmblidy92@gmail.com", "tawormley@aol.com", "edinc99@gmail.com", "bbsheetmetal2@aol.com", "bigwaterducks@comcast.net", "mwormley008@gmail.com"]  # List of email addresses
     # this is just to use if I need to test only one person
     # email_addresses = ["tawormley@aol.com"]
     # email_addresses = ["edinc99@gmail.com"]  # List of email addresses
@@ -805,7 +805,8 @@ if __name__ == "__main__":
         "oblivion969.dm@gmail.com": "Label_7", # PICS-JR - Dave Myers
         "fespitia76@gmail.com": "Label_6",     # PICS-Frank Espitia
         "mmblidy92@gmail.com": "Label_8",      # PICS-Mike Blidy
-        "bbsheetmetal2@aol.com": "Label_5",
+        "bbsheetmetal2@aol.com": "Label_5",    # PICS-Chuck
+        "bigwaterducks@comcast.net": "Label_5",
         "tawormley@aol.com": "Label_9",        # PICS-Troy
         "edinc99@gmail.com": "Label_11",       # Time Sheets - Expenses
         # Add more mappings if needed

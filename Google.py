@@ -19,7 +19,7 @@ def Create_Service(client_secret_file, api_name, api_version, *scopes):
     
     file_str = r"C:\Users\Michael\Desktop\python-work\\"  # Replace with the path to your credentials.json file
     pickle_file = f'{file_str}token_{API_SERVICE_NAME}_{API_VERSION}.pickle'
-    # print(pickle_file)
+    print(pickle_file)
 
     if os.path.exists(pickle_file):
         with open(pickle_file, 'rb') as token:
@@ -27,8 +27,7 @@ def Create_Service(client_secret_file, api_name, api_version, *scopes):
 
     if not cred or not cred.valid:
         try:
-            if cred and cred.expired and cred.refresh_token:
-                cred.refresh(Request())
+            cred.refresh(Request())
         except Exception as e:
             print("Error refreshing token:", e)
             flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES)
