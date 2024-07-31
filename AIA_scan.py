@@ -95,7 +95,7 @@ def find_or_run_scan():
 def click_scan_button():
     # This uses pyautogui to locate the scan button using a png because pywinauto was taking over a minute and
     # and a half to click the button once it had found it
-    start = pyautogui.locateCenterOnScreen('scansingle.png')#If the file is not a png file it will not work
+    start = pyautogui.locateCenterOnScreen(r'C:\Users\Michael\Desktop\pw2\workplace_automation_suite\scansingle.png')#If the file is not a png file it will not work
     print(start)
     pyautogui.moveTo(start)#Moves the mouse to the coordinates of the image
     pyautogui.click()
@@ -103,7 +103,7 @@ def click_scan_button():
 def click_save_button():
     # This uses pyautogui to locate the scan save button using a png because pywinauto was taking over a minute and
     # and a half to click the button once it had found it
-    start = pyautogui.locateCenterOnScreen('savescan.png')#If the file is not a png file it will not work
+    start = pyautogui.locateCenterOnScreen(r'C:\Users\Michael\Desktop\pw2\workplace_automation_suite\savescan.png')#If the file is not a png file it will not work
     print(start)
     pyautogui.moveTo(start)#Moves the mouse to the coordinates of the image
     pyautogui.click()
@@ -191,7 +191,7 @@ if __name__ == '__main__':
 
         while True:
             try:
-                if (pyautogui.locateOnScreen('savescan.png') is not None):
+                if (pyautogui.locateOnScreen(r'C:\Users\Michael\Desktop\pw2\workplace_automation_suite\savescan.png') is not None):
                     print("Save button found!")
                     click_save_button()
                     break

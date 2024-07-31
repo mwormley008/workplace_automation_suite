@@ -43,32 +43,32 @@ def find_file_by_number(folder_path, target_number):
 
 def auto_manual_email_from_aia_scan():
     wbr_window.activate()
-    sleep(1)
+    # sleep(1)
 
     press('esc')
     press('c')
-    sleep(2)
+    # sleep(2)
     company = file_name.split(' ')[0]
     if company in mail_contacts:
         write(mail_contacts[company])
-    sleep(1)
+    # sleep(1)
     press('tab')
-    sleep(.5)
+    # sleep(.5)
     press('tab')
-    sleep(.5)
+    # sleep(.5)
     write(file_name)
-    sleep(1)
+    # sleep(1)
     press('tab')
     write(proposal_message)
-    sleep(3)
+    # sleep(3)
     press('tab', presses=3)
     press('space')
-    sleep(2.5)
+    # sleep(2.5)
     write(file_name)
-    sleep(1)
+    # sleep(1)
     press('down')
     press('enter')
-    sleep(2)
+    # sleep(2)
     hotkey('ctrl', 'enter')
 
 def find_scan_and_email_windows():
@@ -140,7 +140,7 @@ if __name__ == '__main__':
         root.withdraw()  # Hide the root window
 
 
-        sleep(1)
+        # sleep(1)
 
 
         initial_dir=r"\\WBR\data\shared\Proposals"
@@ -183,14 +183,14 @@ if __name__ == '__main__':
 
         print(datetime.now())
         
-        sleep(1)
+        # sleep(1)
         # # Invoke the button
         # continue_button = messagebox.askyesno("Did you click the scan button?")
         # sleep(.5)
 
         while True:
             try:
-                if (pyautogui.locateOnScreen('savescan.png') is not None):
+                if (pyautogui.locateOnScreen(r'C:\Users\Michael\Desktop\pw2\workplace_automation_suite\savescan.png') is not None):
                     print("Save button found!")
                     click_save_button()
                     break
@@ -200,13 +200,13 @@ if __name__ == '__main__':
             except Exception as e:
                 # If an error occurs (like the button isn't found), wait for 2 seconds and try again.
                 sleep(2)
-        sleep(.5)
+        # sleep(.5)
         press('enter')
-        sleep(.5)
+        # sleep(.5)
         pyautogui.write(file_name)
-        sleep(2)
+        # sleep(2)
         press('enter')
-        sleep(1)
+        # sleep(1)
 
         ## If the file name is too long, it may be a duplicate because the ending will be cut off 
         if long_file_name:
@@ -228,7 +228,7 @@ if __name__ == '__main__':
             scan_path = askopenfilename(initialdir=initial_scan_dir)
             file_name = trim_extension_format_slashes(scan_path, initial_scan_dir)
         
-        sleep(5)
+        # sleep(5)
         message = create_message_with_attachment(recipient, file_name, proposal_message, rf'\\WBR\data\shared\My Scans\{file_name}.pdf')
 
         send_message(service, 'me', message)
