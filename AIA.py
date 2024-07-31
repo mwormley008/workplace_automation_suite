@@ -299,8 +299,8 @@ if __name__ =="__main__":
 
         # TODO: Add formulae to all cells
 
-        excel_path = r"C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"
-
+        excel_path = r"C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE"
+        
         open_or_print = messagebox.askyesnocancel("Open or print", "Press yes to open file, no to print file, cancel to do neither")
 
         if open_or_print is True:

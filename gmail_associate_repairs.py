@@ -127,7 +127,8 @@ def fetch_quickbooks_emails(service, user_email):
     # Calculate the date for 24 hours ago
     one_day_ago = (datetime.now() - timedelta(days=1)).strftime('%Y/%m/%d')
     
-    query = f'from:wbrroof@gmail.com subject:"Invoice" after:{one_day_ago}'
+    # query = f'from:wbrroof@gmail.com subject:"Invoice" after:{one_day_ago}'
+    query = f'from:wbrroof@aol.com subject:"Invoice" after:{one_day_ago}'
     response = service.users().messages().list(userId=user_email, q=query).execute()
     messages = response.get('messages', [])
     emails = []

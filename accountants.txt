@@ -19,3 +19,5 @@ Ones I haven't checked yet:
 'G.A.':'jlipinski@gajohnson.com',
 'DRN':'jcorrado@northernbuilders.com',
 'D-R':'daniel.degen@gmail.com',
+'Tessler':'kurt@tesslerinc.com
+',

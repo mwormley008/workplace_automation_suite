@@ -82,7 +82,7 @@ def find_scan_and_email_windows():
 def run_scanning_executable():
     # The path to your scanning executable
     scanning_exe_path =  r"C:\Program Files (x86)\Epson Software\Epson ScanSmart\ScanSmart.exe"
-        
+    
     # Run the scanning executable
     subprocess.Popen([scanning_exe_path])
 
@@ -134,6 +134,8 @@ if __name__ == '__main__':
             'Osman':'mike.wallis@osmanconstruction.com',
             'MRG':'BMolk@matanky.com',
             'Peter':'ap@pschwabe.com',
+            'Tessler':'kurt@tesslerinc.com',
+            '41':'accounting@41northcontractors.com',
             }
 
         billing_message = 'Hello,\nPlease see attached billing.\nThank you,\nMichael Wormley\nWBR Roofing\n25084 W Old Rand Rd\nWauconda, IL 60084\n​O: 847-487-8787​\nwbrroof@aol.com'
@@ -199,8 +201,8 @@ if __name__ == '__main__':
             except Exception as e:
                 # If an error occurs (like the button isn't found), wait for 2 seconds and try again.
                 sleep(2)
-        sleep(.5)
-        press('enter')
+        # sleep(.5)
+        # press('enter')
         sleep(.5)
         pyautogui.write(file_name)
         sleep(2)
