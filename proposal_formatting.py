@@ -56,7 +56,7 @@ def NameSave():
     # Search for "proposal submitted to:"
     search_term('proposal submitted to:')
     send_keys_with_delay('down', 'end')
-    # sleep(10)
+    sleep(2)
     highlight_home_line()
     contractor = copy_clipboard()
     

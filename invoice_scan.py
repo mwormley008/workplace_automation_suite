@@ -117,7 +117,7 @@ for filename in os.listdir(folder_path):
         print(os.path.join(folder_path, filename))
         # Replace 'path_to_your_pdf' with the path to the PDF file you want to process
                 
-        pages = convert_from_path(os.path.join(folder_path, filename), dpi=300)
+        pages = convert_from_path(os.path.join(folder_path, filename), dpi=400)
 
         # Perform OCR on each image
         invoice_no = None
@@ -130,6 +130,7 @@ for filename in os.listdir(folder_path):
             # print(f"Content on {ocr_core(img)}")
             content, inv_text, amt_text = ocr_core(img)
             print(f'content:{content}')
+            print(f'inv_text:{content}')
             print(f'amt_text:{amt_text}')
             
 
@@ -367,6 +368,8 @@ for filename in os.listdir(folder_path):
 
                 if inv_match:
                     match_counter = 1
+                else:
+                    print("no match!!!!!")
                 # inv_match2 = re.search(inv_pattern2, inv_text, re.IGNORECASE)
                 # if inv_match2:
                 #     match_counter = 2
