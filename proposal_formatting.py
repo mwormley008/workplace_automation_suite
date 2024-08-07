@@ -54,6 +54,7 @@ def search_term(term):
 
 def NameSave():
     # Search for "proposal submitted to:"
+    sleep(1)
     search_term('proposal submitted to:')
     send_keys_with_delay('down', 'end')
     sleep(2)
