@@ -59,6 +59,7 @@ def NameSave():
     send_keys_with_delay('down', 'end')
     sleep(2)
     highlight_home_line()
+    sleep(1)
     contractor = copy_clipboard()
     
 
