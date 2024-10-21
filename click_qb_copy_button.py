@@ -36,8 +36,8 @@ def click_duplicate_button(app_path, main_window_title_regex, child_window_title
 
 # Usage
 if __name__ == "__main__":
-    APP_PATH = r"C:\Program Files (x86)\Intuit\QuickBooks 2019\QBW32.EXE"
-    MAIN_WINDOW_TITLE_REGEX = ".*QuickBooks Desktop Pro 2019.*"
+    APP_PATH = r"C:\Program Files\Intuit\QuickBooks 2024\QBW.EXE"
+    MAIN_WINDOW_TITLE_REGEX = ".*QuickBooks Desktop Pro*"
     CHILD_WINDOW_TITLE = "Create Invoices (Editing Transaction...) "
     BUTTON_ID = "DuplicateBtn"
     

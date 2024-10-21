@@ -96,7 +96,7 @@ def handle_error(message_window, main_window):
 
 if __name__ == "__main__":
     # Connect to the QuickBooks application
-    app = Application(backend="uia").connect(path=r"C:\Program Files (x86)\Intuit\QuickBooks 2019\QBW32.EXE")  
+    app = Application(backend="uia").connect(path=r"C:\Program Files\Intuit\QuickBooks 2024\QBW.EXE")  
 
 
     if app.is_process_running():
@@ -104,7 +104,7 @@ if __name__ == "__main__":
     else:
         dual_print("QuickBooks is not running!")
 
-    main_window = app.window(title_re='.*QuickBooks Desktop Pro 2019.*')
+    main_window = app.window(title_re='.*QuickBooks Desktop Pro*')
 
     if main_window.exists():
         dual_print("Main window exists")

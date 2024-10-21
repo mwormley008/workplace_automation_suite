@@ -42,8 +42,8 @@ qb_window = None
 
 
 # Specify the necessary parameters
-APP_PATH = r"C:\Program Files (x86)\Intuit\QuickBooks 2019\QBW32.EXE"
-MAIN_WINDOW_TITLE_REGEX = ".*QuickBooks Desktop Pro 2019.*"
+APP_PATH = r"C:\Program Files\Intuit\QuickBooks 2024\QBW.EXE"
+MAIN_WINDOW_TITLE_REGEX = ".*QuickBooks Desktop.*"
 CHILD_WINDOW_TITLE = "Create Invoices (Editing Transaction...) "
 BUTTON_ID = "DuplicateBtn"
 

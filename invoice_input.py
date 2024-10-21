@@ -26,8 +26,8 @@ def quick_windows():
     return qb_window       
  
 if __name__ == "__main__":
-    app = pywinauto.Application(backend="uia").connect(path=r"C:\Program Files (x86)\Intuit\QuickBooks 2019\QBW32.EXE")
-    main_window = app.window(title_re='.*QuickBooks Desktop Pro 2019.*')
+    app = pywinauto.Application(backend="uia").connect(path=r"C:\Program Files\Intuit\QuickBooks 2024\QBW.EXE")
+    main_window = app.window(title_re='.*QuickBooks Desktop Pro*')
 
     file_name = f'{date.today()}_invoices.xlsx'
 
