@@ -125,7 +125,7 @@ if __name__ == '__main__':
             'Englewood':'VLara@eci.build',
             'Ott':'kate@ottdevelopment.com',
             'R.':'nickc@rcarlsonandsons.com',
-            '41':'amy.hillgamyer@41northcontractors.com',
+            '41':'Frank.Hudson@41northcontractors.com',
             'Niki':'TNGAdmin@thenikigroup.com',
             'Rosewood':'rosewood6727@aol.com',
             'GAJ':'jlipinski@gajohnson.com',
