@@ -1,46 +1,55 @@
-import imdb 
-import openpyxl
+from imdb import IMDb
+from openpyxl import load_workbook
 
-ia = imdb.Cinemagoer()
-movies = ia.search_movie('matrix')
-# print(movies)
-print(movies[0]['title'])
-test_movie_id = movies[0].movieID
-# print(movies[0].keys())
+# Initialize IMDbPY
+ia = IMDb()
 
-testmovie = ia.get_movie(test_movie_id)
-# print(testmovie)
-# trivia_keys = ['stars', 'plot outline', 'plot', 'director', 'synopsis']
-trivia_keys = ['stars', 'plot outline', 'director']
+file_path = r"C:\Users\Michael\Desktop\python-work\ankiprojects\movietrivia.xlsx"
 
-for key in trivia_keys:
-    if key in testmovie.keys():
-        value = testmovie[key]
-        if isinstance(value, list):  # Check if it's a list
-            # Safely handle mixed types in the list
-            names = []
-            for person in value:
-                if hasattr(person, 'get') and 'name' in person:
-                    names.append(person['name'])
-                else:
-                    names.append(str(person))  # Fallback for non-dict elements
-            print(f"{key.capitalize()}: {names}")
-        else:  # Handle non-list types
-            print(f"{key.capitalize()}: {value}")
-    else:
-        print(f"{key.capitalize()}: Not available")
+wb = load_workbook(file_path)
+sheet = wb.active
 
-# from openpyxl import Workbook, load_workbook
-'''
-alright so this imdb module lets you import the movies you want as dictionary objects,
-o you just need to learn which keys you want learn:
-plot
-director
-cast
-cover
+# Define column indices (adjust based on your Excel structure)
+title_column = 1  # Column for movie titles
+director_column = 2  # Column where directors will be written
+actors_column = 3 # Column where actors will be written
+plot_column = 4  # Column where plots will be written
 
-Ok so we need to search the database with the name of the film then using
-that id we can fill in the plot, director, cast, and cover.
+# Iterate over rows, starting from the second row (assuming the first row is headers)
+for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, max_col=1):  # Only read titles
+    title_cell = row[0]  # Movie title cell
+    title = title_cell.value
+    if not title:
+        continue
 
-['title', 'year', 'kind', 'cover url', 'canonical title', 'long imdb title', 'long imdb canonical title', 'smart canonical title', 'smart long imdb canonical title', 'full-size cover url'] 
-'''
+    # Search movie by title
+    search_results = ia.search_movie(title)
+    if not search_results:
+        print(f"Movie not found: {title}")
+        sheet.cell(row=title_cell.row, column=director_column, value="Not Found")
+        sheet.cell(row=title_cell.row, column=actors_column, value="Not Found")
+        sheet.cell(row=title_cell.row, column=plot_column, value="Not Found")
+        continue
+
+    # Get the first result and fetch full movie details
+    movie = ia.get_movie(search_results[0].movieID)
+
+    # Extract directors and plot outline
+    canonical_title = movie.get('title', movie.get('title', 'Unknown Title'))
+    directors = [person['name'] for person in movie.get('director', [])]
+    actors = [person['name'] for person in movie.get('cast', [])[:5]]  # Limit to top 5 actors
+    plot = movie.get('plot outline', 'Not Available')
+
+    # Overwrite the title column with the canonical name
+    sheet.cell(row=title_cell.row, column=title_column, value=canonical_title)
+
+    # Update Excel
+    sheet.cell(row=title_cell.row, column=director_column, value=", ".join(directors))
+    sheet.cell(row=title_cell.row, column=actors_column, value=", ".join(actors))
+    sheet.cell(row=title_cell.row, column=plot_column, value=plot)
+
+    print(f"Processed: {canonical_title}")
+
+# Save the updated Excel file
+wb.save(file_path)
+print("Excel file updated successfully!")
