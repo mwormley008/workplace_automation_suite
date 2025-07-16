@@ -1,3 +1,9 @@
+*.txt
+*.xlsx
+*.jpg
+*.pdf
+*.pickle
+*.json
 credentials.json
 Invoices/
 invoices2/
@@ -7,9 +13,4 @@ accountants.txt
 client_secret_21770210960-lgdtm9rgeen6ct4779t9sg5kdosm1lil.apps.googleusercontent.com.json
 cote.xlsx
 output.txt
-*.txt
-*.xlsx
-*.jpg
-*.pdf
-*.pickle
-*.json
+
