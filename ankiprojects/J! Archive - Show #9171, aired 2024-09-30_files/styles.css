@@ -1,0 +1,1776 @@
+:root {
+  --background-dark-blue: #00003A;
+  --slightly-lighter-than-background-dark-blue: #0D0D42;
+  --font-gray: #EEEEEE;
+  --disclaimer-gray: #9999BB;
+  --font-yellow: #FAB85B;
+  --j-archive-gold: #E5A561;
+  --player-name-gold: #E29231;
+  --lime-green: #32CD32;
+  --aqua-blue: #03FCF8;
+  --result-aqua-blue: #78D5DC;
+  --magenta: #FF00FF;
+  --daily-double-red: #D10000;
+  --clue-screen-blue: #0000AF;
+  --green: #03FC18;
+  --yellow: #F3F312;
+  --result-yellow: #FDF7D5;
+  --orange: #ED7802;
+  --red: #FF0000;
+  --error-red: #EE0000;
+  --white: #FFFFFF;
+  --dark-gray: #A9A9A9;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+html {
+  scrollbar-face-color: var(--white);
+  scrollbar-arrow-color: var(--background-dark-blue);
+  scrollbar-highlight-color: #DDDDDD;
+  scrollbar-shadow-color: #CCCCCC;
+  scrollbar-3dlight-color: #666666;
+  scrollbar-track-color: var(--background-dark-blue);
+  scrollbar-darkshadow-color: #222222;
+}
+
+body {
+  background-color: var(--background-dark-blue);
+  color: var(--font-gray);
+  font-size: 75%;
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-bottom: 0px;
+  margin-right: 0px;
+}
+
+body, p, h1, h2, h3, table, td, th, ul, ol, textarea, input {
+  font-family: arial, verdana, helvetica, sans-serif
+}
+
+html, body, .fullpageheight {
+  height: 100%;
+}
+
+div {
+  width: 100%;
+}
+
+div.level1 {
+  max-width: 1140px;
+  min-width: 200px;
+  width: 96%;
+  margin: 40px 2% 0 45px;
+}
+
+div.level2 {
+  width: 100%;
+  clear: both;
+}
+
+div.level3 {
+  clear: both;
+}
+
+div.level4 {
+  float: left;
+  display: inline-block;
+  min-width: 167px;
+  width: 16%;
+  font-size: 16px;
+  min-height: 42px;
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+div.level4a {
+  float: left;
+  display: inline-block;
+  position: relative;
+  left: 118px;
+  top: 10px;
+  min-width: 167px;
+  min-height: 41px;
+  vertical-align: middle;
+  width: 50%;
+}
+
+div.level4b {
+  float: left;
+  display: inline-block;
+  width: 33%;
+  font-size: 13px;
+  font-weight: 700;
+  padding-left: 5px;
+  vertical-align: middle;
+}
+
+div.level4c {
+  float: left;
+  display: inline-block;
+  min-width: 167px;
+  width: 16%;
+  height: 42px;
+  font-size: 13px;
+  line-height: 16px;
+  vertical-align: middle;
+}
+
+div.level4d {
+  float: left;
+  display: inline-block;
+  min-width: 167px;
+  min-height: 41px;
+  vertical-align: middle;
+  width: 50%;
+}
+
+div.level4e {
+  float: left;
+  display: inline-block;
+  width: 32%;
+  min-width: 160px;
+  margin: 0 0 8px 1%;
+  font-size: 11px;
+  padding-left: 5px;
+  vertical-align: middle;
+  position: relative;
+}
+
+div.level4f {
+  position: relative;
+  left: 200px;
+  top: 10px;
+  min-width: 167px;
+  min-height: 41px;
+  vertical-align: baseline;
+  width: 50%;
+}
+
+div.level5 {
+  color: var(--white);
+  height: 30px;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+div.level5a {
+  padding-right: 16px;
+}
+
+span.ex-query {
+  color: var(--j-archive-gold);
+  font-family: monospace;
+  font-size: 11px;
+  white-space: pre;
+}
+
+@media (max-width: 1056px) {
+  div.disapp {
+    display:none !important
+  }
+}
+
+div#game_title {
+  min-width: 994px;
+}
+
+div#game_comments {
+  min-width: 994px;
+  text-align: center;
+}
+
+div#jeopardy_round table {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div#double_jeopardy_round table {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div#triple_jeopardy_round table {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div#final_jeopardy_round table {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div#disclaimer {
+  font-size: 75%;
+  text-align: justify;
+  color: var(--disclaimer-gray);
+  /* border-top: 1px solid #9999BB; */
+  margin-top: 40px;
+  padding: 4px;
+  width: auto;
+}
+
+.disclaimer_splash {
+  font-size: 90%;
+  text-align: justify;
+  color: var(--disclaimer-gray);
+  /* border-top: 1px solid #9999BB; */
+  margin-top: 40px;
+  padding: 4px;
+  width: 586px;
+}
+
+form.centered { /* I had previously been using this to center forms on the page--probably not a good idea--can I safely delete? */
+  text-align: center;
+}
+
+a:link {
+  color: var(--j-archive-gold);
+  text-decoration: none;
+}
+
+a:visited {
+  color: var(--j-archive-gold);
+  text-decoration: none;
+}
+
+a:hover {
+  color: #FDF7D5;
+  text-decoration: underline;
+}
+
+a:active {
+  color: #FDF7D5;
+  text-decoration: underline;
+}
+
+em.clue_value {
+  font-style: normal;
+  font-weight: bold;
+  color: var(--font-yellow);
+}
+
+em.clue_value_daily_double {
+  font-style: normal;
+  font-weight: bold;
+  color: var(--daily-double-red);
+}
+
+em.tiebreaker_clue {
+  font-style: normal;
+  font-weight: bold;
+  color: var(--magenta);
+}
+
+em.correct_response {
+  font-style: normal;
+  /* font-weight: bold; */
+  color: #00FFFF;
+}
+
+em.strike {
+  font-style: normal;
+  text-decoration: line-through;
+}
+
+em.underline {
+  font-style: normal;
+  text-decoration: underline;
+}
+
+h1 {
+  font-size: 175%;
+  font-weight: bold;
+  text-align: center;
+}
+
+h2 {
+  font-size: 160%;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  padding-top: 15px;
+}
+
+h2.season {
+  margin-top: 0px;
+  margin-bottom: 3px;
+  margin-left: 3px;
+  padding-top: 0px;
+}
+
+h3 {
+  font-size: 140%;
+  font-style: normal;
+  margin-left: 0em;
+  margin-top: 30px;
+  margin-bottom: 0px;
+}
+
+h4 {
+  font-size: 120%;
+  font-weight: bold;
+  /* margin-left: 2em; */
+  margin-bottom: 0px;
+}
+
+h5 {
+  font-size: 110%;
+  font-style: italic;
+  margin-left: 2.16em;
+}
+
+h6 {
+  font-size: 100%;
+  margin-left: 3em;
+}
+
+hr {
+  color: #EEEEEE;
+  background-color: #EEEEEE;
+  height: 3px;
+}
+
+img {
+  border: 0px;
+}
+
+img.boxscoreplayer {
+  vertical-align: bottom;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+img.playerpicture {
+  image-rendering: -webkit-optimize-contrast;
+}
+
+img.game_dynamics {
+  border: 0px;
+  margin-right: 39px;
+}
+
+input[type="radio"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--background-dark-blue);
+  margin: 0;
+  font: inherit;
+  color: currentColor;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.15em solid currentColor;
+  border-radius: 50%;
+  transform: translateY(-0.075em);
+  display: grid;
+  place-content: center;
+}
+
+input[type="radio"]::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em var(--j-archive-gold);
+  background-color: CanvasText;
+}
+
+input[type="radio"]:checked::before {
+  transform: scale(1);
+}
+
+input[type="radio"]:focus {
+  outline: max(2px, 0.15em) solid currentColor;
+  outline-offset: max(2px, 0.15em);
+}
+
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--background-dark-blue);
+  margin: 0;
+  font: inherit;
+  color: currentColor;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.15em solid currentColor;
+  border-radius: 0.15em;
+  transform: translateY(-0.075em);
+  display: grid;
+  place-content: center;
+}
+
+input[type="checkbox"]::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em var(--j-archive-gold);
+  background-color: var(--background-dark-blue);
+  transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+input[type="checkbox"]:disabled {
+  --form-control-color: var(--dark-gray);
+
+  color: var(--dark-gray);
+  cursor: not-allowed;
+}
+
+.form-control--disabled {
+  color: var(--dark-gray);
+  cursor: not-allowed;
+}
+
+input[type="checkbox"]:focus {
+  outline: max(2px, 0.15em) solid currentColor;
+  outline-offset: max(2px, 0.15em);
+}
+
+input[type="file"]::file-selector-button {
+  /* border: 2px solid var(--j-archive-gold); */
+  font-size: 110%;
+  padding: 0.2em 0.4em;
+  border-radius: 0.2em;
+  background-color: var(--background-dark-blue);
+  color: var(--j-archive-gold);
+  transition: 1s;
+}
+
+input[type="file"]::file-selector-button:hover {
+  /* background-color: #81ecec; */
+  color: var(--player-name-gold);
+  /* border: 2px solid #00cec9; */
+}
+
+input.file {
+  font-size: 100%;
+}
+
+.form-control + .form-control {
+  margin-top: 1em;
+}
+
+.form-control:focus-within {
+  color: var(--j-archive-gold);
+}
+
+input.search {
+  width: 100px;
+  background-color: var(--background-dark-blue);
+  color: var(--white);
+  font-size: 75%;
+  margin-top: 0px; /* Because for some really REALLY stupid reason, all forms otherwise have an extra line after them.  Crazy! */
+  margin-bottom: 0px; /* Because for some really REALLY stupid reason, all forms otherwise have an extra line after them.  Crazy! */
+  transition: width 0.3s ease-in-out;
+}
+
+input.search_button {
+  width: 50px;
+  background-color: var(--background-dark-blue);
+  color: var(--j-archive-gold);
+  font-size: 75%;
+  margin-top: 0px; /* Because for some really REALLY stupid reason, all forms otherwise have an extra line after them.  Crazy! */
+  margin-bottom: 0px; /* Because for some really REALLY stupid reason, all forms otherwise have an extra line after them.  Crazy! */
+}
+
+input.text, textarea, checkbox {
+  background-color: var(--background-dark-blue);
+  color: var(--white);
+}
+
+input.textright {
+  background-color: var(--background-dark-blue);
+  color: var(--white);
+  text-align: right;
+}
+
+input.text_fullwidth {
+  width: 99.5%;
+  background-color: var(--background-dark-blue);
+  color: var(--white);
+}
+
+input.category_name_input {
+  background-color: var(--clue-screen-blue);
+  border: 0px #000000;
+  color: var(--white);
+  width: 155px;
+}
+
+input.category_comments_input {
+  background-color: #505050;
+  color: var(--white);
+  width: 155px;
+  border: 0px;
+}
+
+input.clue_value_input {
+  background-color: #505050;
+  font-weight: bold;
+  color: var(--font-yellow);
+  text-shadow: 1px 1px 0px #000000;
+  width: 43px;
+  border: 0px;
+}
+
+input.clue_value_daily_double_input {
+  background-color: #505050;
+  font-weight: bold;
+  color: var(--daily-double-red);
+  text-shadow: 1px 1px 0px #000000;
+  width: 43px;
+  border: 0px;
+}
+
+input.clue_order_number_input {
+  background-color: #505050;
+  color: var(--white);
+  text-align: right;
+  width: 20px;
+  border: 0px;
+}
+
+input.clue_correct_response_input {
+  background-color: #505050;
+  color: #00FFFF;
+  width: 155px;
+  border: 0px;
+}
+
+input.clue_scorecount_input_radio {
+  display: none;
+}
+
+input.final_category_name_input {
+  background-color: var(--clue-screen-blue);
+  border: 0px #000000;
+  color: var(--white);
+  width: 250px;
+}
+
+input.final_category_comments_input {
+  background-color: #505050;
+  color: var(--white);
+  width: 250px;
+  border: 0px;
+}
+
+input.final_clue_correct_response_input {
+  background-color: #505050;
+  color: #00FFFF;
+  width: 250px;
+  border: 0px;
+}
+
+input.final_clue_response_text_input {
+  background-color: var(--clue-screen-blue);
+  color: var(--white);
+  width: 180px;
+  border: 0px;
+}
+
+input.final_clue_wager_input {
+  background-color: #505050;
+  color: var(--white);
+  width: 43px;
+  border: 0px;
+}
+
+input.game_first_break_after_clue_input {
+  background-color: #505050;
+  color: var(--white);
+  text-align: right;
+  width: 20px;
+  border: 0px;
+}
+
+.advancedsearchfield {
+  width: 97%;
+  text-align: left;
+  border-radius: 1px;
+  border: 1px solid #d9d9d9;
+  border-top: 1px solid #c0c0c0;
+  font-size: 13px;
+  height: 25px;
+  padding: 1px 8px;
+  color: var(--white);
+  background-color: var(--background-dark-blue);
+}
+
+p {
+  margin-top: 4px;
+}
+
+p.contestants {
+  margin: 0px 0px 0px 0px;
+}
+
+p.null {
+  margin: 0px;
+  border: 0px;
+}
+
+p.quote {
+  margin: 15px 15px 15px 15px;
+  padding: 4px 4px 4px 4px;
+  border: inset 5px #A0A0A0;
+}
+
+p.scores {
+  margin: 0px 0px 0px 20px;
+}
+
+p.testimonial_text_justified {
+  margin: 0px 0px 0px 0px;
+  padding: 8px 8px 0px 8px;
+  color: var(--j-archive-gold);
+  width: 586px;
+  text-align: justify;
+}
+
+p.testimonial_text_centered {
+  margin: 0px 0px 0px 0px;
+  padding: 8px 8px 0px 8px;
+  color: var(--j-archive-gold);
+  width: 586px;
+  text-align: center;
+}
+
+p.testimonial_name {
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  width: 586px;
+  text-align: right;
+}
+
+pre {
+  font-family: monospace;
+  font-size: 110%;
+  margin-left: 0;
+  margin-bottom: 0;
+}
+
+table.boxscore {
+  border-collapse: collapse;
+}
+
+table.conformity_convention {
+  margin-left: auto;
+  margin-right: auto;
+  border: inset 2px var(--white);
+  width: 95%;
+}
+
+table.content {
+  border-style: outset;
+  border-color: var(--white);
+  border-width: 4px;
+}
+
+table.clue_header {
+  /* width: 155px; Pre-border width */
+  width: 150px;
+  border: 0px;
+}
+
+table.clue_scorecount_input {
+  width: 100%;
+  border: 0px;
+  border-collapse: collapse;
+  padding: 0px;
+}
+
+table.round {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.final_round {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.scores_table {
+  border: 0px;
+}
+
+th.boxscoreheading {
+  padding-bottom: 0px;
+}
+
+th.boxscorekeyheading {
+  text-align: center;
+  padding-top: 4px;
+  padding-bottom: 10px;
+  background-color: var(--slightly-lighter-than-background-dark-blue);
+}
+
+tr.boxscorerowheading {
+  background-color: var(--clue-screen-blue);
+}
+
+tr.boxscorerow:hover {
+  background-color: var(--slightly-lighter-than-background-dark-blue);
+}
+
+/*
+table.clue_value_and_order_number_input {
+  border: 0px;
+  border-collapse: collapse;
+  padding: 0px;
+}
+*/
+
+/*
+td.boldlabel {
+  font-weight: bold;
+}
+*/
+
+td.boxscorerowheadingleft {
+  text-align: left;
+  padding: 15px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-weight: bold;
+  border: none;
+}
+
+td.boxscorerowheadingright {
+  text-align: right;
+  padding: 15px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-right: 6px;
+  font-weight: bold;
+  border: none;
+}
+
+td.boxscoreplayercell {
+  padding-bottom: 0px;
+}
+
+td.boxscoreplayernamecell {
+  text-align: left;
+  font-size: 200%;
+}
+
+td.boxscoreplayerorigincell {
+  text-align:left;
+}
+
+td.boxscorerowheadingcenter {
+  text-align: center;
+  padding: 15px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-weight: bold;
+  border-left: thick solid var(--background-dark-blue);
+}
+
+td.boxscorerowleft {
+  text-align: left;
+  padding: 3px;
+}
+
+td.boxscorerowlefttop {
+  text-align: left;
+  padding: 3px;
+  padding-top: 10px;
+}
+
+td.boxscorerowleftbottom {
+  text-align: left;
+  padding: 3px;
+  padding-bottom: 10px;
+}
+
+td.boxscorerowleftall {
+  text-align: left;
+  padding: 3px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+td.boxscorerowright {
+  text-align: right;
+  padding: 3px;
+  padding-right: 6px;
+}
+
+td.boxscorerowrighttop {
+  text-align: right;
+  padding: 3px;
+  padding-top: 10px;
+  padding-right: 6px;
+}
+
+td.boxscorerowrightbottom {
+  text-align: right;
+  padding: 3px;
+  padding-bottom: 10px;
+  padding-right: 6px;
+}
+
+td.boxscorerowrightall {
+  text-align: right;
+  padding: 3px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 6px;
+}
+
+td.boxscorerowcenter {
+  text-align: center;
+  padding: 3px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: var(--slightly-lighter-than-background-dark-blue);
+  border-left: thick solid var(--clue-screen-blue);
+}
+
+td.boxscorekey {
+  font-size: 70%;
+  text-align: left;
+  vertical-align: top;
+  width: 20%;
+  background-color: var(--slightly-lighter-than-background-dark-blue);
+}
+
+td.category_input {
+  text-align: center;
+  width: 0px;
+}
+
+td.clue {
+  vertical-align: top;
+  background-color: var(--clue-screen-blue); /* Clue screen blue */
+  border-width: 2px;            /* Comment out for no depth. */
+  border-style: outset;         /* Comment out for no depth. */
+  border-bottom-color: #000088; /* Comment out for no depth. */
+  border-left-color:   #0000EE; /* Comment out for no depth. */
+  border-right-color:  #000099; /* Comment out for no depth. */
+  border-top-color:    #0000FF; /* Comment out for no depth. */
+  width: 152px;                 /* Comment out for no depth. */
+ /* width: 160px; Pre-depth value */
+}
+
+td.clue_input {
+  width: 0px;
+}
+
+td.category {
+  background-color: var(--clue-screen-blue); /* Clue screen blue */
+  border-width: 2px;            /* Comment out for no depth. */
+  border-style: outset;         /* Comment out for no depth. */
+  border-bottom-color: #000088; /* Comment out for no depth. */
+  border-left-color:   #0000EE; /* Comment out for no depth. */
+  border-right-color:  #000099; /* Comment out for no depth. */
+  border-top-color:    #0000FF; /* Comment out for no depth. */
+  width: 152px;                 /* Comment out for no depth. */
+ /* width: 160px; Pre-depth value */
+}
+
+td.category_comments_input {
+  text-align: center;
+}
+
+td.category_name {
+  /* width: 160px; Pre-depth value */
+  width: 152px;
+  font-size: 125%;
+  color: var(--white);
+  text-shadow: 2px 2px 0px #000000;
+  text-align: center;
+  vertical-align: middle;
+  font-weight: bold;
+}
+
+td.category_comments {
+  text-align: center;
+}
+
+td.category_name_input {
+  text-align: center;
+}
+
+td.clue_comments {
+}
+
+td.clue_comments_input {
+}
+
+td.clue_correct_response {
+}
+
+td.clue_correct_response_input {
+  text-align: center;
+}
+
+td.clue_order_number {
+  width: 100%;
+}
+
+td.clue_order_number a:link {
+  color: #EEEEEE;
+  text-decoration: none;
+}
+
+td.clue_order_number a:hover {
+  text-decoration: none;
+}
+
+td.clue_order_number a:visited {
+  color: #EEEEEE;
+  text-decoration: none;
+}
+
+td.clue_order_number_input {
+  border: 0px;
+  margin: 0px;
+  padding: 0px;
+  text-align: right;
+}
+
+td.clue_scorecount_input {
+  text-align: left;
+  border: 0px;
+  margin: 0px;
+  padding: 0px;
+  vertical-align: baseline;
+  font-size: 100%;
+}
+
+td.clue_stuck {
+  width: 50px;
+}
+
+td.clue_text {
+  height: 150px;
+  width: 152px;
+  color: var(--white);
+  text-align: center;
+  vertical-align: middle;
+}
+
+td.clue_text_input {
+}
+
+td.clue_unstuck {
+  font-weight: normal;
+  width: 50px;
+}
+
+td.clue_value {
+  width: 100%;
+  color: var(--font-yellow);
+  text-shadow: 1px 1px 0px #000000;
+  text-align: center;
+  vertical-align: middle;
+  font-weight: bold;
+}
+
+td.clue_value_daily_double {
+  width: 100%;
+  color: var(--daily-double-red);
+  text-shadow: 1px 1px 0px #000000;
+  text-align: center;
+  vertical-align: middle;
+  font-weight: bold;
+}
+
+
+td.clue_value_input {
+  border: 0px;
+  margin: 0px;
+  padding: 0px;
+  text-align: left;
+}
+
+td.conformity_convention {
+  margin: 2px;
+  padding: 4px;
+  background-color: #E0E0E0;
+  color:#000000;
+}
+
+td.change {
+  padding: 6px;
+  background-color: #0F0F3F;
+  width: 99.5%;
+}
+
+.even {
+  background-color: #000052;
+}
+
+/*
+td.explanation {
+  font-size: 80%;
+}
+*/
+
+td.final_category_name_input {
+  text-align: center;
+}
+
+td.final_clue_comments_input {
+}
+
+td.final_clue_correct_response_input {
+}
+
+td.final_clue_response_text {
+  text-align: left;
+}
+
+td.final_clue_text_input {
+}
+
+td.final_clue_wager {
+  text-align: right;
+}
+
+td.important {
+  width: 50%;
+  margin: 15px 15px 15px 15px;
+  padding: 4px 4px 4px 4px;
+  border: inset 5px #A0A0A0;
+}
+
+td.label {
+  width: 10em;
+  padding-top: 7px;
+}
+
+td.prize {
+  padding-left: 7px;
+}
+
+td.right {
+  color: var(--lime-green);
+}
+
+td.score_negative {
+  text-align: center;
+  width: 100px;
+  color: var(--white);
+  background-color: var(--red);
+  font-weight: bold;
+  font-size: 125%;
+  padding: 5px;
+}
+
+td.score_positive {
+  text-align: center;
+  width: 100px;
+  color: var(--white);
+  background-color: var(--clue-screen-blue);
+  font-weight: bold;
+  font-size: 125%;
+  padding: 5px;
+}
+
+td.score_lead_clinch {
+  text-align: center;
+  width: 100px;
+  color: var(--aqua-blue);
+  background-color: var(--clue-screen-blue);
+  font-weight: bold;
+  font-size: 125%;
+  padding: 5px;
+}
+
+td.score_lead_superclinch {
+  text-align: center;
+  width: 100px;
+  color: var(--green);
+  background-color: var(--clue-screen-blue);
+  font-weight: bold;
+  font-size: 125%;
+  padding: 5px;
+}
+
+td.score_lock_clinch {
+  text-align: center;
+  width: 100px;
+  color: var(--yellow);
+  background-color: var(--clue-screen-blue);
+  font-weight: bold;
+  font-size: 125%;
+  padding: 5px;
+}
+
+td.score_lock_superclinch {
+  text-align: center;
+  width: 100px;
+  color: var(--orange);
+  background-color: var(--clue-screen-blue);
+  font-weight: bold;
+  font-size: 125%;
+  padding: 5px;
+}
+
+td.score_player_nickname {
+  text-align: center;
+  color: var(--white);
+  font-size: 125%;
+  width: 110px;
+}
+
+td.score_remarks {
+  text-align: center;
+  vertical-align: top;
+  width: 110px;
+}
+
+td.splash_clue_header {
+  text-align: center;
+  border: 0px;
+  margin: 70px;
+  padding: 0px;
+  vertical-align: middle;
+  font-size: 200%;
+  font-variant: small-caps;
+  color: var(--j-archive-gold);
+  width: 250px;
+}
+
+td.splash_clue_footer {
+  text-align: center;
+  border: 0px;
+  margin: 70px;
+  padding: 0px;
+  vertical-align: middle;
+  font-size: 75%;
+  width: 250px;
+}
+
+td.wrong {
+  color: var(--red);
+}
+
+textarea.fullwidth {
+  width: 99.5%; /* changed from 99% 2015-03-08 */
+}
+
+textarea.clue_text_input {
+  background-color: var(--clue-screen-blue);
+  border: 0px #000000;
+  width: 155px;
+  resize: both !important;
+}
+
+textarea.clue_comments_input {
+  background-color: #505050;
+  width: 155px;
+  border: 0px;
+}
+
+textarea.final_clue_comments_input {
+  background-color: #505050;
+  width: 250px;
+  border: 0px;
+}
+
+textarea.final_clue_text_input {
+  background-color: var(--clue-screen-blue);
+  border: 0px #000000;
+  width: 250px;
+}
+
+span.boxscoreneg {
+  color: var(--aqua-blue);
+}
+
+ul.conformity_convention {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-left: 2em;
+}
+
+ins.diff {
+  color: green;
+  background: #dfd;
+  text-decoration: none;
+}
+
+del.diff {
+  color: red;
+  background: #fdd;
+  text-decoration: none;
+}
+
+del
+
+/* Added for registration form */
+
+.page_inside {
+  width: 765px;
+  text-align: left;
+}
+
+.page_inside_inside {
+  padding: 0px 10px 0px 10px;
+}
+
+.button_div {
+  margin-top: 6px;
+}
+
+.explanation {
+  font: 10pt verdana, geneva, lucida, 'lucida grande', arial, helvetica, sans-serif;
+  padding: 2px;
+  margin: 0px;
+}
+
+.form_border {
+  text-align: center;
+/*  background: var(--j-archive-gold);
+  border: 1px solid var(--j-archive-gold); */
+}
+
+.form_category {
+  text-align: left;
+  background-color: var(--clue-screen-blue);
+  font: bold 10pt verdana, geneva, lucida, 'lucida grande', arial, helvetica, sans-serif;
+  border-width: 2px;
+  border-style: outset;
+  border-bottom-color: #000088;
+  border-left-color:   #0000EE;
+  border-right-color:  #000099;
+  border-top-color:    #0000FF;
+}
+
+.form_header {
+  text-align: left;
+  background-color: var(--clue-screen-blue);
+  font: bold 11px tahoma, verdana, geneva, lucida, 'lucida grande', arial, helvetica, sans-serif;
+  border-width: 2px;
+  border-style: outset;
+  border-bottom-color: #000088;
+  border-left-color:   #0000EE;
+  border-right-color:  #000099;
+  border-top-color:    #0000FF;
+}
+
+.smallfont {
+  font: 11px verdana, geneva, lucida, 'lucida grande', arial, helvetica, sans-serif;
+  margin-bottom: 3px;
+}
+
+.nobreak {
+  white-space: nowrap
+}
+
+.panel {
+  width: 765px;
+  background: var(--background-dark-blue);
+  color: #EEEEEE;
+  padding: 10px;
+  border: 2px outset;
+}
+
+.panelsurround {
+  background-color: var(--clue-screen-blue);
+  font: bold 11px tahoma, verdana, geneva, lucida, 'lucida grande', arial, helvetica, sans-serif;
+  border-width: 2px;
+  border-style: outset;
+  border-bottom-color: #000088;
+  border-left-color:   #0000EE;
+  border-right-color:  #000099;
+  border-top-color:    #0000FF;
+  text-align: center;
+}
+
+.insidepanel {
+  width: 640px;
+  text-align: left;
+}
+
+legend {
+  color: var(--j-archive-gold);
+  font: bold 11px tahoma, verdana, geneva, lucida, 'lucida grande', arial, helvetica, sans-serif;
+}
+
+td.form_category, div.form_category {
+  padding: 4px;
+}
+
+.fieldset {
+  margin-bottom: 6px;
+}
+
+.fieldset, .fieldset td, .fieldset p, .fieldset li {
+  font-size: 11px;
+}
+
+.noborder {
+  border: 0px;
+  margin: 0px;
+  padding: 0px;
+}
+
+form { /* USEFUL, POSSIBLY--may replace that "crazy" mod in other stylesheet */
+  display: inline;
+}
+
+/* End added for registration form */
+
+.button {
+  background-color: var(--background-dark-blue);
+  color: var(--j-archive-gold);
+}
+
+/* Suggestion colors */
+.accepted {
+  font-style: normal;
+  color: var(--lime-green);
+}
+
+.rejected {
+  font-style: normal;
+  color: var(--red);
+}
+
+.left_padded {
+  padding-left: 15px;
+}
+
+.top_padded {
+  padding-top: 15px;
+}
+
+.pending {
+  font-style: normal;
+  color: var(--dark-gray);
+}
+
+.normal {
+  font-style: normal;
+}
+
+.centered {
+  text-align: center;
+}
+
+/*
+.category_name {
+  color: var(--white);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.clue_value {
+  color: #EEEEEE;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.clue_value_daily_double {
+  color: #FF1111;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.clue_order_number {
+  color: #EEEEEE;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.clue_text {
+  color: var(--white);
+  text-align: center;
+  vertical-align: middle;
+}
+*/
+
+.ddred {
+  color: var(--daily-double-red);
+}
+
+.search_correct_response {
+  color: #00FFFF;
+  visibility: hidden;
+  margin-left: 10px;
+}
+
+.error {
+  color: var(--error-red);
+}
+
+.edit {
+  font-weight: normal;
+  font-style: normal;
+  font-variant: normal;
+}
+
+.navbar_heading {
+  margin-top: 1em;
+  margin-bottom: 0em;
+  margin-left: 1.25em;
+  text-indent: -1em;
+  font-weight: bold;
+}
+
+.navbar_option {
+  margin-top: 0em;
+  margin-bottom: 0em;
+  margin-left: 1.6em;
+  text-indent: -1em;
+}
+
+.player_occupation_and_origin {
+  font-style: italic;
+  margin-left: 30px;
+}
+
+.player_full_name {
+  color: var(--player-name-gold);
+  font-size: 300%;
+  font-weight: bold;
+  margin-left: 30px;
+}
+
+.player_hometown_howdy {
+  color: var(--result-aqua-blue);
+  font-size: 150%;
+  margin-bottom: 20px;
+}
+
+.text {
+}
+
+.top_line {
+  font-size: 120%;
+  text-align: left;
+}
+
+.bottom_line {
+  font-size: 120%;
+  text-align: right;
+}
+
+.smallbutton {
+  background-color: var(--background-dark-blue);
+  color: var(--j-archive-gold);
+  font-size: 75%;
+}
+
+.spacer_9 {
+  width: 9px;
+}
+
+.spacer_10 {
+  width: 10px;
+}
+
+/* The following added for bar graph functionality 2006-05-07 */
+
+.graph {
+  background-color: var(--background-dark-blue);
+  border: solid 1px var(--font-gray);
+}
+
+.graph td {
+  font-family: verdana, arial, sans serif;
+}
+
+.graph thead th {
+  border-bottom: double 3px var(--font-gray);
+  font-family: verdana, arial, sans serif;
+  padding: 1em;
+}
+
+.graph tfoot td {
+  border-top: solid 1px var(--font-gray);
+  font-size: x-small;
+  text-align: center;
+  padding: 0.5em;
+  color: var(--font-gray);
+}
+
+.bar {
+  background-color: var(--background-dark-blue);
+  text-align: right;
+  border-left: solid 1px var(--background-dark-blue);
+  padding-right: 0.5em;
+  /* width: 600px; */
+}
+
+.bar div { 
+  border-top: solid 2px var(--result-yellow);
+  background-color: var(--j-archive-gold);
+  border-bottom: solid 2px var(--j-archive-gold);
+  text-align: right;
+  color: var(--white);
+  float: left;
+  padding-top: 0;
+  height: 1em;
+}
+
+#navbar {
+  border: 0px;
+  margin: 0px;
+  width: auto;
+  overflow: hidden;
+}
+
+#navbarlogo {
+  border: 0px;
+  margin: 0px;
+  float: left;
+}
+
+#navbartext {
+  height: 22px;
+  line-height: 22px; /* vertically centers the text */
+  border: 0px;
+  float: left;
+}
+
+#navbardropdown {
+  vertical-align: 30%;
+  border: 0px;
+  width: 300px;
+  margin-bottom: 0px; /* Because for some really REALLY stupid reason, all forms otherwise have an extra line after them.  Crazy! */
+  margin-left: 10px;
+  float: left;
+}
+
+#navbarsearch {
+  height: 22px;
+  line-height: 22px; /* vertically centers the text */
+  border: 0px;
+  margin-bottom: 0px; /* Because for some really REALLY stupid reason, all forms otherwise have an extra line after them.  Crazy! */
+  margin-left: 10px;
+  float: left;
+}
+
+#content {
+  position: relative;
+  top: 0px;
+  margin: 0px;
+  min-width: 600px;
+  max-width: 1200px;
+  /* width: expression(document.body.clientWidth); This hangs Internet Explorer!!!! */
+  /* width: expression(document.body.clientWidth < 600? "600px" : document.body.clientWidth > 1200? "1200px" : "auto"); */
+  /* width: 864px; */ 
+  /* width: 854px; */
+}
+
+#contestants {
+  text-align: center;
+}
+
+#contestants_table { /* For correct display in Firefox, added 2008-04-04 */
+  margin: 0px auto 0px auto;
+  width: 995px;
+}
+
+#jeopardy_round {
+  text-align: center;
+}
+
+#double_jeopardy_round {
+  text-align: center;
+}
+
+#triple_jeopardy_round {
+  text-align: center;
+}
+
+#final_jeopardy_round {
+  text-align: center;
+}
+
+#j_and_dj_form {
+  margin: 0px auto 0px auto;
+  width: 992px;
+}
+
+#fj_form {
+  margin: 0px auto 0px auto;
+  width: 262px;
+}
+
+#manual {
+  margin-left: 20px;
+  width: 768px;
+  font-size: 120%;
+  text-align: justify;
+}
+
+#popupwindow {
+  position: fixed;
+  width: 300px;  
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--background-dark-blue);
+  border: 1px solid var(--j-archive-gold);
+  padding: 10px;
+}
+
+/* Google search styles */
+
+  .gsc-control-cse {
+    font-family: Arial, sans-serif;
+    border-color: var(--background-dark-blue);
+    background-color: var(--background-dark-blue);
+  }
+  .gsc-control-cse .gsc-table-result {
+    font-family: Arial, sans-serif;
+  }
+  input.gsc-input {
+    border-color: var(--j-archive-gold);
+  }
+  input.gsc-search-button {
+    border-color: var(--j-archive-gold);
+    background-color: var(--background-dark-blue);
+  }
+  .gsc-tabHeader.gsc-tabhInactive {
+    border-color: var(--j-archive-gold);
+    background-color: var(--background-dark-blue);
+  }
+  .gsc-tabHeader.gsc-tabhActive {
+    border-color: var(--result-yellow);
+    background-color: var(--background-dark-blue);
+  }
+  .gsc-tabsArea {
+    border-color: var(--result-yellow);
+  }
+  .gsc-webResult.gsc-result,
+  .gsc-results .gsc-imageResult {
+    border-color: var(--j-archive-gold);
+    background-color: var(--background-dark-blue);
+  }
+  .gsc-webResult.gsc-result:hover,
+  .gsc-imageResult:hover {
+    border-color: var(--result-yellow);
+    background-color: var(--background-dark-blue);
+  }
+  .gsc-webResult.gsc-result.gsc-promotion:hover {
+    border-color: var(--result-yellow);
+    background-color: var(--background-dark-blue);
+  }
+  .gs-webResult.gs-result a.gs-title:link,
+  .gs-webResult.gs-result a.gs-title:link b,
+  .gs-imageResult a.gs-title:link,
+  .gs-imageResult a.gs-title:link b {
+    color: var(--j-archive-gold);
+  }
+  .gs-webResult.gs-result a.gs-title:visited,
+  .gs-webResult.gs-result a.gs-title:visited b,
+  .gs-imageResult a.gs-title:visited,
+  .gs-imageResult a.gs-title:visited b {
+    color: var(--j-archive-gold);
+  }
+  .gs-webResult.gs-result a.gs-title:hover,
+  .gs-webResult.gs-result a.gs-title:hover b,
+  .gs-imageResult a.gs-title:hover,
+  .gs-imageResult a.gs-title:hover b {
+    color: var(--result-yellow);
+  }
+  .gs-webResult.gs-result a.gs-title:active,
+  .gs-webResult.gs-result a.gs-title:active b,
+  .gs-imageResult a.gs-title:active,
+  .gs-imageResult a.gs-title:active b {
+    color: var(--result-yellow);
+  }
+  .gsc-cursor-page {
+    color: var(--j-archive-gold);
+  }
+  a.gsc-trailing-more-results:link {
+    color: var(--j-archive-gold);
+  }
+  .gs-webResult .gs-snippet,
+  .gs-imageResult .gs-snippet,
+  .gs-fileFormatType {
+    color: var(--disclaimer-gray);
+  }
+  .gs-webResult div.gs-visibleUrl,
+  .gs-imageResult div.gs-visibleUrl {
+    color: var(--result-aqua-blue);
+  }
+  .gs-webResult div.gs-visibleUrl-short {
+    color: var(--result-aqua-blue);
+  }
+  .gs-webResult div.gs-visibleUrl-short {
+    display: none;
+  }
+  .gs-webResult div.gs-visibleUrl-long {
+    display: block;
+  }
+  .gs-promotion div.gs-visibleUrl-short {
+    display: none;
+  }
+  .gs-promotion div.gs-visibleUrl-long {
+    display: block;
+  }
+  .gsc-cursor-box {
+    border-color: var(--j-archive-gold);
+  }
+  .gsc-results .gsc-cursor-box .gsc-cursor-page {
+    border-color: var(--j-archive-gold);
+    background-color: var(--background-dark-blue);
+    color: var(--j-archive-gold);
+  }
+  .gsc-results .gsc-cursor-box .gsc-cursor-current-page {
+    border-color: var(--result-yellow);
+    background-color: var(--background-dark-blue);
+    color: var(--j-archive-gold);
+  }
+  .gsc-webResult.gsc-result.gsc-promotion {
+    border-color: var(--j-archive-gold);
+    background-color: var(--background-dark-blue);
+  }
+  .gsc-completion-title {
+    color: var(--j-archive-gold);
+  }
+  .gsc-completion-snippet {
+    color: var(--disclaimer-gray);
+  }
+  .gs-promotion a.gs-title:link,
+  .gs-promotion a.gs-title:link *,
+  .gs-promotion .gs-snippet a:link {
+    color: var(--j-archive-gold);
+  }
+  .gs-promotion a.gs-title:visited,
+  .gs-promotion a.gs-title:visited *,
+  .gs-promotion .gs-snippet a:visited {
+    color: var(--j-archive-gold);
+  }
+  .gs-promotion a.gs-title:hover,
+  .gs-promotion a.gs-title:hover *,
+  .gs-promotion .gs-snippet a:hover {
+    color: var(--result-yellow);
+  }
+  .gs-promotion a.gs-title:active,
+  .gs-promotion a.gs-title:active *,
+  .gs-promotion .gs-snippet a:active {
+    color: var(--result-yellow);
+  }
+  .gs-promotion .gs-snippet,
+  .gs-promotion .gs-title .gs-promotion-title-right,
+  .gs-promotion .gs-title .gs-promotion-title-right *  {
+    color: var(--disclaimer-gray);
+  }
+  .gs-promotion .gs-visibleUrl,
+  .gs-promotion .gs-visibleUrl-short {
+    color: var(--result-aqua-blue);
+  }
+
